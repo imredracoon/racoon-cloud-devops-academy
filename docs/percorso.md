@@ -17,13 +17,13 @@ flowchart LR
 | Fase | Durata indicativa | Ore | Progetto per il portfolio | Certificazione collegata |
 |---|---|---|---|---|
 | [0 · Fondamenta](fase-0/index.md) | 3 settimane | 25 | Laboratorio documentato | — |
-| [1 · Linux e reti](fase-1/index.md) | 2,5 mesi | 90 | Server web messo in sicurezza | LFCS (facoltativa) |
+| [1 · Linux e reti](fase-1/index.md) | 2,5 mesi | 90 | Server web messo in sicurezza | LFCS · RHCSA · Canonical Academy (facoltative) |
 | [2 · Git, Bash, Python](fase-2/index.md) | 1,5 mesi | 55 | Toolkit di automazione e API Flask | — |
 | [3 · Container](fase-3/index.md) | 1 mese | 40 | Stack containerizzato | — |
 | [4 · Cloud](fase-4/index.md) | 1,5 mesi | 50 | Sito statico nel cloud | AWS Cloud Practitioner · Google Cloud Digital Leader |
 | [5 · Architetture](fase-5/index.md) | 3 mesi | 120 | Applicazione a tre livelli | AWS Solutions Architect Associate |
 | [6 · Terraform](fase-6/index.md) | 1,5 mesi | 60 | Infrastruttura come codice | Terraform Associate |
-| [7 · CI/CD e osservabilità](fase-7/index.md) | 1,5 mesi | 55 | Pipeline e monitoraggio | — |
+| [7 · CI/CD e osservabilità](fase-7/index.md) | 1,5 mesi | 55 | Pipeline e monitoraggio | RHCE in Ansible (facoltativa, dopo la Fase 6) |
 | [8 · Kubernetes](fase-8/index.md) | 3 mesi | 120 | Cluster con GitOps | CKA · Google Associate Cloud Engineer |
 
 Le durate valgono per 8-10 ore di studio a settimana. Se hai più tempo, vai più veloce; se ne hai meno,
@@ -66,6 +66,9 @@ e i comandi.
 | [Certified Kubernetes Administrator (CKA)](appendici/cka/index.md) | Linux Foundation / CNCF | dopo la Fase 8 | pratico, 2 ore | 445 USD |
 | [Google Associate Cloud Engineer](appendici/gcp-ace/index.md) | Google Cloud | dopo la Fase 8 | 50-60 domande, 2 ore | 125 USD |
 | [Linux Foundation Certified System Administrator (LFCS)](appendici/lfcs/index.md) | Linux Foundation | dopo la Fase 1 (facoltativa) | pratico, 2 ore | 445 USD |
+| [Red Hat Certified System Administrator (RHCSA, EX200)](appendici/rhcsa/index.md) | Red Hat | dopo la Fase 1 (facoltativa) | pratico su RHEL 10, circa 3 ore | varia per paese: vedi pagina ufficiale |
+| [Red Hat Certified Engineer in Ansible (EX294)](appendici/rhce/index.md) | Red Hat | dopo la Fase 6, richiede la RHCSA | pratico, circa 4 ore | varia per paese: vedi pagina ufficiale |
+| [Canonical Academy · Ubuntu](appendici/canonical/index.md) | Canonical | dopo la Fase 1 (facoltativa) | ibrido (domande e prove pratiche), 75-120 minuti per esame | vedi pagina ufficiale |
 
 Formati e prezzi sono quelli pubblicati dagli enti certificatori e verificati il **28 ottobre 2026**. Cambiano nel
 tempo: **controlla sempre la pagina ufficiale** prima di prenotare. Ogni appendice riporta i link.
@@ -73,7 +76,31 @@ tempo: **controlla sempre la pagina ufficiale** prima di prenotare. Ogni appendi
 !!! tip "Il percorso consigliato"
     Per chi cerca il primo lavoro, l'ordine più efficace è: **Cloud Practitioner → Solutions Architect Associate →
     Terraform Associate → CKA**. Le certificazioni Google sono un'ottima aggiunta se punti ad aziende che usano
-    Google Cloud. La LFCS è facoltativa: per un profilo junior il portfolio pesa di più.
+    Google Cloud. Le certificazioni Linux (LFCS, RHCSA, Canonical) sono facoltative: per un profilo junior il
+    portfolio pesa di più.
+
+## Le certificazioni Linux: quale scegliere
+
+Il corso prepara a tutte, ma non serve prenderle tutte. Una certificazione Linux pratica è utile soprattutto se
+punti a ruoli da **sistemista** o se nel tuo mercato le aziende usano molto una certa distribuzione.
+
+| | LFCS | RHCSA | Canonical Academy |
+|---|---|---|---|
+| **Distribuzione** | indipendente (l'esame usa Ubuntu) | RHEL 10 | Ubuntu |
+| **Formato** | solo pratico | solo pratico | ibrido: domande e prove pratiche |
+| **Riconoscimento** | buono, internazionale | il più alto tra le certificazioni Linux, molto richiesto in banche, PA e grandi aziende | nuovo (programma lanciato nel 2025), ancora poco conosciuto dai selezionatori |
+| **Validità** | 2 anni | 3 anni | 2 anni |
+| **Prosecuzione** | — | RHCE (Ansible o troubleshooting avanzato) | — |
+
+!!! tip "Il consiglio del corso"
+    Se vuoi **una sola** certificazione Linux, scegli la **RHCSA**: è la più riconosciuta dal mercato. Se lavori o
+    vuoi lavorare in un ambiente Ubuntu, la **LFCS** è una valida alternativa. La **Canonical Academy** è utile
+    come conferma delle tue competenze su Ubuntu, ma oggi pesa poco in un CV: considerala solo dopo le altre.
+
+Esistono due credenziali **RHCE**. La **RHCE in Ansible** (esame EX294) riguarda l'automazione ed è quella
+coerente con un percorso DevOps. La **RHCE in Enterprise Linux** (esame EX342) è dedicata al troubleshooting
+avanzato di RHEL ed è più adatta a chi vuole fare il sistemista puro. L'[appendice RHCE](appendici/rhce/index.md)
+le descrive entrambe.
 
 ## Quando iniziare a cercare lavoro
 

@@ -1,13 +1,16 @@
-"""Controlla la coerenza delle banche domande in docs/assets/banks/.
+"""Controlla la coerenza delle banche domande in docs/assets/banks/ e dei quiz nelle pagine.
 
 Uso: python scripts/check_banks.py
 Esce con codice 1 se trova errori, così la pipeline si ferma.
 """
 import json
 import pathlib
+import re
 import sys
 
-BANKS = pathlib.Path(__file__).resolve().parent.parent / "docs" / "assets" / "banks"
+DOCS = pathlib.Path(__file__).resolve().parent.parent / "docs"
+BANKS = DOCS / "assets" / "banks"
+QUIZ_RE = re.compile(r'<script type="application/json" class="quiz-data">\s*(.*?)\s*</script>', re.S)
 
 
 def check_mcq(name, bank, errors):
@@ -61,8 +64,39 @@ def check_practical(name, bank, errors):
     return len(bank["tasks"])
 
 
+def check_quizzes(errors):
+    """Controlla i quiz inline: JSON valido, risposte nel range, niente domande duplicate."""
+    total = 0
+    for page in sorted(DOCS.rglob("*.md")):
+        rel = page.relative_to(DOCS)
+        for block in QUIZ_RE.findall(page.read_text(encoding="utf-8")):
+            try:
+                quiz = json.loads(block)
+            except json.JSONDecodeError as exc:
+                errors.append(f"{rel}: quiz con JSON non valido ({exc})")
+                continue
+            seen = set()
+            for i, q in enumerate(quiz.get("questions", []), start=1):
+                total += 1
+                opts = q.get("options", [])
+                ans = q.get("answer", [])
+                if q.get("q") in seen:
+                    errors.append(f"{rel}#{i}: domanda duplicata")
+                seen.add(q.get("q"))
+                if len(opts) < 2 or len(set(opts)) != len(opts):
+                    errors.append(f"{rel}#{i}: opzioni mancanti o duplicate")
+                if not ans or any(not 0 <= a < len(opts) for a in ans) or len(set(ans)) != len(ans):
+                    errors.append(f"{rel}#{i}: risposta non valida {ans}")
+                if "(scegli" in q.get("q", ""):
+                    errors.append(f"{rel}#{i}: '(scegli N)' viene aggiunto dal JavaScript, toglilo dal testo")
+                if not q.get("explanation"):
+                    errors.append(f"{rel}#{i}: manca la spiegazione")
+    print(f"quiz nelle pagine: {total} domande")
+
+
 def main():
     errors = []
+    check_quizzes(errors)
     for path in sorted(BANKS.glob("*.json")):
         try:
             bank = json.loads(path.read_text(encoding="utf-8"))
