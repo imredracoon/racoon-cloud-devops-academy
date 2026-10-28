@@ -1,0 +1,37 @@
+# Laboratorio RHEL della Racoon Cloud & DevOps Academy
+# Due VM AlmaLinux 10 (compatibile binariamente con Red Hat Enterprise Linux 10):
+#   rhel-lab     192.168.56.10  il "server"
+#   rhel-client  192.168.56.11  il "client"
+# Uso:   vagrant up            (crea e avvia entrambe)
+#        vagrant ssh rhel-lab  (entra)
+#        vagrant halt          (spegne)   vagrant destroy -f (cancella)
+# Box ufficiali AlmaLinux: https://wiki.almalinux.org/installation/vagrant-boxes.html
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "almalinux/10"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 2048
+    vb.cpus = 2
+  end
+  config.vm.provider "vmware_desktop" do |v|   # Mac con processore Apple (box aarch64)
+    v.vmx["memsize"] = "2048"
+    v.vmx["numvcpus"] = "2"
+  end
+
+  config.vm.define "rhel-lab", primary: true do |lab|
+    lab.vm.hostname = "rhel-lab"
+    lab.vm.network "private_network", ip: "192.168.56.10"
+    lab.vm.provision "shell", path: "provision.sh"
+  end
+
+  config.vm.define "rhel-client" do |client|
+    client.vm.hostname = "rhel-client"
+    client.vm.network "private_network", ip: "192.168.56.11"
+    client.vm.provider "virtualbox" do |vb|
+      vb.memory = 1024
+      vb.cpus = 1
+    end
+    client.vm.provision "shell", inline: "dnf install -y bind-utils nmap-ncat tcpdump curl git"
+  end
+end

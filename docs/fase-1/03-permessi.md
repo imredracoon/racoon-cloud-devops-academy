@@ -53,7 +53,7 @@ sudo useradd -m -s /bin/bash anna      # crea l'utente con home (-m) e shell bas
 sudo passwd anna                       # imposta la password
 sudo groupadd sviluppo                 # crea un gruppo
 sudo usermod -aG sviluppo anna         # aggiunge anna al gruppo (-a = append: senza, la toglie dagli altri!)
-sudo usermod -aG sudo anna             # le dà i privilegi sudo
+sudo usermod -aG sudo anna             # le dà i privilegi sudo (Debian/Ubuntu: vedi le schede sotto)
 groups anna                            # mostra i gruppi di anna
 sudo chage -l anna                     # informazioni sulla scadenza della password
 sudo usermod -L anna                   # blocca l'account (-U per sbloccarlo)
@@ -66,8 +66,27 @@ su - anna                              # diventa anna (chiede la password di ann
     era nel gruppo `sudo`, perde i privilegi. Usa sempre `-aG`. Inoltre l'appartenenza a un nuovo gruppo vale dal
     **prossimo login** dell'utente.
 
-Su Debian e Ubuntu esiste anche `adduser`, un comando interattivo più amichevole; `useradd` è disponibile su tutte
-le distribuzioni ed è quello da conoscere per l'automazione.
+### Le differenze tra le due famiglie
+
+=== "Debian/Ubuntu"
+
+    - Il gruppo degli amministratori è **`sudo`**: `sudo usermod -aG sudo anna`.
+    - `useradd` senza opzioni **non** crea la home e assegna la shell `/bin/sh`: usa sempre `-m -s /bin/bash`.
+    - Esiste anche `adduser`, un comando interattivo più amichevole (crea home, chiede la password).
+    - Ogni nuovo utente riceve un **gruppo personale** con lo stesso nome (*user private group*).
+
+=== "RHEL (Rocky/AlmaLinux)"
+
+    - Il gruppo degli amministratori è **`wheel`**: `sudo usermod -aG wheel anna`.
+    - `useradd` crea la home per default (`CREATE_HOME yes` in `/etc/login.defs`) e assegna `/bin/bash`.
+    - `adduser` è solo un collegamento a `useradd`.
+    - Anche qui ogni utente ha un gruppo personale. La umask predefinita è definita in `/etc/login.defs` e nei
+      file di avvio della shell (`/etc/profile`, `/etc/bashrc`) e varia tra le versioni: verificala con `umask`.
+    - Le policy di sicurezza delle password e la scadenza si impostano in `/etc/login.defs` e con `chage`, come su
+      Debian. Questi argomenti sono negli obiettivi dell'esame RHCSA.
+
+`useradd`, `usermod`, `groupadd`, `chage`, `passwd` funzionano allo stesso modo su entrambe: sono quelli da
+conoscere per l'automazione.
 
 ## I permessi
 

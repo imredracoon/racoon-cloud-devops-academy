@@ -97,7 +97,7 @@ nav:
       - Ambiente di laboratorio:
           - ambiente/index.md
           - Dev Container: ambiente/devcontainer.md
-          - Macchina virtuale Linux: ambiente/vm-linux.md
+          - Macchine virtuali Linux: ambiente/vm-linux.md
           - Account cloud in sicurezza: ambiente/account-cloud.md
       - Glossario: glossario.md
       - Fonti ufficiali: fonti.md
@@ -127,6 +127,8 @@ nav:
       - "1.11 Firewall con nftables": fase-1/11-firewall.md
       - "1.12 HTTP, TLS e Nginx": fase-1/12-http-nginx.md
       - "1.13 Metodo di troubleshooting": fase-1/13-troubleshooting.md
+      - "1.14 SELinux e AppArmor": fase-1/14-selinux-apparmor.md
+      - "1.15 Avvio, tempo e prestazioni": fase-1/15-avvio-tempo.md
       - "Progetto 1 · Server web sicuro": fase-1/progetto.md
       - "Verifica di fine fase": fase-1/verifica.md
   - "Fase 2 · Automazione":
@@ -250,8 +252,20 @@ nav:
           - appendici/cka/index.md
           - Argomenti specifici: appendici/cka/argomenti.md
           - Simulazione pratica: appendici/cka/simulazione.md
-      - "LFCS (facoltativa)":
+      - "LFCS":
           - appendici/lfcs/index.md
           - Argomenti specifici: appendici/lfcs/argomenti.md
           - Simulazione pratica: appendici/lfcs/simulazione.md
+      - "Red Hat RHCSA":
+          - appendici/rhcsa/index.md
+          - Argomenti specifici: appendici/rhcsa/argomenti.md
+          - Simulazione pratica: appendici/rhcsa/simulazione.md
+      - "Red Hat RHCE":
+          - appendici/rhce/index.md
+          - Argomenti specifici: appendici/rhce/argomenti.md
+          - Simulazione pratica: appendici/rhce/simulazione.md
+      - "Canonical Academy (Ubuntu)":
+          - appendici/canonical/index.md
+          - Argomenti specifici: appendici/canonical/argomenti.md
+          - Simulazione d'esame: appendici/canonical/simulazione.md
       - I miei progressi: progressi.md

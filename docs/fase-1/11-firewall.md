@@ -126,22 +126,66 @@ table ip nat {
 Ricorda che la catena `forward` della tabella filtro deve **permettere** il traffico in transito, altrimenti il NAT
 è inutile.
 
-## ufw: la via semplice
+## I gestori delle distribuzioni: ufw e firewalld
 
-Su Ubuntu **ufw** (*Uncomplicated Firewall*) genera regole per te. È adatto ai casi semplici e lo troverai spesso.
+Scrivere regole nftables a mano ti fa capire cosa succede davvero. Nel lavoro quotidiano però ogni famiglia di
+distribuzioni ha il suo **gestore** di firewall, che genera le regole nftables per te.
 
-```bash
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
-sudo ufw allow OpenSSH          # o: sudo ufw allow 22/tcp
-sudo ufw allow 80,443/tcp
-sudo ufw enable
-sudo ufw status verbose
-```
+=== "Debian/Ubuntu"
 
-**Non usare ufw e un `/etc/nftables.conf` scritto a mano contemporaneamente**: si sovrascriverebbero. Nel corso
-scegliamo nftables per capire cosa succede davvero; su RHEL il corrispondente di ufw è **firewalld**
-(`firewall-cmd`).
+    **ufw** (*Uncomplicated Firewall*) è pensato per i casi semplici:
+
+    ```bash
+    sudo ufw default deny incoming
+    sudo ufw default allow outgoing
+    sudo ufw allow OpenSSH          # o: sudo ufw allow 22/tcp
+    sudo ufw allow 80,443/tcp
+    sudo ufw limit 22/tcp           # limita i tentativi di connessione ripetuti
+    sudo ufw enable
+    sudo ufw status numbered
+    sudo ufw delete 3               # cancella la regola numero 3
+    ```
+
+=== "RHEL (Rocky/AlmaLinux)"
+
+    **firewalld** è attivo per default su RHEL ed è negli obiettivi della RHCSA. Ragiona per **zone**: ogni
+    interfaccia appartiene a una zona (di solito `public`) e ogni zona ha i suoi servizi e porte permessi. Tutto ciò
+    che non è permesso viene rifiutato.
+
+    ```bash
+    sudo firewall-cmd --state
+    sudo firewall-cmd --get-active-zones
+    sudo firewall-cmd --list-all                    # cosa permette la zona predefinita
+    sudo firewall-cmd --add-service=http            # solo runtime: sparisce al reload/riavvio
+    sudo firewall-cmd --permanent --add-service=http --add-service=https   # permanente: non attivo finché...
+    sudo firewall-cmd --reload                      # ...non ricarichi
+    sudo firewall-cmd --permanent --add-port=8080/tcp
+    sudo firewall-cmd --permanent --remove-service=cockpit
+    sudo firewall-cmd --get-services                # servizi predefiniti (definiti in /usr/lib/firewalld/services)
+    sudo firewall-cmd --runtime-to-permanent        # salva come permanente la configurazione runtime attuale
+    ```
+
+    Regole più specifiche si scrivono con le **rich rule**:
+
+    ```bash
+    sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="192.168.56.11" service name="ssh" accept'
+    ```
+
+    NAT e port forwarding:
+
+    ```bash
+    sudo firewall-cmd --permanent --add-masquerade
+    sudo firewall-cmd --permanent --add-forward-port=port=8080:proto=tcp:toport=80:toaddr=10.10.0.20
+    sudo firewall-cmd --reload
+    ```
+
+!!! warning "Runtime e permanente"
+    Con firewalld un comando senza `--permanent` ha effetto subito ma si perde al reload; con `--permanent` viene
+    salvato ma non è attivo fino al `--reload`. Agli esami Red Hat le configurazioni devono sopravvivere al riavvio:
+    usa sempre `--permanent` seguito da `--reload`, e verifica con `--list-all`.
+
+**Non usare insieme** un gestore (ufw o firewalld) e un `/etc/nftables.conf` scritto a mano: si sovrascriverebbero
+a vicenda. Su un server scegli un solo strumento.
 
 !!! note "Nel cloud"
     I fornitori cloud offrono firewall di rete gestiti: i **security group** di AWS e le **regole firewall VPC** di
@@ -160,6 +204,10 @@ scegliamo nftables per capire cosa succede davvero; su RHEL il corrispondente di
        perché è diverso da quello della lezione 1.9?
     5. Trova nel journal di `lab` la riga che registra il pacchetto scartato.
     6. Rendi il firewall permanente e verifica dopo un riavvio.
+
+    **Percorso RHEL:** su `rhel-lab` ottieni lo stesso risultato con **firewalld** (lascia attivo firewalld e non
+    usare `/etc/nftables.conf`): solo SSH e HTTP nella zona `public`, porta 9000 chiusa. Nota che firewalld
+    **rifiuta** (reject) invece di scartare: che errore ottiene `rhel-client` sulla porta 9000?
 
 ??? success "Soluzione"
     ```bash
@@ -194,6 +242,23 @@ scegliamo nftables per capire cosa succede davvero; su RHEL il corrispondente di
 
     (Se `multipass shell` smette di funzionare, controlla la regola per la porta 22: Multipass usa SSH.)
 
+??? success "Soluzione: percorso RHEL"
+    ```bash
+    # su rhel-lab
+    sudo firewall-cmd --permanent --add-service=http
+    sudo firewall-cmd --reload
+    sudo firewall-cmd --list-all        # services: cockpit dhcpv6-client http ssh
+    sudo python3 -m http.server 80 &
+    python3 -m http.server 9000 &
+
+    # su rhel-client
+    curl -sI http://192.168.56.10/ | head -1     # 200 OK
+    curl -m 5 http://192.168.56.10:9000/         # errore immediato: "No route to host"
+    ```
+    **Spiegazione.** firewalld risponde ai pacchetti non permessi con un messaggio ICMP *host-prohibited*, che il
+    client mostra come *No route to host*: è un rifiuto (`reject`), quindi arriva subito, a differenza del timeout
+    del `drop`. Il comportamento si può cambiare impostando il *target* della zona a `DROP`.
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">
@@ -213,4 +278,6 @@ scegliamo nftables per capire cosa succede davvero; su RHEL il corrispondente di
 - [nft(8), man page](https://www.netfilter.org/projects/nftables/manpage.html)
 - [Debian wiki: nftables](https://wiki.debian.org/nftables)
 - [Ubuntu Server docs: Firewall (ufw)](https://documentation.ubuntu.com/server/how-to/security/firewalls/)
+- [firewalld: documentazione ufficiale](https://firewalld.org/documentation/)
+- [Red Hat: Using and configuring firewalld (RHEL 10)](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_firewalls_and_packet_filters/index)
 - [Red Hat: Getting started with nftables](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/configuring_firewalls_and_packet_filters/getting-started-with-nftables_firewall-packet-filters)

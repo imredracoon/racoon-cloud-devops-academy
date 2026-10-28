@@ -144,6 +144,28 @@ sudo systemctl reload ssh        # su Ubuntu il servizio si chiama ssh; su RHEL 
 Il pacchetto **fail2ban** legge i log e blocca temporaneamente gli IP che sbagliano troppe volte l'accesso: lo
 configurerai nel progetto della fase.
 
+### Le differenze tra le due famiglie
+
+=== "Debian/Ubuntu"
+
+    - Pacchetto `openssh-server`, servizio **`ssh`** (`systemctl reload ssh`).
+    - Su Ubuntu 24.04 il servizio può essere attivato tramite *socket activation* (`ssh.socket`): se cambi la
+      porta in `sshd_config`, esegui anche `sudo systemctl daemon-reload` e `sudo systemctl restart ssh.socket`.
+    - Il firewall (ufw o nftables) deve permettere la porta.
+
+=== "RHEL (Rocky/AlmaLinux)"
+
+    - Pacchetto `openssh-server`, servizio **`sshd`** (`systemctl reload sshd`).
+    - Se cambi la porta, **SELinux** deve sapere che la nuova porta è di SSH, altrimenti sshd non riesce ad
+      ascoltare (lezione 1.14):
+
+        ```bash
+        sudo semanage port -a -t ssh_port_t -p tcp 2222
+        sudo firewall-cmd --permanent --add-port=2222/tcp && sudo firewall-cmd --reload
+        ```
+
+    - La configurazione di sicurezza va anche qui in `/etc/ssh/sshd_config.d/`.
+
 ## Laboratorio
 
 !!! laboratorio "Laboratorio · Accesso solo con chiave · 1 ora"
@@ -156,6 +178,10 @@ configurerai nel progetto della fase.
     4. Configura `~/.ssh/config` su `client` per entrare con `ssh lab-deploy`.
     5. Applica la configurazione di sicurezza vista sopra e verifica che: con la chiave entri; un utente senza
        chiave venga rifiutato; root non possa entrare.
+
+    **Percorso RHEL:** ripeti il laboratorio con `rhel-client` (192.168.56.11) e `rhel-lab` (192.168.56.10), usando
+    il servizio `sshd` e il gruppo `wheel` al posto di `sudo`. Ricorda che l'utente `vagrant` deve restare nel
+    gruppo `ssh-users`, altrimenti `vagrant ssh` smette di funzionare.
 
 ??? success "Soluzione"
     ```bash

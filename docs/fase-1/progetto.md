@@ -13,6 +13,14 @@
 
 ## Il compito
 
+!!! tip "Su quale distribuzione?"
+    Svolgi il progetto sulla famiglia che hai scelto come percorso principale. Per un portfolio davvero completo,
+    realizzalo su **entrambe**: lo stesso repository può contenere `setup-ubuntu.sh` e `setup-rhel.sh`. Nel percorso
+    RHEL crea una terza VM `web` aggiungendola al `Vagrantfile` (per esempio con IP `192.168.56.20`) e sostituisci:
+    `nftables` con **firewalld**, il gruppo `sudo` con **`wheel`**, il servizio `ssh` con **`sshd`**,
+    `sites-available` con **`/etc/nginx/conf.d/`**, `unattended-upgrades` con **`dnf-automatic`**; installa
+    fail2ban da **EPEL**; mantieni SELinux in **enforcing** e attiva il booleano `httpd_can_network_connect`.
+
 Su una VM nuova chiamata `web` (`multipass launch 24.04 --name web --cpus 1 --memory 1G --disk 10G`):
 
 ### Requisiti funzionali
@@ -89,6 +97,7 @@ Dopo il test di fail2ban sblocca il client con `sudo fail2ban-client set sshd un
 - [ ] Il README spiega il perché di ogni scelta di sicurezza.
 - [ ] Nessun segreto nel repository.
 - [ ] I file di configurazione sono commentati.
+- [ ] (Percorso RHEL) SELinux è in enforcing e `sudo ausearch -m AVC -ts today` non mostra blocchi.
 
 ??? success "Una possibile soluzione: i file principali"
     Prova a costruire il progetto da solo prima di aprire questa sezione: è il modo in cui impari davvero.

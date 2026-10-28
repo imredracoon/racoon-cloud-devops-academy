@@ -168,6 +168,73 @@ swapon --show; free -h
 echo "/swapfile none swap sw 0 0" | sudo tee -a /etc/fstab
 ```
 
+## Filesystem di rete: NFS e autofs
+
+**NFS** (*Network File System*) permette di montare una directory di un altro server attraverso la rete, come se
+fosse un disco locale. È negli obiettivi di RHCSA e LFCS ed è alla base di servizi cloud come Amazon EFS e
+Google Filestore (Fase 5).
+
+### Il server
+
+=== "Debian/Ubuntu"
+
+    ```bash
+    sudo apt install -y nfs-kernel-server
+    sudo mkdir -p /srv/condivisa && sudo chown nobody:nogroup /srv/condivisa
+    echo "/srv/condivisa 10.0.0.0/8(rw,sync,no_subtree_check) 192.168.0.0/16(rw,sync,no_subtree_check)" \
+      | sudo tee -a /etc/exports
+    sudo exportfs -ra            # applica /etc/exports
+    sudo exportfs -v
+    ```
+
+=== "RHEL (Rocky/AlmaLinux)"
+
+    ```bash
+    sudo dnf install -y nfs-utils
+    sudo mkdir -p /srv/condivisa && sudo chown nobody:nobody /srv/condivisa
+    echo "/srv/condivisa 192.168.56.0/24(rw,sync)" | sudo tee -a /etc/exports
+    sudo systemctl enable --now nfs-server
+    sudo exportfs -ra && sudo exportfs -v
+    sudo firewall-cmd --permanent --add-service=nfs && sudo firewall-cmd --reload   # lezione 1.11
+    ```
+
+### Il client
+
+```bash
+# pacchetto client: nfs-common (Debian/Ubuntu) oppure nfs-utils (RHEL)
+showmount -e IP-SERVER                          # cosa esporta il server
+sudo mkdir -p /mnt/condivisa
+sudo mount -t nfs IP-SERVER:/srv/condivisa /mnt/condivisa
+```
+
+In `/etc/fstab` la riga è `IP-SERVER:/srv/condivisa /mnt/condivisa nfs defaults,_netdev,nofail 0 0`, dove
+`_netdev` indica che il montaggio richiede la rete.
+
+### autofs: montare solo quando serve
+
+**autofs** monta un filesystem di rete automaticamente al primo accesso e lo smonta dopo un periodo di inattività.
+
+```bash
+# pacchetto: autofs (stesso nome sulle due famiglie)
+echo "/mnt/auto  /etc/auto.condivisa" | sudo tee /etc/auto.master.d/condivisa.autofs
+echo "dati  -rw,sync  IP-SERVER:/srv/condivisa" | sudo tee /etc/auto.condivisa
+sudo systemctl enable --now autofs
+ls /mnt/auto/dati          # il primo accesso provoca il montaggio
+```
+
+## Le differenze tra le due famiglie
+
+| Argomento | Debian/Ubuntu | RHEL (Rocky/AlmaLinux) |
+|---|---|---|
+| Filesystem di default all'installazione | ext4 | **XFS** |
+| Disco di sistema | partizioni semplici o LVM, a scelta | **LVM** per default (gruppo di volumi `rhel`, `almalinux`…) |
+| Pacchetti NFS | `nfs-kernel-server`, `nfs-common` | `nfs-utils` |
+| Strumenti XFS | pacchetto `xfsprogs` da installare | inclusi |
+
+Gli esami Red Hat chiedono di montare **per UUID o per etichetta** (`LABEL=dati` in fstab, etichetta impostata con
+`mkfs.xfs -L` o `e2label`/`xfs_admin -L`) e di aggiungere partizioni, volumi logici e swap **senza distruggere i dati
+esistenti**: per questo nei laboratori usa sempre i dischi di laboratorio, mai il disco di sistema.
+
 ## Esercizi
 
 !!! esercizio "Esercizio 1 · Disco dati permanente"
@@ -243,3 +310,6 @@ echo "/swapfile none swap sw 0 0" | sudo tee -a /etc/fstab
 - [lvm(8)](https://man7.org/linux/man-pages/man8/lvm.8.html), [lvextend(8)](https://man7.org/linux/man-pages/man8/lvextend.8.html)
 - [The Linux kernel: ext4](https://docs.kernel.org/admin-guide/ext4.html) e [XFS](https://docs.kernel.org/admin-guide/xfs.html)
 - [losetup(8)](https://man7.org/linux/man-pages/man8/losetup.8.html)
+- [Ubuntu Server docs: NFS](https://documentation.ubuntu.com/server/how-to/networking/install-nfs/)
+- [Red Hat: Managing file systems (RHEL 10), NFS e autofs](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_file_systems/index)
+- [exports(5)](https://man7.org/linux/man-pages/man5/exports.5.html), [auto.master(5)](https://man7.org/linux/man-pages/man5/auto.master.5.html)

@@ -49,17 +49,76 @@ dpkg -S /usr/sbin/nginx          # a quale pacchetto appartiene un file
 I repository configurati si trovano in `/etc/apt/sources.list.d/` (su Ubuntu 24.04 nel formato *deb822*, file
 `ubuntu.sources`).
 
-## L'equivalente su Red Hat
+## dnf in pratica (famiglia RHEL)
 
-| Operazione | Debian/Ubuntu | RHEL/Rocky/Fedora |
+Su RHEL, Rocky, AlmaLinux, Fedora e Amazon Linux il gestore è **dnf**. Non serve un comando separato per
+aggiornare il catalogo: dnf lo controlla da solo.
+
+```bash
+sudo dnf check-update            # cosa si può aggiornare
+sudo dnf upgrade                 # aggiorna tutto
+dnf search nginx
+dnf info nginx
+sudo dnf install -y nginx
+sudo dnf remove nginx
+dnf list installed | grep nginx
+dnf provides /usr/sbin/nginx     # quale pacchetto fornisce un file (anche non installato)
+rpm -ql nginx                    # file installati da un pacchetto
+rpm -qf /usr/sbin/nginx          # a quale pacchetto installato appartiene un file
+dnf repolist                     # repository attivi
+dnf history                      # cronologia delle operazioni...
+sudo dnf history undo 15         # ...e annullamento di una transazione
+sudo dnf install ./pacchetto.rpm # installa un file .rpm locale risolvendo le dipendenze
+```
+
+I repository sono file `.repo` in **`/etc/yum.repos.d/`**:
+
+```ini title="/etc/yum.repos.d/interno.repo"
+[interno]
+name=Repository interno
+baseurl=http://repo.example.com/rhel10/x86_64/
+enabled=1
+gpgcheck=1
+gpgkey=http://repo.example.com/RPM-GPG-KEY-interno
+```
+
+Si possono creare anche con `sudo dnf config-manager --add-repo URL` (pacchetto `dnf-plugins-core`).
+Molti pacchetti utili non presenti nei repository ufficiali (per esempio `htop` o `fail2ban`) sono in **EPEL**
+(*Extra Packages for Enterprise Linux*), mantenuto dal progetto Fedora: `sudo dnf install epel-release` su
+Rocky/AlmaLinux.
+
+!!! note "Su RHEL originale"
+    Su Red Hat Enterprise Linux i repository ufficiali si attivano registrando il sistema con
+    `sudo subscription-manager register`; con la Developer Subscription gratuita funziona allo stesso modo.
+
+### Le due famiglie a confronto
+
+| Operazione | Debian/Ubuntu | RHEL/Rocky/AlmaLinux |
 |---|---|---|
 | Aggiornare tutto | `apt update && apt upgrade` | `dnf upgrade` |
 | Cercare | `apt search x` | `dnf search x` |
-| Installare | `apt install x` | `dnf install x` |
-| Rimuovere | `apt remove x` | `dnf remove x` |
+| Installare / rimuovere | `apt install x` / `apt remove x` | `dnf install x` / `dnf remove x` |
 | Informazioni | `apt show x` | `dnf info x` |
+| File di un pacchetto | `dpkg -L x` | `rpm -ql x` |
 | Chi fornisce un file | `dpkg -S /percorso` | `dnf provides /percorso` |
-| Elenco repository | `/etc/apt/sources.list.d/` | `dnf repolist`, `/etc/yum.repos.d/` |
+| Repository | `/etc/apt/sources.list.d/` | `/etc/yum.repos.d/`, `dnf repolist` |
+| Annullare un'operazione | non previsto | `dnf history undo N` |
+| Aggiornamenti automatici | `unattended-upgrades` | `dnf-automatic` |
+
+## Flatpak
+
+**Flatpak** è un formato di pacchetti autocontenuti, pensato soprattutto per le applicazioni desktop. È negli
+obiettivi della RHCSA per RHEL 10:
+
+```bash
+sudo dnf install -y flatpak
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak remotes                   # repository configurati
+flatpak search gimp
+sudo flatpak install -y flathub org.gimp.GIMP
+flatpak list
+sudo flatpak uninstall org.gimp.GIMP
+```
 
 ## Aggiungere un repository esterno
 
@@ -91,17 +150,30 @@ della distribuzione.
 
 ## Aggiornamenti di sicurezza automatici
 
-Un server non aggiornato è un server vulnerabile. Su Ubuntu il pacchetto **unattended-upgrades** installa in
-automatico gli aggiornamenti di sicurezza:
+Un server non aggiornato è un server vulnerabile.
 
-```bash
-sudo apt install unattended-upgrades
-sudo dpkg-reconfigure --priority=low unattended-upgrades   # attiva gli aggiornamenti automatici
-cat /etc/apt/apt.conf.d/20auto-upgrades
-```
+=== "Debian/Ubuntu"
 
-Alcuni aggiornamenti (per esempio del kernel) richiedono un riavvio: su Ubuntu ne trovi l'avviso nel file
-`/var/run/reboot-required`.
+    ```bash
+    sudo apt install unattended-upgrades
+    sudo dpkg-reconfigure --priority=low unattended-upgrades   # attiva gli aggiornamenti automatici
+    cat /etc/apt/apt.conf.d/20auto-upgrades
+    ```
+
+    Se un aggiornamento (per esempio del kernel) richiede un riavvio, compare il file `/var/run/reboot-required`.
+
+=== "RHEL (Rocky/AlmaLinux)"
+
+    ```bash
+    sudo dnf install -y dnf-automatic
+    sudo sed -i 's/^upgrade_type.*/upgrade_type = security/; s/^apply_updates.*/apply_updates = yes/' \
+      /etc/dnf/automatic.conf
+    sudo systemctl enable --now dnf-automatic.timer
+    ```
+
+    `upgrade_type = security` limita gli aggiornamenti automatici a quelli di sicurezza (le informazioni di
+    sicurezza sono pubblicate da RHEL, Rocky e AlmaLinux). Per sapere se serve un riavvio:
+    `sudo dnf needs-restarting -r`.
 
 ## Esercizi
 
@@ -127,6 +199,27 @@ Alcuni aggiornamenti (per esempio del kernel) richiedono un riavvio: su Ubuntu n
     scelta tra i repository configurati secondo la loro priorità. Sotto trovi l'elenco dei repository che offrono il
     pacchetto. È il comando da usare quando "apt installa una versione diversa da quella che mi aspettavo".
 
+!!! esercizio "Esercizio 3 · Percorso RHEL"
+    Su `rhel-lab`:
+
+    1. installa `httpd` e scopri quali file di configurazione ha installato;
+    2. trova quale pacchetto fornisce il comando `semanage` e installalo se manca;
+    3. abilita EPEL e installa `htop`;
+    4. guarda la cronologia di dnf e annulla l'installazione di `htop`.
+
+??? success "Soluzione"
+    ```bash
+    sudo dnf install -y httpd
+    rpm -qc httpd                       # -c elenca solo i file di configurazione
+    dnf provides '*/semanage'           # policycoreutils-python-utils
+    sudo dnf install -y policycoreutils-python-utils
+    sudo dnf install -y epel-release && sudo dnf install -y htop
+    sudo dnf history                    # individua l'ID della transazione di htop
+    sudo dnf history undo ID            # sostituisci ID con il numero
+    ```
+    **Spiegazione.** `dnf provides` accetta anche percorsi con caratteri jolly e cerca nei pacchetti non installati:
+    è il modo più rapido per scoprire "quale pacchetto mi serve per avere questo comando".
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">
@@ -145,5 +238,8 @@ Alcuni aggiornamenti (per esempio del kernel) richiedono un riavvio: su Ubuntu n
 - [apt(8), man page](https://manpages.ubuntu.com/manpages/noble/man8/apt.8.html)
 - [Debian Reference: Debian package management](https://www.debian.org/doc/manuals/debian-reference/ch02.en.html)
 - [DNF documentation](https://dnf.readthedocs.io/)
+- [Red Hat: Managing software with the DNF tool (RHEL 10)](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_software_with_the_dnf_tool/index)
+- [Fedora: EPEL](https://docs.fedoraproject.org/en-US/epel/)
+- [Flatpak documentation](https://docs.flatpak.org/)
 - [Ubuntu Server docs: Automatic updates](https://documentation.ubuntu.com/server/how-to/software/automatic-updates/)
 - [Google Cloud: installare la gcloud CLI](https://cloud.google.com/sdk/docs/install)

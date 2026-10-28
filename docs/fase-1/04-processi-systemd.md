@@ -118,8 +118,16 @@ journalctl --disk-usage           # spazio occupato
 sudo journalctl --vacuum-time=7d  # elimina i log più vecchi di 7 giorni
 ```
 
-Molti servizi scrivono anche file di testo classici in `/var/log` (per esempio `/var/log/nginx/`), e `rsyslog`
-può copiare il journal in `/var/log/syslog`.
+Molti servizi scrivono anche file di testo classici in `/var/log` (per esempio `/var/log/nginx/`), e il servizio
+`rsyslog` copia i messaggi del journal in file di testo. I nomi dei file cambiano tra le famiglie:
+
+| Contenuto | Debian/Ubuntu | RHEL (Rocky/AlmaLinux) |
+|---|---|---|
+| Messaggi generali di sistema | `/var/log/syslog` | `/var/log/messages` |
+| Accessi, sudo, SSH | `/var/log/auth.log` | `/var/log/secure` |
+| Nome del servizio SSH | `ssh` | `sshd` |
+| Server web Apache | `apache2` | `httpd` |
+| Log di audit (SELinux) | — | `/var/log/audit/audit.log` |
 
 ## Scrivere un servizio
 

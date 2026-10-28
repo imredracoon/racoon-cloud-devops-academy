@@ -108,7 +108,23 @@ curl -I http://localhost
 | `/var/www/` | File dei siti. |
 | `/var/log/nginx/access.log`, `error.log` | Log degli accessi e degli errori. |
 
-Su RHEL si usa invece `/etc/nginx/conf.d/*.conf`.
+=== "Debian/Ubuntu"
+
+    La struttura è quella della tabella: un file per sito in `sites-available`, attivato con un link simbolico in
+    `sites-enabled`. Nginx parte da solo dopo l'installazione e il firewall va aperto a mano (ufw o nftables).
+
+=== "RHEL (Rocky/AlmaLinux)"
+
+    - Non esistono `sites-available` e `sites-enabled`: ogni sito è un file **`/etc/nginx/conf.d/NOME.conf`**.
+    - Dopo l'installazione il servizio va avviato e abilitato: `sudo systemctl enable --now nginx`.
+    - Il firewall va aperto con firewalld: `sudo firewall-cmd --permanent --add-service={http,https} && sudo firewall-cmd --reload`.
+    - **SELinux** (lezione 1.14) controlla cosa può fare Nginx. Due casi da ricordare:
+        - come reverse proxy, Nginx deve potersi collegare a un'altra porta: `sudo setsebool -P httpd_can_network_connect on`.
+          Senza, ottieni un `502` e nel log `connect() ... failed (13: Permission denied)`;
+        - i file del sito fuori da `/usr/share/nginx/html` o `/var/www` devono avere il contesto SELinux corretto
+          (`httpd_sys_content_t`), altrimenti Nginx risponde `403`.
+    - Il server web "di casa" Red Hat è **Apache httpd** (pacchetto `httpd`), che troverai spesso nelle aziende e
+      negli esercizi RHCSA. I concetti (virtual host, reverse proxy, TLS) sono gli stessi.
 
 ```bash
 sudo nginx -t                 # controlla la configurazione: fallo SEMPRE prima di ricaricare
@@ -228,6 +244,9 @@ curl -k --resolve app.lab:443:127.0.0.1 https://app.lab/   # -k accetta il certi
        di `lab` non è raggiungibile da `client`.
     5. Ferma l'applicazione e ripeti la richiesta HTTPS: che codice ottieni? In quale log di `lab` trovi la causa?
 
+    **Percorso RHEL:** ripeti su `rhel-lab` con il file `/etc/nginx/conf.d/app.lab.conf`. Prima di attivare il
+    boolean SELinux prova la richiesta: che codice ottieni e cosa dice il log degli errori?
+
 ??? success "Soluzione"
     ```bash
     # su lab
@@ -252,6 +271,12 @@ curl -k --resolve app.lab:443:127.0.0.1 https://app.lab/   # -k accetta il certi
     **Spiegazione.** Il `502` viene da Nginx, che non riesce a collegarsi al backend: l'errore 111 è proprio il
     *Connection refused* della lezione 1.9. Questo è il ragionamento a strati che userai nel troubleshooting.
 
+    **Percorso RHEL.** Con l'applicazione attiva ma senza il boolean ottieni comunque `502`, e in
+    `/var/log/nginx/error.log` trovi `connect() to 127.0.0.1:8000 failed (13: Permission denied)`. L'errore 13 non
+    viene dai permessi dei file ma da **SELinux**: `sudo ausearch -m avc -ts recent` mostra il blocco. Si risolve
+    con `sudo setsebool -P httpd_can_network_connect on`. Stesso sintomo, causa diversa: per questo si leggono
+    sempre i log.
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">
@@ -273,3 +298,4 @@ curl -k --resolve app.lab:443:127.0.0.1 https://app.lab/   # -k accetta il certi
 - [Nginx: documentazione ufficiale](https://nginx.org/en/docs/), [Beginner's Guide](https://nginx.org/en/docs/beginners_guide.html), [ngx_http_proxy_module](https://nginx.org/en/docs/http/ngx_http_proxy_module.html)
 - [Let's Encrypt: How It Works](https://letsencrypt.org/how-it-works/) e [Certbot](https://certbot.eff.org/)
 - [Mozilla: Server Side TLS](https://wiki.mozilla.org/Security/Server_Side_TLS)
+- [Red Hat: Deploying web servers and reverse proxies (RHEL 10)](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/deploying_web_servers_and_reverse_proxies/index)

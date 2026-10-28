@@ -1,10 +1,10 @@
 # Verifica di fine fase 1
 
-Passa alla Fase 2 quando ottieni **almeno l'80%** (16 risposte corrette su 20). Le spiegazioni indicano la lezione
+Passa alla Fase 2 quando ottieni **almeno l'80%** (20 risposte corrette su 25). Le spiegazioni indicano la lezione
 da ripassare. Se vuoi prepararti alla LFCS, prosegui con l'[appendice dedicata](../appendici/lfcs/index.md).
 
 <script type="application/json" class="quiz-data">
-{"title":"Verifica di fine fase 1 · 20 domande","questions":[
+{"title":"Verifica di fine fase 1 · 25 domande","questions":[
  {"q":"In quale directory si trovano i log tradizionali di sistema?","options":["/etc/log","/var/log","/usr/log","/tmp/log"],"answer":[1],"explanation":"Lezione 1.1."},
  {"q":"Hai un hard link e un link simbolico verso lo stesso file. Cancelli il file originale. Cosa succede?","options":["Entrambi smettono di funzionare","L'hard link funziona ancora, il simbolico è rotto","Il simbolico funziona ancora, l'hard link no","Entrambi funzionano"],"answer":[1],"explanation":"L'hard link punta all'inode, il simbolico al nome (lezione 1.1)."},
  {"q":"Quale pipe conta quante volte compare ogni valore della prima colonna di un file, dal più frequente?","options":["cut -f1 file | uniq -c | sort","awk '{print $1}' file | sort | uniq -c | sort -rn","sort file | wc -l","grep -c file"],"answer":[1],"explanation":"uniq richiede input ordinato (lezione 1.2)."},
@@ -24,7 +24,12 @@ da ripassare. Se vuoi prepararti alla LFCS, prosegui con l'[appendice dedicata](
  {"q":"Quale impostazione di sshd impedisce l'accesso con password?","options":["PermitRootLogin no","PasswordAuthentication no","PubkeyAuthentication no","UsePAM no"],"answer":[1],"explanation":"Lezione 1.10."},
  {"q":"Quale regola nftables permette le risposte alle connessioni già accettate?","options":["ct state established,related accept","tcp dport 22 accept","policy accept","iif lo accept"],"answer":[0],"explanation":"Lezione 1.11."},
  {"q":"Nginx risponde 502. Il log dice `connect() failed (111: Connection refused) while connecting to upstream`. Causa più probabile?","options":["Certificato scaduto","Il backend non è in ascolto sulla porta configurata","Il DNS del client è sbagliato","Il firewall blocca la 443"],"answer":[1],"explanation":"Lezioni 1.12 e 1.13."},
- {"q":"Un servizio è sparito e `dmesg` mostra `Out of memory: Killed process`. Cosa è successo?","options":["Il disco è pieno","Il kernel ha terminato il processo per mancanza di RAM","Il servizio è stato aggiornato","Un utente ha usato kill"],"answer":[1],"explanation":"È l'OOM killer (lezione 1.13)."}
+ {"q":"Un servizio è sparito e `dmesg` mostra `Out of memory: Killed process`. Cosa è successo?","options":["Il disco è pieno","Il kernel ha terminato il processo per mancanza di RAM","Il servizio è stato aggiornato","Un utente ha usato kill"],"answer":[1],"explanation":"È l'OOM killer (lezione 1.13)."},
+ {"q":"Su RHEL, a quale gruppo aggiungi un utente per dargli i privilegi sudo?","options":["sudo","admin","wheel","root"],"answer":[2],"explanation":"Su Debian/Ubuntu il gruppo è sudo (lezione 1.3)."},
+ {"q":"Con firewalld hai eseguito `firewall-cmd --permanent --add-service=http` ma la porta 80 resta chiusa. Cosa manca?","options":["firewall-cmd --reload","systemctl restart httpd","setenforce 0","nft flush ruleset"],"answer":[0],"explanation":"Le regole --permanent si attivano al reload (lezione 1.11)."},
+ {"q":"Su RHEL Nginx risponde 403 per file spostati con mv in una nuova directory /srv/sito. I permessi classici sono corretti. Qual è la correzione permanente?","options":["chmod -R 777 /srv/sito","semanage fcontext -a -t httpd_sys_content_t \"/srv/sito(/.*)?\" e restorecon -Rv /srv/sito","setenforce 0","chcon -R -t httpd_sys_content_t /srv/sito"],"answer":[1],"explanation":"chcon non sopravvive alla rietichettatura (lezione 1.14)."},
+ {"q":"Quale strumento configura la rete in modo permanente su RHEL?","options":["netplan","nmcli (NetworkManager)","ifconfig","ufw"],"answer":[1],"explanation":"Su Ubuntu si usa Netplan (lezione 1.7)."},
+ {"q":"Quale parametro aggiungi alla riga del kernel in GRUB per interrompere l'avvio di RHEL nell'initramfs e reimpostare la password di root?","options":["single","rd.break","init=/sbin/systemd","rescue=1"],"answer":[1],"explanation":"Ricorda poi touch /.autorelabel (lezione 1.15)."}
 ]}
 </script>
 

@@ -134,31 +134,56 @@ ip route                      # tabella di instradamento (lezione 1.8)
 sudo ip address add 192.168.50.10/24 dev ens3   # indirizzo temporaneo, sparisce al riavvio
 ```
 
-Su Ubuntu la configurazione permanente si scrive con **Netplan**, in file YAML in `/etc/netplan/`:
+La configurazione **permanente** cambia tra le due famiglie:
 
-```yaml title="/etc/netplan/60-statico.yaml"
-network:
-  version: 2
-  ethernets:
-    ens3:
-      dhcp4: false
-      addresses: [192.168.50.10/24]
-      routes:
-        - to: default
-          via: 192.168.50.1
-      nameservers:
-        addresses: [1.1.1.1, 9.9.9.9]
-```
+=== "Debian/Ubuntu"
 
-```bash
-sudo netplan try      # applica e torna indietro da solo se non confermi entro 120 secondi
-sudo netplan apply
-```
+    Su Ubuntu la configurazione si scrive con **Netplan**, in file YAML in `/etc/netplan/`. Netplan la traduce per
+    il servizio che gestisce davvero la rete (`systemd-networkd` sui server).
 
-!!! warning "Non nella VM di laboratorio"
-    Non cambiare la configurazione di rete della VM `lab`: rischi di perdere la connessione con Multipass. Su un
-    server remoto usa sempre `netplan try`, che ti salva se perdi l'accesso. Su RHEL lo strumento equivalente è
-    NetworkManager (`nmcli`).
+    ```yaml title="/etc/netplan/60-statico.yaml"
+    network:
+      version: 2
+      ethernets:
+        ens3:
+          dhcp4: false
+          addresses: [192.168.50.10/24, "2001:db8:50::10/64"]
+          routes:
+            - to: default
+              via: 192.168.50.1
+          nameservers:
+            addresses: [1.1.1.1, 9.9.9.9]
+    ```
+
+    ```bash
+    sudo netplan try      # applica e torna indietro da solo se non confermi entro 120 secondi
+    sudo netplan apply
+    ```
+
+=== "RHEL (Rocky/AlmaLinux)"
+
+    Su RHEL la rete è gestita da **NetworkManager**, che si configura con `nmcli`. Ogni configurazione è una
+    **connessione** associata a un'interfaccia; su RHEL 10 è salvata in `/etc/NetworkManager/system-connections/`.
+
+    ```bash
+    nmcli device status                       # interfacce e connessioni associate
+    nmcli connection show                     # connessioni configurate
+    sudo nmcli connection modify "eth1" \
+      ipv4.method manual ipv4.addresses 192.168.56.20/24 ipv4.gateway 192.168.56.1 \
+      ipv4.dns "1.1.1.1 9.9.9.9" \
+      ipv6.method manual ipv6.addresses 2001:db8:56::20/64
+    sudo nmcli connection up "eth1"           # applica
+    sudo hostnamectl set-hostname server1.lab # nome host (vale anche su Ubuntu)
+    ```
+
+    `nmtui` offre un'interfaccia testuale a menu con le stesse funzioni. I nomi delle connessioni possono essere
+    diversi da quelli delle interfacce: controllali con `nmcli connection show`.
+
+!!! warning "Attenzione nelle VM di laboratorio"
+    Non cambiare la configurazione dell'interfaccia principale delle VM: rischi di perdere la connessione con
+    Multipass o Vagrant. Sulla VM `rhel-lab` puoi esercitarti sulla seconda interfaccia, quella della rete privata
+    `192.168.56.0/24` (di solito `eth1`), annotando prima la configurazione originale. Su un server remoto usa sempre
+    `netplan try` o tieni pronta una console di emergenza.
 
 ## Esercizi
 
@@ -229,3 +254,5 @@ sudo netplan apply
 - [AWS: Subnet CIDR blocks (indirizzi riservati)](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html)
 - [Google Cloud: subnet e indirizzi riservati](https://cloud.google.com/vpc/docs/subnets)
 - [Netplan documentation](https://netplan.readthedocs.io/)
+- [Red Hat: Configuring and managing networking (RHEL 10)](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_and_managing_networking/index)
+- [nmcli(1)](https://networkmanager.dev/docs/api/latest/nmcli.html)
