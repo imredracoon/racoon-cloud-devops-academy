@@ -4,14 +4,35 @@ Una piccola API REST che gestisce un elenco di attività.
 Il database si sceglie con la variabile d'ambiente DATABASE_URL:
   - non impostata: SQLite nel file tasks.db (Fase 2)
   - postgresql+psycopg://utente:password@host:5432/db (dalla Fase 3)
+Dalla Fase 7 espone le metriche per Prometheus su /metrics.
 """
+
 import os
 import socket
+import time
 
-from flask import Flask, jsonify, request
+from flask import Flask, g, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+from prometheus_client import (
+    CONTENT_TYPE_LATEST,
+    REGISTRY,
+    CollectorRegistry,
+    Counter,
+    Histogram,
+    generate_latest,
+    multiprocess,
+)
 
 db = SQLAlchemy()
+
+# Metriche Prometheus (Fase 7). L'etichetta "endpoint" usa il modello del percorso
+# (/tasks/<int:task_id>), non l'URL reale, per non creare una serie per ogni id.
+RICHIESTE = Counter(
+    "http_requests_total", "Richieste HTTP ricevute", ["method", "endpoint", "status"]
+)
+DURATA = Histogram(
+    "http_request_duration_seconds", "Durata delle richieste HTTP", ["method", "endpoint"]
+)
 
 
 class Task(db.Model):
@@ -36,6 +57,27 @@ def create_app(database_url=None):
         # dai test: chiudere la connessione cancellerebbe il database.)
         if db.engine.url.database != ":memory:":
             db.engine.dispose()
+
+    @app.before_request
+    def avvia_cronometro():
+        g.inizio = time.perf_counter()
+
+    @app.after_request
+    def registra_metriche(response):
+        endpoint = request.url_rule.rule if request.url_rule else "sconosciuto"
+        if endpoint != "/metrics":
+            RICHIESTE.labels(request.method, endpoint, str(response.status_code)).inc()
+            DURATA.labels(request.method, endpoint).observe(time.perf_counter() - g.inizio)
+        return response
+
+    @app.get("/metrics")
+    def metrics():
+        registry = REGISTRY
+        if "PROMETHEUS_MULTIPROC_DIR" in os.environ:
+            # Con Gunicorn e più worker: somma i valori scritti da tutti i processi.
+            registry = CollectorRegistry()
+            multiprocess.MultiProcessCollector(registry)
+        return generate_latest(registry), 200, {"Content-Type": CONTENT_TYPE_LATEST}
 
     @app.get("/health")
     def health():

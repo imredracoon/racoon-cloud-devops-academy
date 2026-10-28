@@ -35,3 +35,12 @@ def test_update_and_delete(client):
     assert r.get_json()["done"] is True
     assert client.delete("/tasks/1").status_code == 204
     assert client.get("/tasks/1").status_code == 404
+
+
+def test_metrics(client):
+    client.get("/tasks")
+    client.get("/tasks/99")
+    testo = client.get("/metrics").get_data(as_text=True)
+    assert 'http_requests_total{endpoint="/tasks",method="GET",status="200"}' in testo
+    assert 'endpoint="/tasks/<int:task_id>",method="GET",status="404"' in testo
+    assert "http_request_duration_seconds_bucket" in testo

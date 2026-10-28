@@ -1,0 +1,83 @@
+# Stack di osservabilità per la Tasks API (Fase 7): metriche, alert, log e dashboard.
+# Avvio insieme allo stack della Fase 3:
+#   docker compose -f compose.yaml -f compose.osservabilita.yaml up -d --build
+# Interfacce: Grafana http://localhost:3000 (admin / admin al primo accesso),
+#             Prometheus http://localhost:9090, Alertmanager http://localhost:9093
+services:
+  prometheus:
+    image: prom/prometheus:v3.15.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=7d
+      - --web.enable-lifecycle          # permette di ricaricare la configurazione con POST /-/reload
+    volumes:
+      - ./osservabilita/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./osservabilita/regole.yml:/etc/prometheus/regole.yml:ro
+      - promdata:/prometheus
+    ports:
+      - "9090:9090"
+    networks: [backend, monitoraggio]
+    restart: unless-stopped
+
+  alertmanager:
+    image: prom/alertmanager:v0.34.1
+    volumes:
+      - ./osservabilita/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    ports:
+      - "9093:9093"
+    networks: [monitoraggio]
+    restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter:v1.12.1
+    command:
+      - --path.rootfs=/host
+    volumes:
+      - /:/host:ro
+    pid: host
+    networks: [monitoraggio]
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:3.7.9
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - lokidata:/loki
+    networks: [monitoraggio]
+    restart: unless-stopped
+
+  alloy:
+    image: grafana/alloy:v1.21.2
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    volumes:
+      - ./osservabilita/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "12345:12345"
+    depends_on: [loki]
+    networks: [monitoraggio]
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:13.3.0
+    volumes:
+      - ./osservabilita/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./osservabilita/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafanadata:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on: [prometheus, loki]
+    networks: [monitoraggio]
+    restart: unless-stopped
+
+networks:
+  monitoraggio:
+
+volumes:
+  promdata:
+  lokidata:
+  grafanadata:

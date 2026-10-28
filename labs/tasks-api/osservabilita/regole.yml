@@ -1,0 +1,34 @@
+# Regole di alert per la Tasks API (Fase 7)
+groups:
+  - name: tasks-api
+    rules:
+      - alert: TasksApiNonRaggiungibile
+        expr: up{job="tasks-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "La Tasks API non risponde a Prometheus"
+          description: "Il target {{ $labels.instance }} è giù da più di un minuto."
+
+      - alert: TasksApiTroppiErrori
+        expr: |
+          sum(rate(http_requests_total{job="tasks-api", status=~"5.."}[5m]))
+            /
+          sum(rate(http_requests_total{job="tasks-api"}[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Più del 5% delle richieste fallisce con un errore 5xx"
+
+      - alert: TasksApiLenta
+        expr: |
+          histogram_quantile(0.95,
+            sum by (le) (rate(http_request_duration_seconds_bucket{job="tasks-api"}[5m]))
+          ) > 0.5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Il 95° percentile della latenza supera 500 ms"

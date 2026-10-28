@@ -1,0 +1,12 @@
+# Configurazione di Alertmanager (Fase 7).
+# Per il laboratorio gli alert sono visibili solo nell'interfaccia (http://localhost:9093).
+# Per riceverli davvero, sostituisci il ricevitore con email_configs, slack_configs o webhook_configs.
+route:
+  receiver: laboratorio
+  group_by: [alertname]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+receivers:
+  - name: laboratorio

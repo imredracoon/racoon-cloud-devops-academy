@@ -1,0 +1,8 @@
+# Dashboard caricate automaticamente dalla cartella /var/lib/grafana/dashboards (Fase 7)
+apiVersion: 1
+providers:
+  - name: academy
+    folder: Academy
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards
