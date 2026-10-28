@@ -23,6 +23,14 @@ pip install -r requirements.txt
 mkdocs serve        # poi apri http://127.0.0.1:8000
 ```
 
+La versione PDF (solo teoria, senza esercizi, quiz, simulazioni e contenuti multimediali) si scarica dalla home
+del sito. Viene generata a ogni pubblicazione; per crearla in locale:
+
+```bash
+pip install -r requirements-pdf.txt && python -m playwright install chromium
+mkdocs build --strict && python scripts/build_pdf.py   # site/assets/pdf/racoon-cloud-devops-academy.pdf
+```
+
 ## Struttura del repository
 
 | Percorso | Contenuto |
@@ -32,6 +40,7 @@ mkdocs serve        # poi apri http://127.0.0.1:8000
 | `lab-vm/` | le macchine virtuali per i laboratori Linux e kubeadm |
 | `.devcontainer/` | l'ambiente di studio riproducibile |
 | `scripts/check_banks.py` | i controlli automatici delle banche domande |
+| `scripts/build_pdf.py` | la generazione della versione PDF del corso |
 
 ## Contribuire
 

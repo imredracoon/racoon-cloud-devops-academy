@@ -10,6 +10,11 @@ Un corso **gratuito, in italiano e aperto a tutti** per diventare **Cloud / DevO
 Non serve alcuna esperienza informatica: ogni concetto viene spiegato dal principio, ogni comando viene
 mostrato e commentato, ogni esercizio ha una soluzione spiegata.
 
+<p><a class="md-button md-button--primary" href="assets/pdf/racoon-cloud-devops-academy.pdf" download>Scarica il corso in PDF</a></p>
+
+Il PDF contiene tutta la teoria, aggiornata a ogni pubblicazione del sito. Esercizi, laboratori, quiz, progetti,
+simulazioni d'esame e contenuti multimediali restano sul sito, dove sono interattivi.
+
 <div class="grid cards" markdown>
 
 -   :material-school:{ .lg .middle } **Nove fasi, dal computer a Kubernetes**

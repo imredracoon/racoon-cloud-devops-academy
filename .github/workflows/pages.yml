@@ -27,6 +27,11 @@ jobs:
         run: python scripts/check_banks.py
       - name: Costruisci il sito
         run: mkdocs build --strict
+      - name: Genera il PDF del corso (solo teoria)
+        run: |
+          pip install -r requirements-pdf.txt
+          python -m playwright install --with-deps chromium
+          python scripts/build_pdf.py
       - uses: actions/upload-pages-artifact@v5
         if: github.event_name != 'pull_request'
         with:
