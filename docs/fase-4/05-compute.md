@@ -191,7 +191,7 @@ di esecuzione. Hanno limiti (per esempio, una funzione Lambda dura al massimo 15
  {"q":"Quale modello di prezzo è adatto a un'elaborazione batch che può essere interrotta?","options":["On demand","Spot","Reserved Instances","Dedicated Hosts"],"answer":[1],"explanation":"Fino a circa il 90% di sconto, ma la capacità può essere ripresa dal fornitore."},
  {"q":"Come si configura in modo ripetibile una VM al primo avvio?","options":["A mano via SSH","Con user data (AWS) o startup script (Google Cloud)","Con un'email al supporto","Non è possibile"],"answer":[1],"explanation":"Su Linux li esegue in genere cloud-init."},
  {"q":"Quale servizio esegue container senza gestire server, scalando anche a zero?","options":["Compute Engine","Cloud Run","EC2","Lightsail"],"answer":[1],"explanation":"Su AWS l'equivalente più vicino è ECS con Fargate (o App Runner)."},
- {"q":"Quali servizi sono Kubernetes gestito? (scegli 2)","options":["EKS","GKE","Lambda","App Engine","Batch"],"answer":[0,1],"explanation":"Amazon EKS e Google Kubernetes Engine."},
+ {"q":"Quali servizi sono Kubernetes gestito?","options":["EKS","GKE","Lambda","App Engine","Batch"],"answer":[0,1],"explanation":"Amazon EKS e Google Kubernetes Engine."},
  {"q":"Dopo un laboratorio hai terminato la VM. Cosa controlli ancora?","options":["Nulla","Che non restino dischi, IP pubblici riservati o altre risorse a pagamento","Che il budget sia cancellato","Che l'account sia chiuso"],"answer":[1],"explanation":"Alcune risorse sopravvivono alla VM e continuano a costare."}
 ]}
 </script>

@@ -145,7 +145,7 @@ città, collegati alla loro rete privata. Servono a:
  {"q":"Per sopravvivere al guasto di un intero data center, cosa fai come minimo?","options":["Usi una VM più grande","Distribuisci l'applicazione su almeno due zone","Fai un backup giornaliero","Usi due regioni sempre"],"answer":[1],"explanation":"Più regioni servono contro la perdita di un'intera regione."},
  {"q":"A cosa servono i punti di presenza (edge locations)?","options":["Ad eseguire database","A portare contenuti in cache e servizi come il DNS vicino agli utenti","A conservare i backup","A ospitare le VM"],"answer":[1],"explanation":"CloudFront e Cloud CDN usano i PoP."},
  {"q":"Su Google Cloud, qual è l'ambito di una rete VPC?","options":["Zonale","Regionale","Globale","Per progetto e zona"],"answer":[2],"explanation":"Su AWS la VPC è regionale; su Google Cloud la rete è globale e le subnet sono regionali."},
- {"q":"Quali sono regioni cloud in Italia? (scegli 2)","options":["eu-south-1","europe-west8","eu-central-1","europe-west1","us-east-1"],"answer":[0,1],"explanation":"AWS Milano ed Google Cloud Milano; c'è anche europe-west12 a Torino."}
+ {"q":"Quali sono regioni cloud in Italia?","options":["eu-south-1","europe-west8","eu-central-1","europe-west1","us-east-1"],"answer":[0,1],"explanation":"AWS Milano ed Google Cloud Milano; c'è anche europe-west12 a Torino."}
 ]}
 </script>
 

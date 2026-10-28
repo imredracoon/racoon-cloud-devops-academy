@@ -267,7 +267,7 @@ docker system prune              # tutto ciò che non è usato (chiede conferma)
  {"q":"Perché non si usa il tag latest in produzione?","options":["Non esiste","Può puntare a versioni diverse nel tempo, causando aggiornamenti non voluti","È più lento da scaricare","Non è supportato da Podman"],"answer":[1],"explanation":"Usa tag precisi, o meglio ancora il digest."},
  {"q":"Quale comando apre una shell in un container già in esecuzione?","options":["docker run -it NOME sh","docker exec -it NOME sh","docker attach --shell NOME","docker start -i NOME"],"answer":[1],"explanation":"run crea un nuovo container."},
  {"q":"Un container termina con codice 137 e OOMKilled true. Cosa è successo?","options":["Errore di sintassi","Il processo ha superato il limite di memoria ed è stato ucciso dal kernel","Il disco è pieno","Il container è stato fermato con docker stop"],"answer":[1],"explanation":"137 = 128 + 9 (SIGKILL)."},
- {"q":"Quali affermazioni su `docker stop` sono corrette? (scegli 2)","options":["Invia prima SIGTERM per una chiusura ordinata","Dopo un tempo di attesa invia SIGKILL","Elimina il container","Elimina l'immagine","Riavvia il demone"],"answer":[0,1],"explanation":"Per eliminare il container serve docker rm."}
+ {"q":"Quali affermazioni su `docker stop` sono corrette?","options":["Invia prima SIGTERM per una chiusura ordinata","Dopo un tempo di attesa invia SIGKILL","Elimina il container","Elimina l'immagine","Riavvia il demone"],"answer":[0,1],"explanation":"Per eliminare il container serve docker rm."}
 ]}
 </script>
 

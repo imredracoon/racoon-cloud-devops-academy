@@ -278,7 +278,7 @@ file principale. Con `-f` scegli esplicitamente i file: `docker compose -f compo
  {"q":"Quale comando cancella anche i dati del database?","options":["docker compose stop","docker compose down","docker compose down -v","docker compose restart"],"answer":[2],"explanation":"-v elimina i volumi con nome."},
  {"q":"Dove metti la password del database per Compose?","options":["Direttamente nel compose.yaml in Git","In un file .env escluso da Git, con un .env.example versionato","Nel Dockerfile","Nel nome dell'immagine"],"answer":[1],"explanation":"I segreti non vanno mai nel repository."},
  {"q":"Hai modificato il codice dell'API. Quale comando aggiorna solo quel servizio?","options":["docker compose down && docker compose up","docker compose up -d --build api","docker compose restart","docker build ."],"answer":[1],"explanation":"Compose ricrea solo ciò che è cambiato."},
- {"q":"Quali file legge automaticamente Compose? (scegli 2)","options":["compose.yaml","compose.override.yaml","docker.json","Containerfile.yaml","settings.env"],"answer":[0,1],"explanation":"Legge anche .env per sostituire le variabili."}
+ {"q":"Quali file legge automaticamente Compose?","options":["compose.yaml","compose.override.yaml","docker.json","Containerfile.yaml","settings.env"],"answer":[0,1],"explanation":"Legge anche .env per sostituire le variabili."}
 ]}
 </script>
 

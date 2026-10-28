@@ -164,7 +164,7 @@ aiutare il cliente a configurare in modo sicuro, con impostazioni predefinite si
  {"q":"Cosa significa passare da CapEx a OpEx?","options":["Comprare più server","Sostituire grandi investimenti iniziali con costi variabili legati all'uso","Ridurre il personale","Usare solo software open source"],"answer":[1],"explanation":"Si paga ciò che si usa, quando lo si usa."},
  {"q":"In quale modello gestisci tu il sistema operativo?","options":["SaaS","PaaS","IaaS","Serverless"],"answer":[2],"explanation":"In IaaS il fornitore gestisce hardware e virtualizzazione, tu tutto il resto."},
  {"q":"Chi aggiorna il sistema operativo di una VM su Compute Engine?","options":["Google","Il cliente","Nessuno, è automatico","Il fornitore del sistema operativo"],"answer":[1],"explanation":"È IaaS: il sistema operativo è responsabilità del cliente."},
- {"q":"Quali responsabilità restano sempre del cliente, qualunque servizio usi? (scegli 2)","options":["I propri dati","I permessi di accesso (IAM)","La sicurezza fisica dei data center","L'hardware dei server","La rete globale del fornitore"],"answer":[0,1],"explanation":"La sicurezza fisica e l'hardware sono sempre del fornitore."},
+ {"q":"Quali responsabilità restano sempre del cliente, qualunque servizio usi?","options":["I propri dati","I permessi di accesso (IAM)","La sicurezza fisica dei data center","L'hardware dei server","La rete globale del fornitore"],"answer":[0,1],"explanation":"La sicurezza fisica e l'hardware sono sempre del fornitore."},
  {"q":"Un'azienda usa server nel proprio data center collegati a servizi AWS. Che modello è?","options":["Pubblico","Privato","Ibrido","SaaS"],"answer":[2],"explanation":"Ibrido: in sede più cloud pubblico."}
 ]}
 </script>

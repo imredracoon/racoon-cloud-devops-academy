@@ -208,7 +208,7 @@ più per la lettura, e hanno una durata minima di conservazione.
  {"q":"Quale funzione protegge da cancellazioni e sovrascritture accidentali in un bucket?","options":["Il ciclo di vita","Il versioning","La classe Standard","La CDN"],"answer":[1],"explanation":"Conserva ogni versione degli oggetti."},
  {"q":"Quale classe di Cloud Storage scegli per dati letti meno di una volta all'anno?","options":["Standard","Nearline","Coldline","Archive"],"answer":[3],"explanation":"Durata minima 365 giorni, costo per GB più basso."},
  {"q":"Come dai accesso temporaneo a un oggetto privato a un utente esterno?","options":["Rendendo pubblico il bucket","Con un URL prefirmato o firmato","Inviando le tue credenziali","Copiandolo su EBS"],"answer":[1],"explanation":"L'URL scade dopo il tempo stabilito."},
- {"q":"Quali servizi offrono file system condivisi via rete? (scegli 2)","options":["Amazon EFS","Filestore","Amazon S3 Glacier","Persistent Disk","Instance store"],"answer":[0,1],"explanation":"EFS e Filestore sono NFS gestiti."}
+ {"q":"Quali servizi offrono file system condivisi via rete?","options":["Amazon EFS","Filestore","Amazon S3 Glacier","Persistent Disk","Instance store"],"answer":[0,1],"explanation":"EFS e Filestore sono NFS gestiti."}
 ]}
 </script>
 

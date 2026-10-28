@@ -197,10 +197,10 @@ attaccante che la compromette non può disattivarlo.
 {"questions":[
  {"q":"Cosa rende pubblica una subnet su AWS?","options":["Il nome","Una rotta 0.0.0.0/0 verso un Internet gateway nella sua route table","Un security group aperto","Una network ACL"],"answer":[1],"explanation":"È il routing a fare la differenza."},
  {"q":"Come esce verso Internet una VM in una subnet privata, senza essere raggiungibile dall'esterno?","options":["Con un Internet gateway diretto","Con un NAT (NAT Gateway, Cloud NAT)","Con un VPC peering","Non può"],"answer":[1],"explanation":"Il NAT permette solo connessioni avviate dall'interno."},
- {"q":"Quali affermazioni sui security group AWS sono corrette? (scegli 2)","options":["Sono stateful","Contengono solo regole allow","Si applicano alle subnet","Contengono regole deny numerate","Sono stateless"],"answer":[0,1],"explanation":"Le network ACL invece sono stateless, applicate alle subnet, con allow e deny."},
+ {"q":"Quali affermazioni sui security group AWS sono corrette?","options":["Sono stateful","Contengono solo regole allow","Si applicano alle subnet","Contengono regole deny numerate","Sono stateless"],"answer":[0,1],"explanation":"Le network ACL invece sono stateless, applicate alle subnet, con allow e deny."},
  {"q":"Su Google Cloud, qual è l'ambito di una subnet?","options":["Zonale","Regionale","Globale","Per VM"],"answer":[1],"explanation":"La rete VPC è globale, le subnet sono regionali."},
  {"q":"Quale servizio collega la sede al cloud con un collegamento fisico dedicato su AWS?","options":["Site-to-Site VPN","Direct Connect","CloudFront","Transit Gateway"],"answer":[1],"explanation":"Su Google Cloud: Cloud Interconnect."},
- {"q":"Su Google Cloud, a quali VM si applicano le regole firewall? (scegli 2)","options":["A quelle con un certo tag di rete","A quelle con un certo service account","A quelle in una certa zona soltanto","A quelle con un certo nome di disco","A quelle con un certo tipo di macchina"],"answer":[0,1],"explanation":"Oppure a tutte le istanze della rete."}
+ {"q":"Su Google Cloud, a quali VM si applicano le regole firewall?","options":["A quelle con un certo tag di rete","A quelle con un certo service account","A quelle in una certa zona soltanto","A quelle con un certo nome di disco","A quelle con un certo tipo di macchina"],"answer":[0,1],"explanation":"Oppure a tutte le istanze della rete."}
 ]}
 </script>
 
