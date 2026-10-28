@@ -1,0 +1,581 @@
+{
+ "type": "practical",
+ "id": "lfcs",
+ "title": "Linux Foundation Certified System Administrator (LFCS) · Simulazione pratica",
+ "lang": "it",
+ "format": {
+  "tasks": 17,
+  "tasksLabel": "15-20",
+  "minutes": 120,
+  "passPct": 67,
+  "note": "L'esame reale è online con sorvegliante, interamente da riga di comando su Ubuntu. I task sono originali e seguono i domini pubblicati dalla Linux Foundation. Dove serve, la soluzione indica anche l'equivalente RHEL."
+ },
+ "domains": [
+  {
+   "id": "operazioni",
+   "name": "Operations Deployment",
+   "weight": 25
+  },
+  {
+   "id": "rete",
+   "name": "Networking",
+   "weight": 25
+  },
+  {
+   "id": "storage",
+   "name": "Storage",
+   "weight": 20
+  },
+  {
+   "id": "comandi",
+   "name": "Essential Commands",
+   "weight": 20
+  },
+  {
+   "id": "utenti",
+   "name": "Users and Groups",
+   "weight": 10
+  }
+ ],
+ "tasks": [
+  {
+   "d": "operazioni",
+   "pts": 6,
+   "title": "Parametro del kernel persistente",
+   "task": "Abilita l'inoltro dei pacchetti IPv4 sia subito sia dopo il riavvio, usando un file dedicato `/etc/sysctl.d/90-inoltro.conf`.",
+   "check": "```\nsysctl net.ipv4.ip_forward          # = 1\ncat /etc/sysctl.d/90-inoltro.conf\n```",
+   "solution": "```\necho 'net.ipv4.ip_forward = 1' | sudo tee /etc/sysctl.d/90-inoltro.conf\nsudo sysctl --system\n```\n`sysctl -w` cambia il valore solo fino al riavvio; i file in `/etc/sysctl.d/` lo rendono permanente. `sysctl --system` rilegge tutti i file.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/sysctl.8.html",
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/sysctl.d.5.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs01"
+  },
+  {
+   "d": "operazioni",
+   "pts": 5,
+   "title": "Processo che consuma CPU",
+   "task": "Un processo sta usando quasi tutta la CPU. Scrivi il suo PID in `/root/pid.txt`, abbassane la priorità a nice 15 e, se non risponde, terminalo.",
+   "check": "```\ncat /root/pid.txt\nps -o pid,ni,cmd -p $(cat /root/pid.txt)\n```",
+   "solution": "```\nps -eo pid,pcpu,cmd --sort=-pcpu | head -5\nps -eo pid --sort=-pcpu --no-headers | head -1 | tr -d ' ' | sudo tee /root/pid.txt\nsudo renice -n 15 -p $(sudo cat /root/pid.txt)\nsudo kill $(sudo cat /root/pid.txt)        # SIGTERM; SIGKILL (-9) solo se necessario\n```",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/ps.1.html",
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/renice.1.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs02"
+  },
+  {
+   "d": "operazioni",
+   "pts": 5,
+   "title": "Analisi dei log",
+   "task": "Salva in `/root/ssh-falliti.txt` tutti i tentativi di accesso SSH falliti di oggi.",
+   "check": "```\nwc -l /root/ssh-falliti.txt\n```",
+   "solution": "```\nsudo journalctl -u ssh --since today | grep -i 'failed' | sudo tee /root/ssh-falliti.txt\n```\nSu Ubuntu il servizio si chiama `ssh` (su RHEL `sshd`). In alternativa `grep -i failed /var/log/auth.log` (su RHEL `/var/log/secure`).",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/journalctl.1.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs03"
+  },
+  {
+   "d": "operazioni",
+   "pts": 6,
+   "title": "Attività pianificata con systemd",
+   "task": "Crea un timer systemd `pulizia.timer` che ogni giorno alle 03:15 esegua `/usr/local/bin/pulizia.sh` tramite `pulizia.service`. Il timer deve recuperare le esecuzioni perse se la macchina era spenta.",
+   "check": "```\nsystemctl list-timers pulizia.timer\nsystemctl is-enabled pulizia.timer\n```",
+   "solution": "`/etc/systemd/system/pulizia.service`:\n```\n[Unit]\nDescription=Pulizia giornaliera\n\n[Service]\nType=oneshot\nExecStart=/usr/local/bin/pulizia.sh\n```\n`/etc/systemd/system/pulizia.timer`:\n```\n[Unit]\nDescription=Pulizia giornaliera alle 03:15\n\n[Timer]\nOnCalendar=*-*-* 03:15:00\nPersistent=true\n\n[Install]\nWantedBy=timers.target\n```\n```\nsudo systemctl daemon-reload\nsudo systemctl enable --now pulizia.timer\n```",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/systemd.timer.5.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs04"
+  },
+  {
+   "d": "operazioni",
+   "pts": 4,
+   "title": "Attività pianificata con cron",
+   "task": "L'utente `backup` deve eseguire `/home/backup/copia.sh` ogni 15 minuti nei giorni feriali dalle 8 alle 18.",
+   "check": "```\nsudo crontab -l -u backup\n```",
+   "solution": "```\nsudo crontab -e -u backup\n```\n```\n*/15 8-18 * * 1-5 /home/backup/copia.sh\n```",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/crontab.5.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs05"
+  },
+  {
+   "d": "operazioni",
+   "pts": 5,
+   "title": "Gestione dei pacchetti",
+   "task": "Installa il pacchetto `nginx`, impedisci che venga aggiornato con gli aggiornamenti automatici e scrivi in `/root/nginx-file.txt` l'elenco dei file installati dal pacchetto.",
+   "check": "```\napt-mark showhold | grep nginx\nwc -l /root/nginx-file.txt\n```",
+   "solution": "```\nsudo apt update && sudo apt install -y nginx\nsudo apt-mark hold nginx\ndpkg -L nginx | sudo tee /root/nginx-file.txt\n```\nSu RHEL: `dnf install nginx`, `dnf versionlock add nginx` (plugin), `rpm -ql nginx`.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/software/package-management/"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs06"
+  },
+  {
+   "d": "operazioni",
+   "pts": 6,
+   "title": "Container con Docker",
+   "task": "Avvia un container `web` dall'immagine `nginx:1.29` in background, che si riavvii sempre (anche dopo un riavvio della macchina), con la porta 8080 dell'host collegata alla 80 del container e la directory `/srv/sito` montata in sola lettura su `/usr/share/nginx/html`.",
+   "check": "```\ndocker inspect -f '{{.HostConfig.RestartPolicy.Name}}' web     # always\ncurl -s localhost:8080\n```",
+   "solution": "```\nsudo mkdir -p /srv/sito && echo ciao | sudo tee /srv/sito/index.html\ndocker run -d --name web --restart always -p 8080:80 \\\n  -v /srv/sito:/usr/share/nginx/html:ro nginx:1.29\n```\nIl servizio `docker` deve essere abilitato all'avvio (`systemctl enable docker`) perché la politica di riavvio funzioni dopo il reboot.",
+   "r": [
+    "https://docs.docker.com/engine/containers/start-containers-automatically/"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs07"
+  },
+  {
+   "d": "operazioni",
+   "pts": 5,
+   "title": "AppArmor",
+   "task": "Verifica quali profili AppArmor sono in modalità enforce e metti in modalità complain il profilo di `/usr/sbin/tcpdump`.",
+   "check": "```\nsudo aa-status | grep -A2 complain\n```",
+   "solution": "```\nsudo aa-status\nsudo apt install -y apparmor-utils\nsudo aa-complain /usr/sbin/tcpdump\n```\nIn complain le violazioni vengono registrate ma non bloccate. `aa-enforce` torna alla modalità enforce. Su RHEL il controllo d'accesso obbligatorio è SELinux (`getenforce`, `setenforce`, `semanage`).",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/security/apparmor/"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs08"
+  },
+  {
+   "d": "operazioni",
+   "pts": 6,
+   "title": "Macchina virtuale con libvirt",
+   "task": "Su un host con KVM, elenca tutte le VM, avvia la VM `prova` e configurala per avviarsi automaticamente con l'host.",
+   "check": "```\nvirsh list --all\nvirsh dominfo prova | grep -i autostart     # enable\n```",
+   "solution": "```\nvirsh list --all\nvirsh start prova\nvirsh autostart prova\n```\n`virsh shutdown` spegne in modo ordinato, `virsh destroy` forza lo spegnimento (non cancella la VM).",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/virtualisation/libvirt/"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs09"
+  },
+  {
+   "d": "operazioni",
+   "pts": 5,
+   "title": "Script di manutenzione",
+   "task": "Scrivi lo script `/usr/local/bin/spazio.sh` che stampa `ATTENZIONE` seguito dal punto di mount per ogni filesystem pieno oltre l'80%, ed esce con codice 1 se ne trova almeno uno, altrimenti 0.",
+   "check": "```\n/usr/local/bin/spazio.sh; echo \"codice: $?\"\n```",
+   "solution": "```\n#!/usr/bin/env bash\nset -euo pipefail\ntrovato=0\nwhile read -r uso mount; do\n  uso=${uso%\\%}\n  if [ \"$uso\" -gt 80 ]; then\n    echo \"ATTENZIONE $mount\"\n    trovato=1\n  fi\ndone < <(df --output=pcent,target -x tmpfs -x devtmpfs | tail -n +2)\nexit $trovato\n```\n```\nsudo chmod +x /usr/local/bin/spazio.sh\n```",
+   "r": [
+    "https://www.gnu.org/software/bash/manual/bash.html",
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/df.1.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs10"
+  },
+  {
+   "d": "rete",
+   "pts": 7,
+   "title": "Indirizzo statico con netplan",
+   "task": "Configura l'interfaccia `enp0s8` con indirizzo `192.168.50.10/24`, gateway `192.168.50.1` e DNS `1.1.1.1`, in modo persistente.",
+   "check": "```\nip -4 addr show enp0s8\nip route | grep default\nresolvectl dns enp0s8\n```",
+   "solution": "`/etc/netplan/60-statico.yaml` (permessi 600):\n```yaml\nnetwork:\n  version: 2\n  ethernets:\n    enp0s8:\n      dhcp4: false\n      addresses: [192.168.50.10/24]\n      routes:\n        - to: default\n          via: 192.168.50.1\n      nameservers:\n        addresses: [1.1.1.1]\n```\n```\nsudo chmod 600 /etc/netplan/60-statico.yaml\nsudo netplan try      # conferma entro il tempo, altrimenti torna indietro\n```\nSu RHEL: `nmcli con mod enp0s8 ipv4.method manual ipv4.addresses 192.168.50.10/24 ipv4.gateway 192.168.50.1 ipv4.dns 1.1.1.1` e `nmcli con up enp0s8`.",
+   "r": [
+    "https://netplan.readthedocs.io/en/stable/"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs11"
+  },
+  {
+   "d": "rete",
+   "pts": 4,
+   "title": "Nome host e risoluzione locale",
+   "task": "Imposta il nome host `srv01.academy.lan` e fai risolvere localmente `db.academy.lan` a `192.168.50.20`.",
+   "check": "```\nhostnamectl --static\ngetent hosts db.academy.lan\n```",
+   "solution": "```\nsudo hostnamectl set-hostname srv01.academy.lan\necho '192.168.50.20 db.academy.lan db' | sudo tee -a /etc/hosts\n```\n`getent hosts` segue l'ordine di `/etc/nsswitch.conf` (di solito file, poi DNS), come le applicazioni.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/hostnamectl.1.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs12"
+  },
+  {
+   "d": "rete",
+   "pts": 4,
+   "title": "Sincronizzazione dell'ora",
+   "task": "Verifica che l'ora sia sincronizzata via NTP e imposta il fuso orario `Europe/Rome`.",
+   "check": "```\ntimedatectl\n```",
+   "solution": "```\nsudo timedatectl set-timezone Europe/Rome\nsudo timedatectl set-ntp true\ntimedatectl show-timesync --all   # systemd-timesyncd su Ubuntu\n```\nSu Ubuntu 24.04 il servizio predefinito è `systemd-timesyncd` (alcune installazioni usano chrony); su RHEL è `chronyd` (`chronyc sources`).",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/timedatectl.1.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs13"
+  },
+  {
+   "d": "rete",
+   "pts": 5,
+   "title": "Porte in ascolto",
+   "task": "Scrivi in `/root/porte.txt` le porte TCP in ascolto con il processo che le apre.",
+   "check": "```\ncat /root/porte.txt\n```",
+   "solution": "```\nsudo ss -tlnp | sudo tee /root/porte.txt\n```\n`-t` TCP, `-l` in ascolto, `-n` numeri, `-p` processo (serve sudo per vedere quelli di altri utenti).",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/ss.8.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs14"
+  },
+  {
+   "d": "rete",
+   "pts": 6,
+   "title": "Server SSH più sicuro",
+   "task": "Configura il server SSH in modo che: non accetti accessi diretti di root, non accetti password (solo chiavi), e solo gli utenti del gruppo `ssh-ammessi` possano entrare. Non perdere l'accesso durante la modifica.",
+   "check": "```\nsudo sshd -T | grep -Ei 'permitrootlogin|passwordauthentication|allowgroups'\n```",
+   "solution": "`/etc/ssh/sshd_config.d/50-academy.conf`:\n```\nPermitRootLogin no\nPasswordAuthentication no\nAllowGroups ssh-ammessi\n```\n```\nsudo groupadd -f ssh-ammessi && sudo usermod -aG ssh-ammessi $USER\nsudo sshd -t && sudo systemctl reload ssh\n```\n`sshd -t` controlla la sintassi prima del reload. Tieni aperta una sessione mentre provi una nuova connessione da un altro terminale.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/security/openssh-server/"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs15"
+  },
+  {
+   "d": "rete",
+   "pts": 6,
+   "title": "Firewall con ufw",
+   "task": "Attiva il firewall: blocca tutto il traffico in ingresso tranne SSH (22/tcp) da chiunque e HTTP (80/tcp) solo dalla rete `192.168.50.0/24`.",
+   "check": "```\nsudo ufw status verbose\n```",
+   "solution": "```\nsudo ufw default deny incoming\nsudo ufw default allow outgoing\nsudo ufw allow 22/tcp\nsudo ufw allow from 192.168.50.0/24 to any port 80 proto tcp\nsudo ufw enable\n```\nPrima la regola SSH, poi `enable`, per non chiudersi fuori. Su RHEL: `firewall-cmd --permanent --add-service=ssh`, rich rule per la rete, `firewall-cmd --reload`.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/security/firewalls/"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs16"
+  },
+  {
+   "d": "rete",
+   "pts": 7,
+   "title": "Redirezione di porta e NAT",
+   "task": "Il server ha l'interfaccia pubblica `enp0s3` e quella interna `enp0s8` (rete `10.10.0.0/24`). Fai in modo che le macchine interne escano su Internet tramite il server (masquerade) e che il traffico in arrivo sulla porta 8080 pubblica venga inoltrato a `10.10.0.20:80`. Le regole devono sopravvivere al riavvio.",
+   "check": "```\nsudo nft list ruleset | grep -E 'masquerade|dnat'\nsysctl net.ipv4.ip_forward\n```",
+   "solution": "Abilita l'inoltro (vedi task sui parametri del kernel), poi `/etc/nftables.conf`:\n```\ntable ip nat {\n  chain prerouting {\n    type nat hook prerouting priority dstnat;\n    iifname \"enp0s3\" tcp dport 8080 dnat to 10.10.0.20:80\n  }\n  chain postrouting {\n    type nat hook postrouting priority srcnat;\n    oifname \"enp0s3\" ip saddr 10.10.0.0/24 masquerade\n  }\n}\n```\n```\nsudo nft -f /etc/nftables.conf\nsudo systemctl enable nftables\n```\nSe usi ufw, la stessa logica va nei file `/etc/ufw/before.rules` e in `DEFAULT_FORWARD_POLICY`; non mescolare strumenti diversi sulle stesse catene.",
+   "r": [
+    "https://wiki.nftables.org/wiki-nftables/index.php/Performing_Network_Address_Translation_(NAT)"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs17"
+  },
+  {
+   "d": "rete",
+   "pts": 6,
+   "title": "Reverse proxy e bilanciamento",
+   "task": "Configura nginx come reverse proxy sulla porta 80 che bilancia le richieste tra `127.0.0.1:8081` e `127.0.0.1:8082`.",
+   "check": "```\nsudo nginx -t\nfor i in 1 2 3 4; do curl -s localhost; done\n```",
+   "solution": "`/etc/nginx/conf.d/bilanciatore.conf`:\n```\nupstream applicazione {\n    server 127.0.0.1:8081;\n    server 127.0.0.1:8082;\n}\nserver {\n    listen 80;\n    location / {\n        proxy_pass http://applicazione;\n        proxy_set_header Host $host;\n        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n    }\n}\n```\n```\nsudo rm -f /etc/nginx/sites-enabled/default\nsudo nginx -t && sudo systemctl reload nginx\n```\nIl bilanciamento predefinito è round robin.",
+   "r": [
+    "https://nginx.org/en/docs/http/load_balancing.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs18"
+  },
+  {
+   "d": "rete",
+   "pts": 6,
+   "title": "Bridge di rete",
+   "task": "Crea un bridge `br0` che includa l'interfaccia `enp0s9` e ottenga l'indirizzo con DHCP, in modo persistente.",
+   "check": "```\nip -br addr show br0\nbridge link\n```",
+   "solution": "```yaml\nnetwork:\n  version: 2\n  ethernets:\n    enp0s9:\n      dhcp4: false\n  bridges:\n    br0:\n      interfaces: [enp0s9]\n      dhcp4: true\n```\n```\nsudo netplan try\n```\nI bridge collegano VM e container alla rete fisica; per un bond si usa la sezione `bonds:` con `parameters: {mode: active-backup}`.",
+   "r": [
+    "https://netplan.readthedocs.io/en/stable/netplan-yaml/#properties-for-device-type-bridges"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs19"
+  },
+  {
+   "d": "rete",
+   "pts": 5,
+   "title": "Rotta statica",
+   "task": "Aggiungi in modo persistente la rotta verso `172.20.0.0/16` attraverso `192.168.50.254` sull'interfaccia `enp0s8`.",
+   "check": "```\nip route get 172.20.1.1\n```",
+   "solution": "Nel file netplan di `enp0s8`, sotto `routes:`:\n```yaml\n        - to: 172.20.0.0/16\n          via: 192.168.50.254\n```\n```\nsudo netplan try\n```\nPer una prova temporanea: `sudo ip route add 172.20.0.0/16 via 192.168.50.254 dev enp0s8`.",
+   "r": [
+    "https://netplan.readthedocs.io/en/stable/"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs20"
+  },
+  {
+   "d": "storage",
+   "pts": 7,
+   "title": "LVM da zero",
+   "task": "Sul disco `/dev/vdb` crea il volume group `vgdati` e il volume logico `lvweb` da 2 GiB con filesystem ext4, montato in modo persistente in `/srv/web`.",
+   "check": "```\nsudo lvs vgdati\nfindmnt /srv/web\ngrep /srv/web /etc/fstab\n```",
+   "solution": "```\nsudo pvcreate /dev/vdb\nsudo vgcreate vgdati /dev/vdb\nsudo lvcreate -n lvweb -L 2G vgdati\nsudo mkfs.ext4 /dev/vgdati/lvweb\nsudo mkdir -p /srv/web\necho '/dev/vgdati/lvweb /srv/web ext4 defaults 0 2' | sudo tee -a /etc/fstab\nsudo systemctl daemon-reload && sudo mount -a\n```\nProva sempre `mount -a` dopo aver modificato `/etc/fstab`: un errore può bloccare l'avvio.",
+   "r": [
+    "https://documentation.ubuntu.com/server/explanation/storage/about-lvm/"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs21"
+  },
+  {
+   "d": "storage",
+   "pts": 5,
+   "title": "Estendere un volume",
+   "task": "Il volume `lvweb` è quasi pieno: aggiungi 1 GiB e ingrandisci il filesystem senza smontarlo.",
+   "check": "```\ndf -h /srv/web\n```",
+   "solution": "```\nsudo lvextend -r -L +1G /dev/vgdati/lvweb\n```\n`-r` ridimensiona anche il filesystem (ext4 e XFS crescono a caldo; XFS non si può ridurre). Se il VG non ha spazio, prima `vgextend vgdati /dev/vdc`.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/lvextend.8.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs22"
+  },
+  {
+   "d": "storage",
+   "pts": 5,
+   "title": "Swap aggiuntivo",
+   "task": "Aggiungi 1 GiB di swap tramite il file `/swapfile2`, attivo subito e dopo il riavvio.",
+   "check": "```\nswapon --show\ngrep swapfile2 /etc/fstab\n```",
+   "solution": "```\nsudo fallocate -l 1G /swapfile2\nsudo chmod 600 /swapfile2\nsudo mkswap /swapfile2\nsudo swapon /swapfile2\necho '/swapfile2 none swap sw 0 0' | sudo tee -a /etc/fstab\n```",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/mkswap.8.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs23"
+  },
+  {
+   "d": "storage",
+   "pts": 6,
+   "title": "Condivisione NFS",
+   "task": "Sul server esporta `/srv/condivisa` in lettura e scrittura per la rete `192.168.50.0/24`. Sul client montala in modo persistente in `/mnt/condivisa`.",
+   "check": "```\nsudo exportfs -v              # sul server\nfindmnt /mnt/condivisa        # sul client\n```",
+   "solution": "Server:\n```\nsudo apt install -y nfs-kernel-server\nsudo mkdir -p /srv/condivisa\necho '/srv/condivisa 192.168.50.0/24(rw,sync,no_subtree_check)' | sudo tee -a /etc/exports\nsudo exportfs -ra\n```\nClient:\n```\nsudo apt install -y nfs-common\nsudo mkdir -p /mnt/condivisa\necho 'srv01.academy.lan:/srv/condivisa /mnt/condivisa nfs defaults,_netdev 0 0' | sudo tee -a /etc/fstab\nsudo mount -a\n```\n`_netdev` indica che il mount richiede la rete.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/networking/install-nfs/"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs24"
+  },
+  {
+   "d": "storage",
+   "pts": 6,
+   "title": "Montaggio automatico",
+   "task": "Configura il client in modo che `/mnt/auto/condivisa` venga montata automaticamente via NFS solo quando qualcuno vi accede, e smontata dopo 60 secondi di inattività.",
+   "check": "```\nls /mnt/auto/condivisa && findmnt /mnt/auto/condivisa\n```",
+   "solution": "```\nsudo apt install -y autofs\necho '/mnt/auto /etc/auto.academy --timeout=60' | sudo tee /etc/auto.master.d/academy.autofs\necho 'condivisa -rw srv01.academy.lan:/srv/condivisa' | sudo tee /etc/auto.academy\nsudo systemctl restart autofs\n```\nIn alternativa systemd: opzioni `noauto,x-systemd.automount,x-systemd.idle-timeout=60` in `/etc/fstab`.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/auto.master.5.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs25"
+  },
+  {
+   "d": "storage",
+   "pts": 5,
+   "title": "Filesystem danneggiato",
+   "task": "Il filesystem ext4 su `/dev/vdc1` non si monta più. Controllalo e riparalo.",
+   "check": "```\nsudo mount /dev/vdc1 /mnt && findmnt /mnt\n```",
+   "solution": "```\nfindmnt /dev/vdc1        # deve risultare smontato\nsudo fsck.ext4 -f -y /dev/vdc1\nsudo mount /dev/vdc1 /mnt\n```\nPer XFS si usa `xfs_repair`. Mai riparare un filesystem montato in lettura e scrittura.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/e2fsck.8.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs26"
+  },
+  {
+   "d": "storage",
+   "pts": 4,
+   "title": "Prestazioni del disco",
+   "task": "Scrivi in `/root/io.txt` tre campioni, a un secondo di distanza, dell'utilizzo dei dischi (percentuale di occupazione per dispositivo).",
+   "check": "```\ncat /root/io.txt\n```",
+   "solution": "```\nsudo apt install -y sysstat\niostat -dx 1 3 | sudo tee /root/io.txt\n```\nLa colonna `%util` vicina a 100 indica un disco saturo; `iotop` mostra quali processi fanno più I/O.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/iostat.1.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs27"
+  },
+  {
+   "d": "storage",
+   "pts": 4,
+   "title": "Montaggio per UUID",
+   "task": "Monta in modo persistente la partizione `/dev/vdd1` (ext4) in `/archivio` usando il suo UUID, con l'opzione `noexec`.",
+   "check": "```\nfindmnt /archivio -o SOURCE,OPTIONS\n```",
+   "solution": "```\nsudo blkid /dev/vdd1\nsudo mkdir -p /archivio\necho 'UUID=<uuid> /archivio ext4 defaults,noexec 0 2' | sudo tee -a /etc/fstab\nsudo systemctl daemon-reload && sudo mount -a\n```\nL'UUID non cambia se l'ordine dei dischi cambia, a differenza di `/dev/vdd1`.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/fstab.5.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs28"
+  },
+  {
+   "d": "comandi",
+   "pts": 5,
+   "title": "Git di base",
+   "task": "In `/srv/config` inizializza un repository Git, aggiungi tutti i file con il messaggio `configurazione iniziale`, crea il ramo `prova` e passa su quel ramo.",
+   "check": "```\ngit -C /srv/config log --oneline\ngit -C /srv/config branch --show-current   # prova\n```",
+   "solution": "```\ncd /srv/config\ngit init\ngit add -A\ngit -c user.name=admin -c user.email=admin@academy.lan commit -m \"configurazione iniziale\"\ngit switch -c prova\n```",
+   "r": [
+    "https://git-scm.com/docs/git-switch"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs29"
+  },
+  {
+   "d": "comandi",
+   "pts": 6,
+   "title": "Servizio che non parte",
+   "task": "Il servizio `nginx` non si avvia. Trova la causa, correggila e assicurati che parta all'avvio.",
+   "check": "```\nsystemctl is-active nginx && systemctl is-enabled nginx\n```",
+   "solution": "```\nsudo systemctl status nginx\nsudo journalctl -u nginx -n 30 --no-pager\nsudo nginx -t\nsudo ss -tlnp | grep ':80 '\n```\nCause tipiche: errore di sintassi nella configurazione, porta 80 già occupata da un altro processo, permessi su file di log o certificati. Correggi e poi `sudo systemctl enable --now nginx`.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/systemctl.1.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs30"
+  },
+  {
+   "d": "comandi",
+   "pts": 6,
+   "title": "Unit di servizio personalizzata",
+   "task": "Crea il servizio `orologio.service` che esegue `/usr/local/bin/orologio.sh` come utente `app`, si riavvia se fallisce dopo 5 secondi, e parte all'avvio.",
+   "check": "```\nsystemctl show orologio -p User -p Restart -p RestartUSec\nsystemctl is-enabled orologio\n```",
+   "solution": "`/etc/systemd/system/orologio.service`:\n```\n[Unit]\nDescription=Orologio di prova\nAfter=network-online.target\n\n[Service]\nUser=app\nExecStart=/usr/local/bin/orologio.sh\nRestart=on-failure\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target\n```\n```\nsudo systemctl daemon-reload\nsudo systemctl enable --now orologio\n```",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/systemd.service.5.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs31"
+  },
+  {
+   "d": "comandi",
+   "pts": 5,
+   "title": "Disco pieno",
+   "task": "Il filesystem `/` è al 100%. Trova le 5 directory più grandi sotto `/var` e scrivile in `/root/grandi.txt`. Libera spazio dai log del journal mantenendo solo gli ultimi 200 MB.",
+   "check": "```\ncat /root/grandi.txt\njournalctl --disk-usage\n```",
+   "solution": "```\nsudo du -xh /var --max-depth=2 2>/dev/null | sort -rh | head -5 | sudo tee /root/grandi.txt\nsudo journalctl --vacuum-size=200M\n```\nControlla anche i file cancellati ma ancora aperti da un processo: `sudo lsof +L1`. Lo spazio torna libero solo quando il processo chiude il file.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/du.1.html",
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/journalctl.1.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs32"
+  },
+  {
+   "d": "comandi",
+   "pts": 5,
+   "title": "Inode esauriti",
+   "task": "Su `/srv` non si riescono a creare file anche se `df -h` mostra spazio libero. Diagnostica il problema e scrivi in `/root/inode.txt` la directory che contiene più file.",
+   "check": "```\ndf -i /srv\ncat /root/inode.txt\n```",
+   "solution": "```\ndf -i /srv          # IUse% al 100%\nsudo find /srv -xdev -type f | cut -d/ -f1-3 | sort | uniq -c | sort -rn | head -1 | sudo tee /root/inode.txt\n```\nOgni file usa un inode; milioni di file piccoli (cache, sessioni) li esauriscono prima dello spazio.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/df.1.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs33"
+  },
+  {
+   "d": "comandi",
+   "pts": 6,
+   "title": "Certificato TLS",
+   "task": "Crea una chiave privata e un certificato autofirmato valido 365 giorni per `srv01.academy.lan` (con SAN), salvati in `/etc/ssl/academy/`. Poi mostra data di scadenza e soggetto.",
+   "check": "```\nopenssl x509 -in /etc/ssl/academy/srv01.crt -noout -subject -enddate -ext subjectAltName\n```",
+   "solution": "```\nsudo mkdir -p /etc/ssl/academy\nsudo openssl req -x509 -newkey rsa:3072 -nodes -days 365 \\\n  -keyout /etc/ssl/academy/srv01.key -out /etc/ssl/academy/srv01.crt \\\n  -subj \"/CN=srv01.academy.lan\" -addext \"subjectAltName=DNS:srv01.academy.lan\"\nsudo chmod 600 /etc/ssl/academy/srv01.key\n```\nI client moderni controllano il SAN, non il CN.",
+   "r": [
+    "https://docs.openssl.org/3.0/man1/openssl-req/"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs34"
+  },
+  {
+   "d": "comandi",
+   "pts": 4,
+   "title": "Limiti di un servizio",
+   "task": "Il servizio `orologio` non deve usare più di 256 MB di memoria e il 20% di una CPU, senza modificare il file originale.",
+   "check": "```\nsystemctl show orologio -p MemoryMax -p CPUQuotaPerSecUSec\n```",
+   "solution": "```\nsudo systemctl set-property orologio MemoryMax=256M CPUQuota=20%\n```\nOppure `sudo systemctl edit orologio` e nella sezione `[Service]` le due righe. Entrambi creano un drop-in senza toccare la unit originale.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/systemd.resource-control.5.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs35"
+  },
+  {
+   "d": "comandi",
+   "pts": 4,
+   "title": "Cercare e archiviare",
+   "task": "Crea l'archivio compresso `/root/config.tar.gz` con tutti i file `.conf` sotto `/etc` modificati negli ultimi 7 giorni.",
+   "check": "```\ntar -tzf /root/config.tar.gz | head\n```",
+   "solution": "```\nsudo find /etc -name '*.conf' -type f -mtime -7 -print0 | sudo tar --null -czf /root/config.tar.gz -T -\n```\n`-print0` e `--null` gestiscono nomi con spazi.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/find.1.html",
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/tar.1.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs36"
+  },
+  {
+   "d": "utenti",
+   "pts": 5,
+   "title": "Utenti e gruppi",
+   "task": "Crea il gruppo `sviluppo` e l'utente `luca` con shell `/bin/bash`, home creata, gruppo supplementare `sviluppo`, password che scade ogni 60 giorni e account che scade il 31 dicembre 2027.",
+   "check": "```\nid luca\nsudo chage -l luca\n```",
+   "solution": "```\nsudo groupadd sviluppo\nsudo useradd -m -s /bin/bash -G sviluppo luca\nsudo passwd luca\nsudo chage -M 60 -E 2027-12-31 luca\n```",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/useradd.8.html",
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/chage.1.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs37"
+  },
+  {
+   "d": "utenti",
+   "pts": 4,
+   "title": "Profilo d'ambiente",
+   "task": "Tutti gli utenti devono avere la variabile `AMBIENTE=laboratorio` al login; l'utente `luca` deve avere in più l'alias `ll='ls -la'`.",
+   "check": "```\nsudo -iu luca bash -lc 'echo $AMBIENTE; alias ll'\n```",
+   "solution": "```\necho 'export AMBIENTE=laboratorio' | sudo tee /etc/profile.d/academy.sh\necho \"alias ll='ls -la'\" | sudo tee -a /home/luca/.bashrc\n```\n`/etc/profile.d/*.sh` vale per le shell di login di tutti; `~/.bashrc` per le shell interattive di un utente.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/bash.1.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs38"
+  },
+  {
+   "d": "utenti",
+   "pts": 5,
+   "title": "Limiti delle risorse utente",
+   "task": "Gli utenti del gruppo `sviluppo` possono avere al massimo 100 processi e 4096 file aperti (limite rigido).",
+   "check": "```\nsudo -iu luca bash -c 'ulimit -Hu; ulimit -Hn'\n```",
+   "solution": "`/etc/security/limits.d/sviluppo.conf`:\n```\n@sviluppo hard nproc  100\n@sviluppo hard nofile 4096\n```\nI limiti si applicano alle nuove sessioni tramite pam_limits.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/limits.conf.5.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs39"
+  },
+  {
+   "d": "utenti",
+   "pts": 5,
+   "title": "ACL su una directory condivisa",
+   "task": "In `/srv/progetto` (proprietario root) il gruppo `sviluppo` deve poter leggere e scrivere, anche sui file creati in futuro, e l'utente `ospite` solo leggere.",
+   "check": "```\ngetfacl /srv/progetto\n```",
+   "solution": "```\nsudo mkdir -p /srv/progetto\nsudo setfacl -m g:sviluppo:rwX,u:ospite:rX /srv/progetto\nsudo setfacl -d -m g:sviluppo:rwX,u:ospite:rX /srv/progetto\n```\n`-d` imposta le ACL predefinite ereditate dai nuovi file; `X` dà l'esecuzione solo alle directory.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/setfacl.1.html"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs40"
+  },
+  {
+   "d": "utenti",
+   "pts": 6,
+   "title": "Utenti da LDAP",
+   "task": "Configura il sistema perché riconosca utenti e gruppi del server LDAP `ldap://ldap.academy.lan` con base `dc=academy,dc=lan`, usando SSSD, e crei la home al primo accesso.",
+   "check": "```\ngetent passwd utente-ldap\nid utente-ldap\n```",
+   "solution": "```\nsudo apt install -y sssd-ldap ldap-utils\n```\n`/etc/sssd/sssd.conf` (permessi 600):\n```\n[sssd]\ndomains = academy\nservices = nss, pam\n\n[domain/academy]\nid_provider = ldap\nauth_provider = ldap\nldap_uri = ldap://ldap.academy.lan\nldap_search_base = dc=academy,dc=lan\nldap_id_use_start_tls = true\ncache_credentials = true\n```\n```\nsudo chmod 600 /etc/sssd/sssd.conf\nsudo systemctl restart sssd\nsudo pam-auth-update --enable mkhomedir\n```\nSu RHEL si usa `authselect select sssd with-mkhomedir`.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/sssd/with-ldap/"
+   ],
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "id": "lfcs41"
+  }
+ ]
+}
