@@ -1,0 +1,467 @@
+{
+ "type": "practical",
+ "id": "rhce",
+ "title": "Red Hat Certified Advanced System Administrator in Ansible (EX294) · Simulazione pratica",
+ "lang": "it",
+ "format": {
+  "tasks": 15,
+  "tasksLabel": "circa 15-20",
+  "minutes": 240,
+  "passPct": 70,
+  "note": "L'esame reale è pratico, su RHEL 9 con Red Hat Ansible Automation Platform: si eseguono i playbook con ansible-navigator e ansible-playbook, si usano Git e VS Code con un dev container. I playbook vengono riapplicati su sistemi appena installati e verificati dopo un riavvio. Superare EX294 dà la credenziale Red Hat Certified Advanced System Administrator in Ansible; con l'RHCSA si ottiene RHCE in Ansible (l'RHCE in Enterprise Linux richiede invece EX342). Durata e pesi non sono pubblicati: quelli usati qui sono indicativi."
+ },
+ "domains": [
+  {
+   "id": "configurazione",
+   "name": "Configure Ansible and managed nodes",
+   "weight": 15
+  },
+  {
+   "id": "esecuzione",
+   "name": "Run playbooks, Git and VS Code",
+   "weight": 15
+  },
+  {
+   "id": "playbook",
+   "name": "Create plays and playbooks",
+   "weight": 25
+  },
+  {
+   "id": "ruoli",
+   "name": "Roles and Content Collections",
+   "weight": 15
+  },
+  {
+   "id": "automazione",
+   "name": "Automate RHCSA tasks with Ansible modules",
+   "weight": 20
+  },
+  {
+   "id": "contenuti",
+   "name": "Manage content: templates and Vault",
+   "weight": 10
+  }
+ ],
+ "tasks": [
+  {
+   "d": "configurazione",
+   "pts": 5,
+   "title": "Inventario statico con gruppi",
+   "task": "Crea `/home/studente/ansible/inventario` con: `web1` e `web2` nel gruppo `web`, `db1` nel gruppo `db`, `app1` nel gruppo `app`. Il gruppo `prod` contiene i gruppi `db` e `app`.",
+   "check": "```\nansible-navigator inventory -i inventario --graph -m stdout\nansible-inventory -i inventario --graph\n```",
+   "solution": "```\n[web]\nweb1\nweb2\n\n[db]\ndb1\n\n[app]\napp1\n\n[prod:children]\ndb\napp\n```\nNel laboratorio aggiungi a ogni host `ansible_host` e `ansible_port` come nel file `inventory.ini` fornito.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce01"
+  },
+  {
+   "d": "configurazione",
+   "pts": 5,
+   "title": "ansible.cfg del progetto",
+   "task": "Crea `/home/studente/ansible/ansible.cfg` che: usa l'inventario `./inventario`, si collega come utente `ansible`, usa la directory `./roles` per i ruoli e `./collections` per le collection, e diventa root con sudo senza chiedere la password.",
+   "check": "```\nansible-config dump --only-changed\nansible all -m command -a id   # uid=0 se usi -b; vedi become=True\n```",
+   "solution": "```\n[defaults]\ninventory = ./inventario\nremote_user = ansible\nroles_path = ./roles\ncollections_path = ./collections\nhost_key_checking = False\n\n[privilege_escalation]\nbecome = True\nbecome_method = sudo\nbecome_user = root\nbecome_ask_pass = False\n```\nAnsible usa il primo file trovato tra `ANSIBLE_CONFIG`, `./ansible.cfg`, `~/.ansible.cfg`, `/etc/ansible/ansible.cfg`.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/reference_appendices/config.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce02"
+  },
+  {
+   "d": "configurazione",
+   "pts": 5,
+   "title": "ansible-navigator.yml",
+   "task": "Crea `ansible-navigator.yml` nella directory del progetto in modo che: usi l'execution environment già presente in locale senza scaricarlo di nuovo, mostri l'output in modalità `stdout` e non salvi gli artefatti dei playbook.",
+   "check": "```\nansible-navigator settings --effective -m stdout | grep -E 'mode|policy|enable'\n```",
+   "solution": "```yaml\n---\nansible-navigator:\n  execution-environment:\n    pull:\n      policy: missing\n  mode: stdout\n  playbook-artifact:\n    enable: false\n```\nPer indicare un'immagine precisa si aggiunge `image:` sotto `execution-environment`. Senza EE disponibile, `enabled: false` usa l'Ansible installato localmente.",
+   "r": [
+    "https://ansible.readthedocs.io/projects/navigator/settings/"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce03"
+  },
+  {
+   "d": "configurazione",
+   "pts": 6,
+   "title": "Preparare i nodi gestiti",
+   "task": "Scrivi `utente-ansible.yml` che su tutti i nodi crea l'utente `automazione`, installa la tua chiave pubblica `~/.ssh/id_ed25519.pub` nelle sue chiavi autorizzate e gli concede sudo senza password tramite un file in `/etc/sudoers.d/`, validato prima di essere scritto.",
+   "check": "```\nansible all -u automazione -b -m command -a whoami   # root\n```",
+   "solution": "```yaml\n---\n- name: Utente per l'automazione\n  hosts: all\n  become: true\n  tasks:\n    - name: Utente automazione\n      ansible.builtin.user:\n        name: automazione\n        state: present\n\n    - name: Chiave autorizzata\n      ansible.posix.authorized_key:\n        user: automazione\n        key: \"{{ lookup('ansible.builtin.file', '~/.ssh/id_ed25519.pub') }}\"\n\n    - name: Sudo senza password\n      ansible.builtin.copy:\n        dest: /etc/sudoers.d/automazione\n        content: \"automazione ALL=(ALL) NOPASSWD: ALL\\n\"\n        mode: \"0440\"\n        validate: /usr/sbin/visudo -cf %s\n```\n`validate` controlla il file temporaneo prima di installarlo: un sudoers rotto non arriva mai sul nodo.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/collections/ansible/posix/authorized_key_module.html",
+    "https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce04"
+  },
+  {
+   "d": "configurazione",
+   "pts": 4,
+   "title": "Distribuire file",
+   "task": "Copia `files/motd` in `/etc/motd` su tutti i nodi del gruppo `web`, con proprietario root e permessi 0644; aggiungi in fondo a `/etc/hosts` di tutti i nodi la riga `192.168.60.50 repo.academy.lan` senza duplicarla.",
+   "check": "```\nansible web -m command -a 'cat /etc/motd'\nansible all -m command -a 'grep -c repo.academy.lan /etc/hosts'   # 1\n```",
+   "solution": "```yaml\n---\n- name: File di sistema\n  hosts: all\n  become: true\n  tasks:\n    - name: Messaggio del giorno\n      ansible.builtin.copy:\n        src: files/motd\n        dest: /etc/motd\n        owner: root\n        group: root\n        mode: \"0644\"\n      when: \"'web' in group_names\"\n\n    - name: Voce in /etc/hosts\n      ansible.builtin.lineinfile:\n        path: /etc/hosts\n        line: \"192.168.60.50 repo.academy.lan\"\n```\n`lineinfile` aggiunge la riga solo se manca: rieseguire il playbook non cambia nulla (idempotenza).",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce05"
+  },
+  {
+   "d": "esecuzione",
+   "pts": 4,
+   "title": "Eseguire con ansible-navigator",
+   "task": "Esegui `site.yml` con ansible-navigator in modalità stdout, prima in controllo (senza modifiche) mostrando le differenze, poi davvero.",
+   "check": "L'output finale mostra `failed=0` per ogni host e una seconda esecuzione `changed=0`.",
+   "solution": "```\nansible-navigator run site.yml -m stdout --check --diff\nansible-navigator run site.yml -m stdout\n```\nGli stessi argomenti valgono per `ansible-playbook site.yml --check --diff`. Con `--syntax-check` si controlla solo la sintassi.",
+   "r": [
+    "https://ansible.readthedocs.io/projects/navigator/subcommands/#run"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce06"
+  },
+  {
+   "d": "esecuzione",
+   "pts": 5,
+   "title": "Trovare un modulo e la sua documentazione",
+   "task": "Usa ansible-navigator per trovare in quale collection installata si trova il modulo `firewalld` e salva in `/home/studente/firewalld.txt` la sua documentazione in testo.",
+   "check": "```\nhead /home/studente/firewalld.txt\n```",
+   "solution": "```\nansible-navigator collections -m stdout\nansible-navigator doc ansible.posix.firewalld -m stdout > /home/studente/firewalld.txt\n```\nSenza navigator: `ansible-doc -l | grep firewalld` e `ansible-doc ansible.posix.firewalld`. All'esame non c'è Internet: la documentazione dei moduli è la tua fonte principale.",
+   "r": [
+    "https://ansible.readthedocs.io/projects/navigator/subcommands/#doc"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce07"
+  },
+  {
+   "d": "esecuzione",
+   "pts": 4,
+   "title": "Git: clonare e aggiungere",
+   "task": "Clona `http://git.academy.lan/automazione.git` in `/home/studente/automazione`, aggiungi il playbook `site.yml`, fai commit con messaggio `primo playbook` e invia al ramo `main`.",
+   "check": "```\ngit -C /home/studente/automazione log --oneline -1\ngit -C /home/studente/automazione status   # nulla da inviare\n```",
+   "solution": "```\ngit clone http://git.academy.lan/automazione.git /home/studente/automazione\ncd /home/studente/automazione\ncp ../ansible/site.yml .\ngit add site.yml\ngit commit -m \"primo playbook\"\ngit push origin main\n```\nSe Git chiede l'identità: `git config --global user.name` e `user.email`.",
+   "r": [
+    "https://git-scm.com/docs/git-clone"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce08"
+  },
+  {
+   "d": "esecuzione",
+   "pts": 4,
+   "title": "Playbook dal dev container di VS Code",
+   "task": "In VS Code, con l'estensione Ansible e il progetto aperto nel dev container Ansible, esegui `site.yml` con ansible-navigator dal terminale integrato e conferma che usa il tuo `ansible-navigator.yml`.",
+   "check": "Nel terminale integrato del container:\n```\nansible-navigator settings --effective -m stdout | grep -i 'mode'\nansible-navigator run site.yml -m stdout\n```",
+   "solution": "1. Apri la cartella e scegli **Reopen in Container** (la configurazione è in `.devcontainer/`).\n2. Apri il terminale integrato: i comandi vengono eseguiti dentro il container, dove ansible-navigator e ansible-lint sono installati.\n3. `ansible-navigator run site.yml -m stdout`.\n\nL'estensione Ansible segnala errori e suggerisce i nomi completi dei moduli (FQCN) mentre scrivi.",
+   "r": [
+    "https://docs.ansible.com/projects/vscode-ansible/"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce09"
+  },
+  {
+   "d": "esecuzione",
+   "pts": 4,
+   "title": "Comandi ad hoc",
+   "task": "Con comandi ad hoc: verifica la raggiungibilità di tutti i nodi, poi raccogli dal gruppo `rhel` solo i fatti sulla distribuzione.",
+   "check": "L'output mostra `pong` per ogni nodo e le chiavi `ansible_distribution*` per db1 e app1.",
+   "solution": "```\nansible all -m ansible.builtin.ping\nansible rhel -m ansible.builtin.setup -a 'filter=ansible_distribution*'\n```",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/collections/ansible/builtin/setup_module.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce10"
+  },
+  {
+   "d": "playbook",
+   "pts": 6,
+   "title": "Pacchetti e servizi con handler",
+   "task": "Scrivi `web.yml` per il gruppo `web`: installa `nginx`, distribuisci `files/index.html` in `/var/www/html/index.html`, assicura che nginx sia avviato e abilitato. Se cambia la configurazione `files/academy.conf` copiata in `/etc/nginx/conf.d/`, nginx va ricaricato solo in quel caso.",
+   "check": "```\nansible-navigator run web.yml -m stdout     # seconda esecuzione: changed=0\ncurl -s localhost:8091\n```",
+   "solution": "```yaml\n---\n- name: Server web\n  hosts: web\n  become: true\n  tasks:\n    - name: Pacchetto nginx\n      ansible.builtin.package:\n        name: nginx\n        state: present\n\n    - name: Pagina iniziale\n      ansible.builtin.copy:\n        src: files/index.html\n        dest: /var/www/html/index.html\n        mode: \"0644\"\n\n    - name: Configurazione\n      ansible.builtin.copy:\n        src: files/academy.conf\n        dest: /etc/nginx/conf.d/academy.conf\n        mode: \"0644\"\n      notify: Ricarica nginx\n\n    - name: Servizio attivo\n      ansible.builtin.service:\n        name: nginx\n        state: started\n        enabled: true\n\n  handlers:\n    - name: Ricarica nginx\n      ansible.builtin.service:\n        name: nginx\n        state: reloaded\n```\nGli handler girano una volta, alla fine del play, solo se notificati da un task che ha cambiato qualcosa.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_handlers.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce11"
+  },
+  {
+   "d": "playbook",
+   "pts": 6,
+   "title": "Registrare il risultato di un comando",
+   "task": "Scrivi `kernel.yml` che su tutti i nodi esegue `uname -r`, salva il risultato e scrive in `/root/kernel.txt` la riga `HOST: VERSIONE` (per esempio `web1: 6.8.0-45-generic`). Il task del comando non deve risultare mai `changed`.",
+   "check": "```\nansible all -b -m command -a 'cat /root/kernel.txt'\n```",
+   "solution": "```yaml\n---\n- name: Versione del kernel\n  hosts: all\n  become: true\n  tasks:\n    - name: Leggi la versione\n      ansible.builtin.command: uname -r\n      register: kernel\n      changed_when: false\n\n    - name: Scrivi il file\n      ansible.builtin.copy:\n        content: \"{{ inventory_hostname }}: {{ kernel.stdout }}\\n\"\n        dest: /root/kernel.txt\n        mode: \"0644\"\n```\n`register` salva stdout, stderr, rc e altro; `changed_when: false` dice ad Ansible che leggere non cambia il sistema.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html#registering-variables"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce12"
+  },
+  {
+   "d": "playbook",
+   "pts": 6,
+   "title": "Condizioni sui fatti",
+   "task": "Scrivi `pacchetti.yml` che installa `httpd` sui nodi della famiglia RedHat e `apache2` sui nodi della famiglia Debian, in un unico play per tutti i nodi.",
+   "check": "```\nansible rhel -m command -a 'rpm -q httpd'\nansible debian -m command -a 'dpkg -s apache2'\n```",
+   "solution": "```yaml\n---\n- name: Server web per famiglia\n  hosts: all\n  become: true\n  tasks:\n    - name: Installa httpd su RHEL\n      ansible.builtin.dnf:\n        name: httpd\n        state: present\n      when: ansible_facts['os_family'] == \"RedHat\"\n\n    - name: Installa apache2 su Debian/Ubuntu\n      ansible.builtin.apt:\n        name: apache2\n        state: present\n        update_cache: true\n      when: ansible_facts['os_family'] == \"Debian\"\n```\nIn alternativa un dizionario di variabili per famiglia e il modulo generico `package`.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_conditionals.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce13"
+  },
+  {
+   "d": "playbook",
+   "pts": 6,
+   "title": "Cicli e variabili",
+   "task": "Scrivi `utenti.yml` che crea su tutti i nodi gli utenti definiti in `vars/utenti.yml` (lista di dizionari con `nome`, `uid`, `gruppo`). Prima devono esistere i gruppi `sviluppo` e `operazioni`.",
+   "check": "```\nansible all -m command -a 'id marta'\n```",
+   "solution": "`vars/utenti.yml`:\n```yaml\n---\nutenti:\n  - nome: marta\n    uid: 3001\n    gruppo: sviluppo\n  - nome: piero\n    uid: 3002\n    gruppo: operazioni\n```\n`utenti.yml`:\n```yaml\n---\n- name: Utenti\n  hosts: all\n  become: true\n  vars_files:\n    - vars/utenti.yml\n  tasks:\n    - name: Gruppi\n      ansible.builtin.group:\n        name: \"{{ item }}\"\n        state: present\n      loop:\n        - sviluppo\n        - operazioni\n\n    - name: Utenti\n      ansible.builtin.user:\n        name: \"{{ item.nome }}\"\n        uid: \"{{ item.uid }}\"\n        groups: \"{{ item.gruppo }}\"\n        append: true\n      loop: \"{{ utenti }}\"\n```",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce14"
+  },
+  {
+   "d": "playbook",
+   "pts": 7,
+   "title": "Gestione degli errori con block",
+   "task": "Scrivi `aggiorna.yml` per il gruppo `app`: prova a installare il pacchetto `applicazione-academy`; se fallisce, scrivi `installazione fallita` in `/var/log/academy.log`; in ogni caso assicura che il servizio `crond` sia avviato.",
+   "check": "```\nansible app -b -m command -a 'cat /var/log/academy.log'\n```\nIl play termina con `failed=0` anche se il pacchetto non esiste (`rescued=1`).",
+   "solution": "```yaml\n---\n- name: Aggiornamento con ripiego\n  hosts: app\n  become: true\n  tasks:\n    - name: Installazione protetta\n      block:\n        - name: Pacchetto applicativo\n          ansible.builtin.dnf:\n            name: applicazione-academy\n            state: present\n      rescue:\n        - name: Annota il fallimento\n          ansible.builtin.lineinfile:\n            path: /var/log/academy.log\n            line: installazione fallita\n            create: true\n            mode: \"0644\"\n      always:\n        - name: Servizio crond attivo\n          ansible.builtin.service:\n            name: crond\n            state: started\n            enabled: true\n```",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_blocks.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce15"
+  },
+  {
+   "d": "playbook",
+   "pts": 5,
+   "title": "Fallire secondo una condizione",
+   "task": "Scrivi `memoria.yml` che fallisce in modo esplicito con il messaggio `memoria insufficiente` sui nodi con meno di 1024 MB di RAM, e su quelli adeguati stampa la RAM totale.",
+   "check": "L'output mostra il messaggio d'errore solo sui nodi piccoli.",
+   "solution": "```yaml\n---\n- name: Controllo memoria\n  hosts: all\n  tasks:\n    - name: Ferma i nodi piccoli\n      ansible.builtin.fail:\n        msg: memoria insufficiente\n      when: ansible_facts['memtotal_mb'] < 1024\n\n    - name: Mostra la RAM\n      ansible.builtin.debug:\n        msg: \"{{ inventory_hostname }} ha {{ ansible_facts['memtotal_mb'] }} MB\"\n```\nIn alternativa `ansible.builtin.assert` con `that:` e `fail_msg:`. Per un task che non deve fermare il play si usa `ignore_errors: true` o `failed_when`.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/collections/ansible/builtin/fail_module.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce16"
+  },
+  {
+   "d": "playbook",
+   "pts": 5,
+   "title": "Errore definito dall'output",
+   "task": "Il comando `/usr/local/bin/verifica.sh` esce sempre con 0, ma scrive `ERRORE` quando qualcosa non va. Fai fallire il task in quel caso.",
+   "check": "Con lo script che scrive `ERRORE`, il task risulta `failed`.",
+   "solution": "```yaml\n- name: Verifica\n  ansible.builtin.command: /usr/local/bin/verifica.sh\n  register: esito\n  changed_when: false\n  failed_when: \"'ERRORE' in esito.stdout\"\n```",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_error_handling.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce17"
+  },
+  {
+   "d": "playbook",
+   "pts": 5,
+   "title": "Fatti personalizzati",
+   "task": "Distribuisci su tutti i nodi il file di fatti locali `/etc/ansible/facts.d/academy.fact` con la sezione `[ruolo]` e la chiave `tipo` uguale al primo gruppo dell'host. Poi stampa il valore letto dai fatti.",
+   "check": "```\nansible all -m setup -a 'filter=ansible_local'\n```",
+   "solution": "```yaml\n---\n- name: Fatti locali\n  hosts: all\n  become: true\n  tasks:\n    - name: Directory dei fatti\n      ansible.builtin.file:\n        path: /etc/ansible/facts.d\n        state: directory\n        mode: \"0755\"\n\n    - name: File dei fatti\n      ansible.builtin.copy:\n        dest: /etc/ansible/facts.d/academy.fact\n        content: |\n          [ruolo]\n          tipo={{ group_names[0] }}\n        mode: \"0644\"\n\n    - name: Rileggi i fatti\n      ansible.builtin.setup:\n        filter: ansible_local\n\n    - name: Mostra\n      ansible.builtin.debug:\n        var: ansible_local.academy.ruolo.tipo\n```",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_vars_facts.html#facts-d-or-local-facts"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce18"
+  },
+  {
+   "d": "ruoli",
+   "pts": 6,
+   "title": "Creare un ruolo",
+   "task": "Crea il ruolo `apache` in `roles/` che installa httpd, distribuisce una pagina generata da template con il nome host e l'indirizzo IP, avvia e abilita il servizio. Usalo in `ruolo-web.yml` sui nodi `app`.",
+   "check": "```\ncurl -s localhost:8094   # contiene app1 e il suo IP\n```",
+   "solution": "```\nansible-galaxy role init roles/apache\n```\n`roles/apache/tasks/main.yml`:\n```yaml\n---\n- name: Pacchetto\n  ansible.builtin.dnf:\n    name: httpd\n    state: present\n\n- name: Pagina\n  ansible.builtin.template:\n    src: index.html.j2\n    dest: /var/www/html/index.html\n    mode: \"0644\"\n\n- name: Servizio\n  ansible.builtin.service:\n    name: httpd\n    state: started\n    enabled: true\n```\n`roles/apache/templates/index.html.j2`:\n```\nBenvenuto su {{ ansible_facts['fqdn'] }} ({{ ansible_facts['default_ipv4']['address'] }})\n```\n`ruolo-web.yml`:\n```yaml\n---\n- name: Web con ruolo\n  hosts: app\n  become: true\n  roles:\n    - apache\n```",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_roles.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce19"
+  },
+  {
+   "d": "ruoli",
+   "pts": 5,
+   "title": "Installare ruoli da requirements",
+   "task": "Installa in `roles/` i ruoli elencati in `roles/requirements.yml`: un ruolo da un archivio `http://repo.academy.lan/ruoli/fasi.tar.gz` chiamato `fasi` e un ruolo da Git `http://git.academy.lan/bilanciatore.git` chiamato `bilanciatore`.",
+   "check": "```\nansible-galaxy role list -p roles\n```",
+   "solution": "```yaml\n---\n- src: http://repo.academy.lan/ruoli/fasi.tar.gz\n  name: fasi\n- src: git+http://git.academy.lan/bilanciatore.git\n  name: bilanciatore\n```\n```\nansible-galaxy role install -r roles/requirements.yml -p roles\n```",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#installing-multiple-roles-from-a-file"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce20"
+  },
+  {
+   "d": "ruoli",
+   "pts": 5,
+   "title": "Installare collection",
+   "task": "Installa in `./collections` le collection `ansible.posix` e `community.general` dagli archivi presenti in `http://repo.academy.lan/collection/`, tramite `collections/requirements.yml`.",
+   "check": "```\nansible-galaxy collection list -p collections\n```",
+   "solution": "```yaml\n---\ncollections:\n  - name: http://repo.academy.lan/collection/ansible-posix-2.1.0.tar.gz\n    type: url\n  - name: http://repo.academy.lan/collection/community-general-11.4.0.tar.gz\n    type: url\n```\n```\nansible-galaxy collection install -r collections/requirements.yml -p collections\n```\nI nomi dei file dipendono dalle versioni disponibili nel repository dell'esame. Con accesso a Galaxy o ad Automation Hub basta `- name: ansible.posix`.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/collections_guide/collections_installing.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce21"
+  },
+  {
+   "d": "ruoli",
+   "pts": 6,
+   "title": "Ruolo di sistema: timesync",
+   "task": "Usa il ruolo di sistema `timesync` (collection `redhat.rhel_system_roles` o il pacchetto `rhel-system-roles`) per configurare su tutti i nodi `rhel` il server NTP `ntp.academy.lan` con iburst.",
+   "check": "```\nansible rhel -b -m command -a 'chronyc sources'\n```",
+   "solution": "```yaml\n---\n- name: Ora sincronizzata\n  hosts: rhel\n  become: true\n  vars:\n    timesync_ntp_servers:\n      - hostname: ntp.academy.lan\n        iburst: true\n  roles:\n    - redhat.rhel_system_roles.timesync\n```\nCon il pacchetto RPM il ruolo si chiama `rhel-system-roles.timesync` e la documentazione è in `/usr/share/doc/rhel-system-roles/`.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/automating_system_administration_by_using_rhel_system_roles/index"
+   ],
+   "ctx": "Laboratorio: VM RHEL-compatibili (Rocky/AlmaLinux 9). firewalld e SELinux non sono attivi nei container del laboratorio.",
+   "id": "rhce22"
+  },
+  {
+   "d": "ruoli",
+   "pts": 5,
+   "title": "Ruolo di sistema: selinux",
+   "task": "Con il ruolo di sistema `selinux` imposta la modalità enforcing e il booleano `httpd_can_network_connect` attivo in modo persistente sui nodi `rhel`.",
+   "check": "```\nansible rhel -b -m command -a 'getsebool httpd_can_network_connect'\n```",
+   "solution": "```yaml\n---\n- name: SELinux\n  hosts: rhel\n  become: true\n  vars:\n    selinux_state: enforcing\n    selinux_policy: targeted\n    selinux_booleans:\n      - name: httpd_can_network_connect\n        state: true\n        persistent: true\n  roles:\n    - redhat.rhel_system_roles.selinux\n```",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/automating_system_administration_by_using_rhel_system_roles/index"
+   ],
+   "ctx": "Laboratorio: VM RHEL-compatibili (Rocky/AlmaLinux 9). firewalld e SELinux non sono attivi nei container del laboratorio.",
+   "id": "rhce23"
+  },
+  {
+   "d": "automazione",
+   "pts": 6,
+   "title": "Repository e pacchetti",
+   "task": "Con un playbook configura su tutti i nodi `rhel` il repository `academy` (`http://repo.academy.lan/9/AppStream`, GPG attivo con chiave `http://repo.academy.lan/RPM-GPG-KEY-academy`) e installa il gruppo `Development Tools` e i pacchetti `php` e `mariadb`.",
+   "check": "```\nansible rhel -m command -a 'dnf repolist'\n```",
+   "solution": "```yaml\n---\n- name: Software\n  hosts: rhel\n  become: true\n  tasks:\n    - name: Repository\n      ansible.builtin.yum_repository:\n        name: academy\n        description: Academy AppStream\n        baseurl: http://repo.academy.lan/9/AppStream\n        gpgcheck: true\n        gpgkey: http://repo.academy.lan/RPM-GPG-KEY-academy\n        enabled: true\n\n    - name: Pacchetti\n      ansible.builtin.dnf:\n        name:\n          - \"@Development Tools\"\n          - php\n          - mariadb\n        state: present\n```",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_repository_module.html"
+   ],
+   "ctx": "Laboratorio: VM RHEL-compatibili (Rocky/AlmaLinux 9). firewalld e SELinux non sono attivi nei container del laboratorio.",
+   "id": "rhce24"
+  },
+  {
+   "d": "automazione",
+   "pts": 6,
+   "title": "Firewall e SELinux per un servizio",
+   "task": "Sui nodi `app` apri in modo permanente e immediato il servizio http, permetti a httpd di ascoltare sulla porta 82/tcp per SELinux e imposta il contesto `httpd_sys_content_t` su `/srv/sito`.",
+   "check": "```\nansible app -b -m command -a 'firewall-cmd --list-services'\nansible app -b -m command -a 'ls -Zd /srv/sito'\n```",
+   "solution": "```yaml\n---\n- name: Sicurezza del servizio web\n  hosts: app\n  become: true\n  tasks:\n    - name: Firewall\n      ansible.posix.firewalld:\n        service: http\n        permanent: true\n        immediate: true\n        state: enabled\n\n    - name: Porta SELinux\n      community.general.seport:\n        ports: 82\n        proto: tcp\n        setype: http_port_t\n        state: present\n\n    - name: Directory\n      ansible.builtin.file:\n        path: /srv/sito\n        state: directory\n        mode: \"0755\"\n\n    - name: Regola di contesto\n      community.general.sefcontext:\n        target: \"/srv/sito(/.*)?\"\n        setype: httpd_sys_content_t\n        state: present\n\n    - name: Applica il contesto\n      ansible.builtin.command: restorecon -Rv /srv/sito\n      register: rc\n      changed_when: rc.stdout | length > 0\n```",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/collections/ansible/posix/firewalld_module.html",
+    "https://docs.ansible.com/ansible/latest/collections/community/general/sefcontext_module.html"
+   ],
+   "ctx": "Laboratorio: VM RHEL-compatibili (Rocky/AlmaLinux 9). firewalld e SELinux non sono attivi nei container del laboratorio.",
+   "id": "rhce25"
+  },
+  {
+   "d": "automazione",
+   "pts": 7,
+   "title": "Storage: partizione, LVM e mount",
+   "task": "Scrivi `storage.yml` che sui nodi con un disco `vdb`: crea il VG `dati` su `/dev/vdb`, un LV `archivio` da 800 MiB (se il VG non ha spazio sufficiente, crealo da 500 MiB e stampa `dimensione ridotta`), lo formatta XFS e lo monta in `/archivio`. Sui nodi senza `vdb` stampa `disco assente`.",
+   "check": "```\nansible all -b -m command -a 'findmnt /archivio'\n```",
+   "solution": "```yaml\n---\n- name: Storage\n  hosts: all\n  become: true\n  tasks:\n    - name: Nessun disco\n      ansible.builtin.debug:\n        msg: disco assente\n      when: \"'vdb' not in ansible_facts['devices']\"\n\n    - name: Volumi\n      when: \"'vdb' in ansible_facts['devices']\"\n      block:\n        - name: Volume group\n          community.general.lvg:\n            vg: dati\n            pvs: /dev/vdb\n\n        - name: Volume logico da 800 MiB\n          block:\n            - name: LV grande\n              community.general.lvol:\n                vg: dati\n                lv: archivio\n                size: 800m\n          rescue:\n            - name: Avviso\n              ansible.builtin.debug:\n                msg: dimensione ridotta\n            - name: LV piccolo\n              community.general.lvol:\n                vg: dati\n                lv: archivio\n                size: 500m\n\n        - name: Filesystem\n          community.general.filesystem:\n            dev: /dev/dati/archivio\n            fstype: xfs\n\n        - name: Mount\n          ansible.posix.mount:\n            path: /archivio\n            src: /dev/dati/archivio\n            fstype: xfs\n            state: mounted\n```\n`state: mounted` monta subito e scrive `/etc/fstab`.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/collections/community/general/lvol_module.html",
+    "https://docs.ansible.com/ansible/latest/collections/ansible/posix/mount_module.html"
+   ],
+   "ctx": "Laboratorio: VM RHEL-compatibili (Rocky/AlmaLinux 9). firewalld e SELinux non sono attivi nei container del laboratorio.",
+   "id": "rhce26"
+  },
+  {
+   "d": "automazione",
+   "pts": 5,
+   "title": "Contenuto dei file",
+   "task": "Su tutti i nodi: in `/etc/ssh/sshd_config` imposta `PermitRootLogin no` sostituendo la riga esistente (anche se commentata), e aggiungi in `/etc/issue` un blocco delimitato con le righe `Sistema gestito da Ansible` e `Accesso riservato`.",
+   "check": "```\nansible all -b -m command -a 'grep ^PermitRootLogin /etc/ssh/sshd_config'\n```",
+   "solution": "```yaml\n---\n- name: Contenuto dei file\n  hosts: all\n  become: true\n  tasks:\n    - name: Niente root via SSH\n      ansible.builtin.lineinfile:\n        path: /etc/ssh/sshd_config\n        regexp: '^#?PermitRootLogin'\n        line: PermitRootLogin no\n        validate: /usr/sbin/sshd -t -f %s\n      notify: Riavvia ssh\n\n    - name: Banner\n      ansible.builtin.blockinfile:\n        path: /etc/issue\n        block: |\n          Sistema gestito da Ansible\n          Accesso riservato\n\n  handlers:\n    - name: Riavvia ssh\n      ansible.builtin.service:\n        name: \"{{ 'ssh' if ansible_facts['os_family'] == 'Debian' else 'sshd' }}\"\n        state: restarted\n```",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/collections/ansible/builtin/blockinfile_module.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce27"
+  },
+  {
+   "d": "automazione",
+   "pts": 5,
+   "title": "Archivi e pianificazione",
+   "task": "Sui nodi `db`: crea l'archivio `/backup/etc.tar.gz` di `/etc`, pianifica con cron per l'utente root un backup giornaliero alle 01:30 (`tar czf /backup/etc-$(date +\\%F).tar.gz /etc`) e un riavvio una tantum di `crond` fra 5 minuti con `at`.",
+   "check": "```\nansible db -b -m command -a 'crontab -l'\nansible db -b -m command -a 'atq'\n```",
+   "solution": "```yaml\n---\n- name: Backup\n  hosts: db\n  become: true\n  tasks:\n    - name: Directory\n      ansible.builtin.file:\n        path: /backup\n        state: directory\n        mode: \"0700\"\n\n    - name: Archivio\n      community.general.archive:\n        path: /etc\n        dest: /backup/etc.tar.gz\n        format: gz\n        mode: \"0600\"\n\n    - name: Backup giornaliero\n      ansible.builtin.cron:\n        name: backup etc\n        minute: \"30\"\n        hour: \"1\"\n        job: 'tar czf /backup/etc-$(date +\\%F).tar.gz /etc'\n\n    - name: Riavvio una tantum\n      ansible.posix.at:\n        command: systemctl restart crond\n        count: 5\n        units: minutes\n```\nIn crontab il carattere `%` va scritto `\\%`. Il pacchetto `at` deve essere installato e `atd` attivo.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/collections/ansible/builtin/cron_module.html",
+    "https://docs.ansible.com/ansible/latest/collections/community/general/archive_module.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce28"
+  },
+  {
+   "d": "automazione",
+   "pts": 5,
+   "title": "Utenti con password cifrate",
+   "task": "Crea su tutti i nodi l'utente `revisore` con password `Revisione2026!` memorizzata come hash SHA-512 e scadenza della password a 60 giorni.",
+   "check": "```\nansible all -b -m command -a 'chage -l revisore'\n```",
+   "solution": "```yaml\n---\n- name: Utente revisore\n  hosts: all\n  become: true\n  tasks:\n    - name: Utente\n      ansible.builtin.user:\n        name: revisore\n        password: \"{{ 'Revisione2026!' | password_hash('sha512', 'saleacademy') }}\"\n        password_expire_max: 60\n```\nIl modulo `user` vuole l'hash, non la password in chiaro. Il sale fisso evita che l'hash cambi a ogni esecuzione (idempotenza). Nella realtà la password va in un file cifrato con Vault.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/collections/ansible/builtin/user_module.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce29"
+  },
+  {
+   "d": "contenuti",
+   "pts": 6,
+   "title": "Template con cicli",
+   "task": "Genera su tutti i nodi `/etc/hosts.academy` con una riga `IP FQDN NOME` per ogni host dell'inventario, usando un template Jinja2 e i fatti di tutti gli host.",
+   "check": "```\nansible all -m command -a 'cat /etc/hosts.academy'   # quattro righe su ogni nodo\n```",
+   "solution": "`templates/hosts.j2`:\n```\n{% for host in groups['all'] %}\n{{ hostvars[host]['ansible_facts']['default_ipv4']['address'] }} {{ hostvars[host]['ansible_facts']['fqdn'] }} {{ hostvars[host]['ansible_facts']['hostname'] }}\n{% endfor %}\n```\n```yaml\n---\n- name: Raccogli i fatti\n  hosts: all\n  gather_facts: true\n\n- name: File hosts\n  hosts: all\n  become: true\n  tasks:\n    - name: Template\n      ansible.builtin.template:\n        src: templates/hosts.j2\n        dest: /etc/hosts.academy\n        mode: \"0644\"\n```\n`hostvars` contiene i fatti di un host solo se sono stati raccolti: per questo il primo play li raccoglie da tutti.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_templating.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce30"
+  },
+  {
+   "d": "contenuti",
+   "pts": 6,
+   "title": "Ansible Vault",
+   "task": "Crea il file cifrato `vars/segreti.yml` con la variabile `db_password: Segreta2026`, protetto dalla password contenuta in `.vault-pass` (non deve finire in Git). Usalo in un playbook che crea l'utente `dbadmin` con quella password, ed eseguilo senza digitare la password.",
+   "check": "```\nhead -1 vars/segreti.yml        # $ANSIBLE_VAULT;1.1;AES256\ngrep vault-pass .gitignore\n```",
+   "solution": "```\necho 'PasswordDelVault' > .vault-pass && chmod 600 .vault-pass\necho '.vault-pass' >> .gitignore\nansible-vault create --vault-password-file .vault-pass vars/segreti.yml\n```\n```yaml\n---\n- name: Utente database\n  hosts: db\n  become: true\n  vars_files:\n    - vars/segreti.yml\n  tasks:\n    - name: Utente dbadmin\n      ansible.builtin.user:\n        name: dbadmin\n        password: \"{{ db_password | password_hash('sha512', 'saledb') }}\"\n```\n```\nansible-navigator run db-utente.yml -m stdout --vault-password-file .vault-pass\n```\nIn alternativa `vault_password_file = .vault-pass` in `ansible.cfg`. `ansible-vault view`, `edit` e `rekey` gestiscono il file nel tempo.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/vault_guide/index.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce31"
+  },
+  {
+   "d": "contenuti",
+   "pts": 5,
+   "title": "Template con condizioni",
+   "task": "Genera `/etc/academy/ruolo.conf` che contiene `tipo=database` sui nodi del gruppo `db`, `tipo=web` su quelli del gruppo `web`, `tipo=altro` sugli altri.",
+   "check": "```\nansible all -m command -a 'cat /etc/academy/ruolo.conf'\n```",
+   "solution": "`templates/ruolo.conf.j2`:\n```\n{% if 'db' in group_names %}\ntipo=database\n{% elif 'web' in group_names %}\ntipo=web\n{% else %}\ntipo=altro\n{% endif %}\n```\nNel playbook: un task `file` per la directory `/etc/academy` e un task `template` con `src: templates/ruolo.conf.j2`.",
+   "r": [
+    "https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_templating.html"
+   ],
+   "ctx": "Laboratorio: `labs/ansible-lab` (nodi web1, web2, db1, app1). Lavora nella directory `/home/studente/ansible`.",
+   "id": "rhce32"
+  }
+ ]
+}

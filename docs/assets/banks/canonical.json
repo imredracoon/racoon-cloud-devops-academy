@@ -687,7 +687,7 @@
    ],
    "e": "update-grub regenerates /boot/grub/grub.cfg.",
    "r": [
-    "https://help.ubuntu.com/community/Grub2"
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/grub-mkconfig.8.html"
    ]
   },
   {
@@ -943,7 +943,7 @@
    ],
    "e": "Private keys must remain with their owners.",
    "r": [
-    "https://documentation.ubuntu.com/server/explanation/crypto/introduction-to-crypto-libraries/"
+    "https://documentation.ubuntu.com/server/how-to/security/install-a-root-ca-certificate-in-the-trust-store/"
    ]
   },
   {
@@ -1669,7 +1669,7 @@
    ],
    "e": "-w file.pcap saves the capture for analysis.",
    "r": [
-    "https://manpages.ubuntu.com/manpages/noble/en/man1/tcpdump.1.html"
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/tcpdump.8.html"
    ]
   },
   {
