@@ -10,6 +10,21 @@ pytest
 python app.py            # http://127.0.0.1:8000
 ```
 
+## Con i container (Fase 3)
+
+```bash
+cp .env.example .env     # e cambia la password
+docker compose up -d --build
+curl -s localhost:8080/health
+docker compose down      # i dati restano nel volume pgdata; con -v vengono cancellati
+```
+
+Lo stack comprende `proxy` (Nginx, porta 8080), `api` (Gunicorn) e `db` (PostgreSQL 17).
+
+| Variabile | Predefinito | Descrizione |
+|---|---|---|
+| `DATABASE_URL` | `sqlite:///tasks.db` | URL SQLAlchemy del database |
+
 | Metodo | Percorso | Descrizione |
 |---|---|---|
 | GET | `/health` | Stato dell'applicazione e del database |

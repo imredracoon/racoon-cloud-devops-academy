@@ -31,6 +31,11 @@ def create_app(database_url=None):
     db.init_app(app)
     with app.app_context():
         db.create_all()
+        # Con "gunicorn --preload" l'app viene creata una sola volta, prima dei worker: chiudiamo
+        # le connessioni perché i worker non le condividano. (Non con SQLite in memoria, usato
+        # dai test: chiudere la connessione cancellerebbe il database.)
+        if db.engine.url.database != ":memory:":
+            db.engine.dispose()
 
     @app.get("/health")
     def health():
