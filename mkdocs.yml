@@ -1,0 +1,255 @@
+site_name: Racoon Cloud & DevOps Academy
+site_description: >-
+  Corso gratuito e completo, in italiano, per diventare Cloud / DevOps Engineer
+  partendo da zero: lezioni, esercizi con soluzioni, laboratori riproducibili
+  e simulazioni d'esame per AWS, Google Cloud, Terraform, Kubernetes e Linux.
+site_url: https://imredracoon.github.io/racoon-cloud-devops-academy/
+repo_url: https://github.com/imredracoon/racoon-cloud-devops-academy
+repo_name: racoon-cloud-devops-academy
+edit_uri: edit/main/docs/
+copyright: Contenuti a cura della community di Racoon Cloud & DevOps Academy
+
+theme:
+  name: material
+  language: it
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - navigation.tracking
+    - navigation.instant
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/weather-night
+        name: Passa al tema scuro
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/weather-sunny
+        name: Passa al tema chiaro
+  icon:
+    logo: material/cloud-braces
+    repo: fontawesome/brands/github
+
+extra_css:
+  - assets/css/academy.css
+extra_javascript:
+  - assets/js/academy.js
+  - assets/js/exam.js
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search:
+      lang: it
+
+nav:
+  - Benvenuto:
+      - index.md
+      - Come funziona il corso: come-studiare.md
+      - Il percorso e le certificazioni: percorso.md
+      - Ambiente di laboratorio:
+          - ambiente/index.md
+          - Dev Container: ambiente/devcontainer.md
+          - Macchina virtuale Linux: ambiente/vm-linux.md
+          - Account cloud in sicurezza: ambiente/account-cloud.md
+      - Glossario: glossario.md
+      - Fonti ufficiali: fonti.md
+  - "Fase 0 · Fondamenta":
+      - fase-0/index.md
+      - "0.1 Come funziona un computer": fase-0/01-computer.md
+      - "0.2 Sistemi operativi e Linux": fase-0/02-sistemi-operativi.md
+      - "0.3 Reti e Internet: i concetti": fase-0/03-reti-concetti.md
+      - "0.4 Il terminale: primi passi": fase-0/04-terminale.md
+      - "0.5 Editor, file di testo e Markdown": fase-0/05-editor-markdown.md
+      - "0.6 Cloud, DevOps e i ruoli del mestiere": fase-0/06-cloud-devops.md
+      - "0.7 Laboratorio: prepara l'ambiente": fase-0/07-laboratorio.md
+      - "Progetto 0 · Laboratorio documentato": fase-0/progetto.md
+      - "Verifica di fine fase": fase-0/verifica.md
+  - "Fase 1 · Linux e reti":
+      - fase-1/index.md
+      - "1.1 Il filesystem": fase-1/01-filesystem.md
+      - "1.2 Lavorare con file e testo": fase-1/02-file-testo.md
+      - "1.3 Utenti, gruppi e permessi": fase-1/03-permessi.md
+      - "1.4 Processi e servizi con systemd": fase-1/04-processi-systemd.md
+      - "1.5 Pacchetti e software": fase-1/05-pacchetti.md
+      - "1.6 Dischi, filesystem e LVM": fase-1/06-storage.md
+      - "1.7 TCP/IP e indirizzamento": fase-1/07-tcpip.md
+      - "1.8 DNS, DHCP, routing e NAT": fase-1/08-dns-routing.md
+      - "1.9 Diagnostica di rete": fase-1/09-diagnostica.md
+      - "1.10 SSH e chiavi": fase-1/10-ssh.md
+      - "1.11 Firewall con nftables": fase-1/11-firewall.md
+      - "1.12 HTTP, TLS e Nginx": fase-1/12-http-nginx.md
+      - "1.13 Metodo di troubleshooting": fase-1/13-troubleshooting.md
+      - "Progetto 1 · Server web sicuro": fase-1/progetto.md
+      - "Verifica di fine fase": fase-1/verifica.md
+  - "Fase 2 · Automazione":
+      - fase-2/index.md
+      - "2.1 Git: i fondamenti": fase-2/01-git-base.md
+      - "2.2 Git: branch e collaborazione": fase-2/02-git-collaborazione.md
+      - "2.3 Bash: variabili e condizioni": fase-2/03-bash-base.md
+      - "2.4 Bash: cicli, funzioni e robustezza": fase-2/04-bash-avanzato.md
+      - "2.5 Pianificare i job": fase-2/05-pianificazione.md
+      - "2.6 Python: le basi": fase-2/06-python-base.md
+      - "2.7 Python per l'automazione": fase-2/07-python-automazione.md
+      - "2.8 API HTTP con Flask": fase-2/08-flask.md
+      - "Progetto 2 · Toolkit di automazione": fase-2/progetto.md
+      - "Verifica di fine fase": fase-2/verifica.md
+  - "Fase 3 · Container":
+      - fase-3/index.md
+      - "3.1 Cosa sono i container": fase-3/01-concetti.md
+      - "3.2 Immagini e container": fase-3/02-immagini-container.md
+      - "3.3 Dockerfile": fase-3/03-dockerfile.md
+      - "3.4 Volumi e reti": fase-3/04-volumi-reti.md
+      - "3.5 Docker Compose": fase-3/05-compose.md
+      - "3.6 Registry e sicurezza": fase-3/06-registry-sicurezza.md
+      - "Progetto 3 · Stack containerizzato": fase-3/progetto.md
+      - "Verifica di fine fase": fase-3/verifica.md
+  - "Fase 4 · Cloud":
+      - fase-4/index.md
+      - "4.1 Cos'è il cloud computing": fase-4/01-cloud-computing.md
+      - "4.2 Infrastruttura globale": fase-4/02-infrastruttura-globale.md
+      - "4.3 Account, progetti e fatturazione": fase-4/03-account.md
+      - "4.4 Identità e accessi (IAM)": fase-4/04-iam.md
+      - "4.5 Calcolo": fase-4/05-compute.md
+      - "4.6 Storage": fase-4/06-storage.md
+      - "4.7 Reti nel cloud": fase-4/07-rete.md
+      - "4.8 Database, analisi e AI": fase-4/08-database-ai.md
+      - "4.9 Costi, supporto e buone pratiche": fase-4/09-costi.md
+      - "4.10 Le CLI: aws e gcloud": fase-4/10-cli.md
+      - "Progetto 4 · Sito statico nel cloud": fase-4/progetto.md
+      - "Verifica di fine fase": fase-4/verifica.md
+  - "Fase 5 · Architetture":
+      - fase-5/index.md
+      - "5.1 Reti private e pubbliche": fase-5/01-vpc.md
+      - "5.2 Bilanciamento e scalabilità": fase-5/02-ha-scaling.md
+      - "5.3 Storage avanzato": fase-5/03-storage.md
+      - "5.4 Database gestiti": fase-5/04-database.md
+      - "5.5 Disaccoppiamento e messaggistica": fase-5/05-messaggistica.md
+      - "5.6 Sicurezza e crittografia": fase-5/06-sicurezza.md
+      - "5.7 DNS e distribuzione dei contenuti": fase-5/07-dns-cdn.md
+      - "5.8 Monitoraggio e audit": fase-5/08-monitoraggio.md
+      - "5.9 Container e serverless": fase-5/09-container-serverless.md
+      - "5.10 Progettare bene: framework e costi": fase-5/10-well-architected.md
+      - "Progetto 5 · Applicazione a tre livelli": fase-5/progetto.md
+      - "Verifica di fine fase": fase-5/verifica.md
+  - "Fase 6 · Terraform":
+      - fase-6/index.md
+      - "6.1 Infrastructure as Code": fase-6/01-iac.md
+      - "6.2 Provider e primo progetto": fase-6/02-primo-progetto.md
+      - "6.3 Il workflow": fase-6/03-workflow.md
+      - "6.4 Risorse, data source e dipendenze": fase-6/04-risorse.md
+      - "6.5 Variabili, output ed espressioni": fase-6/05-variabili.md
+      - "6.6 Lo state": fase-6/06-state.md
+      - "6.7 Moduli": fase-6/07-moduli.md
+      - "6.8 Dati sensibili e Vault": fase-6/08-segreti.md
+      - "6.9 HCP Terraform": fase-6/09-hcp.md
+      - "6.10 Configurare server con Ansible": fase-6/10-ansible.md
+      - "Progetto 6 · Infrastruttura come codice": fase-6/progetto.md
+      - "Verifica di fine fase": fase-6/verifica.md
+  - "Fase 7 · CI/CD e osservabilità":
+      - fase-7/index.md
+      - "7.1 Integrazione e rilascio continui": fase-7/01-concetti.md
+      - "7.2 GitHub Actions": fase-7/02-github-actions.md
+      - "7.3 Pipeline di build e test": fase-7/03-pipeline.md
+      - "7.4 Deploy sicuro con OIDC": fase-7/04-deploy-oidc.md
+      - "7.5 Osservabilità": fase-7/05-osservabilita.md
+      - "7.6 Metriche con Prometheus": fase-7/06-prometheus.md
+      - "7.7 Dashboard e alert con Grafana": fase-7/07-grafana.md
+      - "7.8 Log con Loki": fase-7/08-loki.md
+      - "Progetto 7 · Pipeline e osservabilità": fase-7/progetto.md
+      - "Verifica di fine fase": fase-7/verifica.md
+  - "Fase 8 · Kubernetes":
+      - fase-8/index.md
+      - "8.1 Architettura di Kubernetes": fase-8/01-architettura.md
+      - "8.2 kind e kubectl": fase-8/02-kubectl.md
+      - "8.3 Pod, namespace e label": fase-8/03-pod.md
+      - "8.4 Deployment e rollout": fase-8/04-deployment.md
+      - "8.5 Service e DNS": fase-8/05-service.md
+      - "8.6 ConfigMap e Secret": fase-8/06-config.md
+      - "8.7 Storage persistente": fase-8/07-storage.md
+      - "8.8 Scheduling e autoscaling": fase-8/08-scheduling.md
+      - "8.9 Ingress e Gateway API": fase-8/09-ingress.md
+      - "8.10 Network Policy": fase-8/10-networkpolicy.md
+      - "8.11 RBAC e service account": fase-8/11-rbac.md
+      - "8.12 Cluster con kubeadm": fase-8/12-kubeadm.md
+      - "8.13 Helm, Kustomize e operatori": fase-8/13-helm-kustomize.md
+      - "8.14 Troubleshooting": fase-8/14-troubleshooting.md
+      - "8.15 GitOps e Kubernetes nel cloud": fase-8/15-gitops-cloud.md
+      - "Progetto 8 · Cluster con GitOps": fase-8/progetto.md
+      - "Verifica di fine fase": fase-8/verifica.md
+  - Certificazioni:
+      - appendici/index.md
+      - "AWS Cloud Practitioner":
+          - appendici/aws-clf/index.md
+          - Argomenti specifici: appendici/aws-clf/argomenti.md
+          - Simulazione d'esame: appendici/aws-clf/simulazione.md
+      - "AWS Solutions Architect Associate":
+          - appendici/aws-saa/index.md
+          - Argomenti specifici: appendici/aws-saa/argomenti.md
+          - Simulazione d'esame: appendici/aws-saa/simulazione.md
+      - "Google Cloud Digital Leader":
+          - appendici/gcp-cdl/index.md
+          - Argomenti specifici: appendici/gcp-cdl/argomenti.md
+          - Simulazione d'esame: appendici/gcp-cdl/simulazione.md
+      - "Google Associate Cloud Engineer":
+          - appendici/gcp-ace/index.md
+          - Argomenti specifici: appendici/gcp-ace/argomenti.md
+          - Simulazione d'esame: appendici/gcp-ace/simulazione.md
+      - "Terraform Associate":
+          - appendici/terraform/index.md
+          - Argomenti specifici: appendici/terraform/argomenti.md
+          - Simulazione d'esame: appendici/terraform/simulazione.md
+      - "CKA":
+          - appendici/cka/index.md
+          - Argomenti specifici: appendici/cka/argomenti.md
+          - Simulazione pratica: appendici/cka/simulazione.md
+      - "LFCS (facoltativa)":
+          - appendici/lfcs/index.md
+          - Argomenti specifici: appendici/lfcs/argomenti.md
+          - Simulazione pratica: appendici/lfcs/simulazione.md
+      - I miei progressi: progressi.md
