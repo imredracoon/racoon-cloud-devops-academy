@@ -1,0 +1,2518 @@
+{
+ "id": "terraform-004",
+ "title": "HashiCorp Certified: Terraform Associate (004) · Practice exam",
+ "lang": "en",
+ "format": {
+  "questions": 57,
+  "minutes": 60,
+  "passPct": 70,
+  "note": "The real exam is online proctored, 1 hour, with multiple choice, multiple select, and other question types. It tests Terraform 1.12.",
+  "scoring": "HashiCorp does not publish the passing score. 70% here is an indicative target."
+ },
+ "domains": [
+  {
+   "id": "iac",
+   "name": "Infrastructure as Code with Terraform",
+   "weight": 8
+  },
+  {
+   "id": "fund",
+   "name": "Terraform fundamentals",
+   "weight": 14
+  },
+  {
+   "id": "workflow",
+   "name": "Core Terraform workflow",
+   "weight": 16
+  },
+  {
+   "id": "config",
+   "name": "Terraform configuration",
+   "weight": 22
+  },
+  {
+   "id": "modules",
+   "name": "Terraform modules",
+   "weight": 10
+  },
+  {
+   "id": "state",
+   "name": "Terraform state management",
+   "weight": 12
+  },
+  {
+   "id": "maintain",
+   "name": "Maintain infrastructure with Terraform",
+   "weight": 8
+  },
+  {
+   "id": "hcp",
+   "name": "HCP Terraform",
+   "weight": 10
+  }
+ ],
+ "questions": [
+  {
+   "id": "tf001",
+   "d": "iac",
+   "q": "What does Infrastructure as Code (IaC) mean?",
+   "o": [
+    "Defining infrastructure in machine-readable configuration files that can be versioned, reviewed, and applied automatically",
+    "Writing application code that runs on servers",
+    "Documenting infrastructure in a wiki",
+    "Configuring servers by hand through the cloud console"
+   ],
+   "a": [
+    0
+   ],
+   "e": "IaC manages infrastructure through code instead of manual processes.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/tutorials/aws-get-started/infrastructure-as-code"
+   ]
+  },
+  {
+   "id": "tf002",
+   "d": "iac",
+   "q": "Which are advantages of managing infrastructure with IaC?",
+   "o": [
+    "Changes can be reviewed and versioned in source control",
+    "Environments can be reproduced consistently",
+    "It removes the need to understand the underlying cloud services",
+    "It makes infrastructure free of charge",
+    "It guarantees that no human error is possible"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "IaC improves consistency, reviewability, and repeatability; it does not replace knowledge of the platform.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/tutorials/aws-get-started/infrastructure-as-code"
+   ]
+  },
+  {
+   "id": "tf003",
+   "d": "iac",
+   "q": "Terraform configuration is described as declarative. What does that mean?",
+   "o": [
+    "You describe the desired end state, and Terraform works out the actions needed to reach it",
+    "You write the exact sequence of API calls to make",
+    "Terraform only reads infrastructure and never changes it",
+    "Configuration must be written in a general-purpose programming language"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Terraform compares desired state with current state and plans the required changes.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/intro"
+   ]
+  },
+  {
+   "id": "tf004",
+   "d": "iac",
+   "q": "A company uses AWS, Google Cloud, and an on-premises VMware environment. Why can Terraform help?",
+   "o": [
+    "The same language and workflow can manage all of them through different providers",
+    "Terraform automatically migrates workloads between clouds",
+    "Terraform makes all clouds use the same API",
+    "Terraform only works with a single cloud per installation"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Providers translate the common workflow into each platform's API.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/intro/use-cases"
+   ]
+  },
+  {
+   "id": "tf005",
+   "d": "iac",
+   "q": "Which statement about Terraform being 'service-agnostic' is correct?",
+   "o": [
+    "Terraform can manage not only cloud infrastructure but also SaaS and other services, such as DNS, monitoring, and Git platforms, through providers",
+    "Terraform can only manage virtual machines",
+    "Terraform cannot manage services that have an API",
+    "Terraform requires every service to be from the same vendor"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Thousands of providers exist for many kinds of services.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/intro/use-cases"
+   ]
+  },
+  {
+   "id": "tf006",
+   "d": "iac",
+   "q": "Applying the same Terraform configuration twice without changes produces no new changes the second time. Which IaC property is this?",
+   "o": [
+    "Idempotence",
+    "Imperative execution",
+    "Mutability",
+    "Drift"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Terraform only proposes changes when the desired state differs from the current state.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/intro"
+   ]
+  },
+  {
+   "id": "tf007",
+   "d": "iac",
+   "q": "Why do teams typically store Terraform configuration in a version control system such as Git?",
+   "o": [
+    "To track history, review changes through pull requests, and roll back to previous configurations",
+    "Because Terraform cannot run otherwise",
+    "To store the state file safely",
+    "To speed up terraform apply"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Version control enables collaboration and auditing. The state file should be stored in a backend, not in Git.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/tutorials/aws-get-started/infrastructure-as-code"
+   ]
+  },
+  {
+   "id": "tf008",
+   "d": "iac",
+   "q": "Compared to clicking in a cloud console, what is a key benefit of IaC for disaster recovery?",
+   "o": [
+    "Infrastructure can be recreated quickly and consistently from code in another region or account",
+    "Backups are no longer needed",
+    "Data is automatically replicated",
+    "Recovery requires no testing"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Code describes the environment; data still needs its own backup strategy.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/tutorials/aws-get-started/infrastructure-as-code"
+   ]
+  },
+  {
+   "id": "tf009",
+   "d": "iac",
+   "q": "Which of these is a tool whose primary purpose is provisioning infrastructure across many platforms, rather than configuring software inside existing servers?",
+   "o": [
+    "Terraform",
+    "A shell history file",
+    "A text editor",
+    "A monitoring dashboard"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Terraform focuses on provisioning; configuration management tools such as Ansible focus on configuring systems.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/intro/use-cases"
+   ]
+  },
+  {
+   "id": "tf010",
+   "d": "fund",
+   "q": "Where should you declare which providers a configuration needs and their acceptable versions?",
+   "o": [
+    "In a required_providers block inside the terraform block",
+    "In the provider block with a version argument only",
+    "In terraform.tfvars",
+    "In the .terraform directory"
+   ],
+   "a": [
+    0
+   ],
+   "e": "required_providers declares source addresses and version constraints.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/providers/requirements"
+   ]
+  },
+  {
+   "id": "tf011",
+   "d": "fund",
+   "q": "What does the version constraint '~> 5.4' allow?",
+   "o": [
+    "Versions >= 5.4 and < 6.0",
+    "Only 5.4.0",
+    "Versions >= 5.4.0 and < 5.5.0",
+    "Any version newer than 5.4"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The pessimistic operator allows the rightmost specified component to increment.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/expressions/version-constraints"
+   ]
+  },
+  {
+   "id": "tf012",
+   "d": "fund",
+   "q": "What does the version constraint '~> 5.4.0' allow?",
+   "o": [
+    "Versions >= 5.4.0 and < 5.5.0",
+    "Versions >= 5.4.0 and < 6.0.0",
+    "Only 5.4.0",
+    "Any 5.x version"
+   ],
+   "a": [
+    0
+   ],
+   "e": "With three components, only the patch version may increase.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/expressions/version-constraints"
+   ]
+  },
+  {
+   "id": "tf013",
+   "d": "fund",
+   "q": "What is the purpose of the .terraform.lock.hcl file?",
+   "o": [
+    "It records the exact provider versions and checksums selected, so every run uses the same versions",
+    "It locks the state during apply",
+    "It stores secrets",
+    "It lists the modules to download"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The dependency lock file should be committed to version control.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/files/dependency-lock"
+   ]
+  },
+  {
+   "id": "tf014",
+   "d": "fund",
+   "q": "A colleague wants to move to a newer provider version allowed by the constraints, ignoring the version recorded in the lock file. Which command should they run?",
+   "o": [
+    "terraform init -upgrade",
+    "terraform apply -upgrade",
+    "terraform providers update",
+    "terraform validate -upgrade"
+   ],
+   "a": [
+    0
+   ],
+   "e": "init -upgrade selects the newest versions allowed by constraints and updates the lock file.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/init"
+   ]
+  },
+  {
+   "id": "tf015",
+   "d": "fund",
+   "q": "What is the source address of the official AWS provider?",
+   "o": [
+    "hashicorp/aws",
+    "terraform/aws",
+    "aws/terraform",
+    "registry/aws-official"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Provider source addresses have the form [hostname/]namespace/type; the default hostname is registry.terraform.io.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/providers/requirements"
+   ]
+  },
+  {
+   "id": "tf016",
+   "d": "fund",
+   "q": "How does Terraform interact with cloud platforms?",
+   "o": [
+    "Through providers, plugins that translate Terraform resources into API calls for each platform",
+    "Through SSH connections to every server",
+    "Through a single universal API",
+    "By editing the cloud provider's database directly"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Providers implement resource types and data sources.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/providers"
+   ]
+  },
+  {
+   "id": "tf017",
+   "d": "fund",
+   "q": "You need to create resources in two AWS regions in the same configuration. What should you do?",
+   "o": [
+    "Define two provider blocks, one with an alias, and set provider = aws.ALIAS on the resources of the second region",
+    "Run Terraform twice with different environment variables",
+    "Use count on the provider",
+    "It is not possible in one configuration"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Aliases allow multiple configurations of the same provider.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/providers/configuration"
+   ]
+  },
+  {
+   "id": "tf018",
+   "d": "fund",
+   "q": "Which statement about provider plugins is correct?",
+   "o": [
+    "terraform init downloads the required providers into the working directory (or uses a plugin cache)",
+    "Providers are built into the Terraform binary",
+    "Providers are downloaded during terraform apply",
+    "Providers must be compiled from source by the user"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Providers are separate plugins installed during init.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/init"
+   ]
+  },
+  {
+   "id": "tf019",
+   "d": "fund",
+   "q": "A configuration uses the AWS, Kubernetes, and Helm providers together. Which statements are correct?",
+   "o": [
+    "Each provider is declared in required_providers and configured with its own provider block",
+    "Resources of different providers can reference each other's attributes",
+    "Only one provider can be used per configuration",
+    "Providers must all come from the same company",
+    "Using multiple providers requires HCP Terraform"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "Cross-provider references are common, for example passing a cluster endpoint to the Kubernetes provider.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/providers/configuration"
+   ]
+  },
+  {
+   "id": "tf020",
+   "d": "fund",
+   "q": "What is the main purpose of Terraform state?",
+   "o": [
+    "To map resources in the configuration to real-world objects and track metadata",
+    "To store the source code of modules",
+    "To store provider binaries",
+    "To encrypt variables"
+   ],
+   "a": [
+    0
+   ],
+   "e": "State binds configuration to real resources and improves performance.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/state/purpose"
+   ]
+  },
+  {
+   "id": "tf021",
+   "d": "fund",
+   "q": "Which statement about secrets in Terraform state is correct?",
+   "o": [
+    "State can contain sensitive values in plain text, so it must be stored securely, for example in an encrypted remote backend with restricted access",
+    "Terraform never writes sensitive values to state",
+    "Marking a variable sensitive removes it from state",
+    "State is always encrypted by Terraform itself"
+   ],
+   "a": [
+    0
+   ],
+   "e": "sensitive = true only hides values in CLI output.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/state/sensitive-data"
+   ]
+  },
+  {
+   "id": "tf022",
+   "d": "fund",
+   "q": "Where does Terraform store state by default if no backend is configured?",
+   "o": [
+    "In a terraform.tfstate file in the working directory (local backend)",
+    "In HCP Terraform",
+    "In memory only",
+    "In the .terraform.lock.hcl file"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The local backend is the default.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/backend/local"
+   ]
+  },
+  {
+   "id": "tf023",
+   "d": "fund",
+   "q": "Before refreshing or planning, why does Terraform compare state with the real infrastructure?",
+   "o": [
+    "To detect changes made outside Terraform and propose actions based on the current situation",
+    "To download providers",
+    "To format the configuration",
+    "To push state to Git"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Plan refreshes state by default and then compares with the configuration.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/plan"
+   ]
+  },
+  {
+   "id": "tf024",
+   "d": "fund",
+   "q": "Can you use a provider that is not published by HashiCorp?",
+   "o": [
+    "Yes, partner and community providers are published in the Terraform Registry with their own namespaces",
+    "No, only HashiCorp providers are allowed",
+    "Only with HCP Terraform",
+    "Only if it is written in HCL"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The Registry contains official, partner, and community providers.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/providers"
+   ]
+  },
+  {
+   "id": "tf025",
+   "d": "fund",
+   "q": "Which statement about provider-defined functions is correct?",
+   "o": [
+    "Since Terraform 1.8 providers can offer functions called with the syntax provider::NAME::FUNCTION",
+    "Users can define their own functions in HCL",
+    "Functions can only come from modules",
+    "Terraform has no built-in functions"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Terraform does not support user-defined functions in HCL, but providers can contribute functions.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/functions#provider-defined-functions"
+   ]
+  },
+  {
+   "id": "tf026",
+   "d": "workflow",
+   "q": "What is the core Terraform workflow?",
+   "o": [
+    "Write, plan, apply",
+    "Plan, write, destroy",
+    "Init, push, merge",
+    "Validate, import, delete"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Write configuration, preview changes with plan, and apply them.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/intro/core-workflow"
+   ]
+  },
+  {
+   "id": "tf027",
+   "d": "workflow",
+   "q": "Which command must you run first in a new working directory, or after adding a provider or module?",
+   "o": [
+    "terraform init",
+    "terraform plan",
+    "terraform apply",
+    "terraform fmt"
+   ],
+   "a": [
+    0
+   ],
+   "e": "init configures the backend and installs providers and modules.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/init"
+   ]
+  },
+  {
+   "id": "tf028",
+   "d": "workflow",
+   "q": "What does terraform init do?",
+   "o": [
+    "Initializes the backend",
+    "Downloads providers and modules",
+    "Creates the infrastructure",
+    "Formats the code",
+    "Deletes the state"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "init prepares the working directory; it does not create infrastructure.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/init"
+   ]
+  },
+  {
+   "id": "tf029",
+   "d": "workflow",
+   "q": "What does terraform validate check?",
+   "o": [
+    "That the configuration is syntactically valid and internally consistent, without contacting remote services",
+    "That the plan has no changes",
+    "That the cloud credentials are valid",
+    "That the state matches real infrastructure"
+   ],
+   "a": [
+    0
+   ],
+   "e": "validate is useful in CI; it requires an initialized directory but does not access remote state or APIs.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/validate"
+   ]
+  },
+  {
+   "id": "tf030",
+   "d": "workflow",
+   "q": "You want to save a plan and apply exactly that plan later in the pipeline. Which commands do this?",
+   "o": [
+    "terraform plan -out=tfplan and then terraform apply tfplan",
+    "terraform plan > tfplan and terraform apply < tfplan",
+    "terraform apply -save",
+    "terraform show -plan"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Applying a saved plan does not prompt and does not recalculate.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/plan"
+   ]
+  },
+  {
+   "id": "tf031",
+   "d": "workflow",
+   "q": "What does terraform apply do when run without a saved plan?",
+   "o": [
+    "It creates a new plan, shows it, and asks for confirmation before applying",
+    "It applies without showing anything",
+    "It only refreshes state",
+    "It fails because a plan file is required"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Use -auto-approve to skip confirmation, typically only in automation.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/apply"
+   ]
+  },
+  {
+   "id": "tf032",
+   "d": "workflow",
+   "q": "A plan shows '-/+' next to a resource. What does it mean?",
+   "o": [
+    "The resource will be destroyed and recreated (replaced)",
+    "The resource will be updated in place",
+    "The resource will be imported",
+    "The resource will be read only"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Replacement happens when an argument that cannot be updated in place changes.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/plan"
+   ]
+  },
+  {
+   "id": "tf033",
+   "d": "workflow",
+   "q": "A plan shows '~' next to a resource. What does it mean?",
+   "o": [
+    "The resource will be updated in place",
+    "The resource will be destroyed",
+    "The resource will be created",
+    "The resource will be moved to another state"
+   ],
+   "a": [
+    0
+   ],
+   "e": "+ create, - destroy, ~ update in place, -/+ replace.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/plan"
+   ]
+  },
+  {
+   "id": "tf034",
+   "d": "workflow",
+   "q": "Which command destroys all resources managed by the current configuration and state?",
+   "o": [
+    "terraform destroy",
+    "terraform delete",
+    "terraform remove -all",
+    "terraform state rm -all"
+   ],
+   "a": [
+    0
+   ],
+   "e": "destroy is an alias for terraform apply -destroy.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/destroy"
+   ]
+  },
+  {
+   "id": "tf035",
+   "d": "workflow",
+   "q": "You want to preview what terraform destroy would do without destroying anything. What should you run?",
+   "o": [
+    "terraform plan -destroy",
+    "terraform destroy -dry-run",
+    "terraform validate -destroy",
+    "terraform show -destroy"
+   ],
+   "a": [
+    0
+   ],
+   "e": "plan -destroy creates a speculative destroy plan.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/plan"
+   ]
+  },
+  {
+   "id": "tf036",
+   "d": "workflow",
+   "q": "A virtual machine is misbehaving and you want Terraform to recreate it on the next apply, although the configuration did not change. What is the recommended way?",
+   "o": [
+    "terraform apply -replace=ADDRESS",
+    "terraform taint ADDRESS (the preferred modern way)",
+    "Delete the state file",
+    "terraform destroy -target with no further step"
+   ],
+   "a": [
+    0
+   ],
+   "e": "-replace replaced the deprecated taint command.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/plan"
+   ]
+  },
+  {
+   "id": "tf037",
+   "d": "workflow",
+   "q": "What does terraform fmt do?",
+   "o": [
+    "Rewrites configuration files to the canonical format and style",
+    "Validates provider credentials",
+    "Formats the state file",
+    "Converts JSON to HCL"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Use fmt -check in CI and -recursive for subdirectories.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/fmt"
+   ]
+  },
+  {
+   "id": "tf038",
+   "d": "workflow",
+   "q": "In a CI pipeline, you want the job to fail if any file is not formatted, without changing files. Which command?",
+   "o": [
+    "terraform fmt -check -recursive",
+    "terraform fmt -write=true",
+    "terraform validate -fmt",
+    "terraform plan -fmt"
+   ],
+   "a": [
+    0
+   ],
+   "e": "-check returns a non-zero exit code if formatting is needed.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/fmt"
+   ]
+  },
+  {
+   "id": "tf039",
+   "d": "workflow",
+   "q": "When should -target be used with plan or apply?",
+   "o": [
+    "Only in exceptional situations, such as recovering from errors, because it can leave configuration and state inconsistent",
+    "For every daily change",
+    "To speed up all applies in production",
+    "To apply changes to multiple workspaces"
+   ],
+   "a": [
+    0
+   ],
+   "e": "HashiCorp recommends using -target only for exceptional circumstances.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/plan"
+   ]
+  },
+  {
+   "id": "tf040",
+   "d": "workflow",
+   "q": "Which options make terraform plan exit with a code that distinguishes 'no changes' from 'changes present', useful in automation?",
+   "o": [
+    "-detailed-exitcode",
+    "-compact-warnings",
+    "-input=false",
+    "-lock=false"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Exit code 0 no changes, 1 error, 2 changes present.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/plan"
+   ]
+  },
+  {
+   "id": "tf041",
+   "d": "workflow",
+   "q": "In automation, you want Terraform to fail instead of prompting for missing variable values. Which flag?",
+   "o": [
+    "-input=false",
+    "-auto-approve",
+    "-lock=false",
+    "-refresh=false"
+   ],
+   "a": [
+    0
+   ],
+   "e": "-input=false disables interactive prompts.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/plan"
+   ]
+  },
+  {
+   "id": "tf042",
+   "d": "workflow",
+   "q": "Which statements about terraform plan are correct?",
+   "o": [
+    "It does not change real infrastructure",
+    "It refreshes the state in memory by default to compare it with the configuration",
+    "It permanently deletes resources removed from configuration",
+    "It downloads providers",
+    "It is required before every terraform destroy"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "Plan is a preview; apply makes changes.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/plan"
+   ]
+  },
+  {
+   "id": "tf043",
+   "d": "workflow",
+   "q": "Which style conventions does HashiCorp recommend?",
+   "o": [
+    "Two-space indentation and aligned equals signs, as produced by terraform fmt",
+    "Use snake_case names for resources and variables",
+    "Use tabs for indentation",
+    "Put all configuration in a single line",
+    "Use CamelCase resource names"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "See the style guide.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/style"
+   ]
+  },
+  {
+   "id": "tf044",
+   "d": "workflow",
+   "q": "What happens to resources when you remove their block from the configuration and run terraform apply?",
+   "o": [
+    "Terraform plans to destroy them",
+    "Nothing, they are kept and forgotten",
+    "They are moved to another state",
+    "Terraform fails"
+   ],
+   "a": [
+    0
+   ],
+   "e": "To stop managing without destroying, use a removed block with destroy = false.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/resources/syntax#removing-resources"
+   ]
+  },
+  {
+   "id": "tf045",
+   "d": "workflow",
+   "q": "Which command shows a human-readable version of a saved plan file or of the current state?",
+   "o": [
+    "terraform show",
+    "terraform output",
+    "terraform console",
+    "terraform graph"
+   ],
+   "a": [
+    0
+   ],
+   "e": "terraform show can also produce JSON with -json.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/show"
+   ]
+  },
+  {
+   "id": "tf046",
+   "d": "workflow",
+   "q": "What does 'terraform apply -refresh-only' do?",
+   "o": [
+    "Updates the state to match real infrastructure without changing infrastructure",
+    "Recreates all resources",
+    "Formats the code",
+    "Applies only to resources marked refresh"
+   ],
+   "a": [
+    0
+   ],
+   "e": "It replaced the deprecated terraform refresh command.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/refresh"
+   ]
+  },
+  {
+   "id": "tf047",
+   "d": "config",
+   "q": "What is the difference between a resource block and a data block?",
+   "o": [
+    "A resource creates and manages an object; a data source only reads information about an existing object",
+    "They are identical",
+    "Data blocks create objects; resources only read",
+    "Data blocks are only for variables"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Data sources let configuration use information defined elsewhere.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/data-sources"
+   ]
+  },
+  {
+   "id": "tf048",
+   "d": "config",
+   "q": "You need the ID of the latest Ubuntu AMI published by Canonical to use in an aws_instance. What should you use?",
+   "o": [
+    "A data source such as aws_ami with filters",
+    "A resource aws_ami",
+    "A local value with a hard-coded ID forever",
+    "An output block"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Data sources query existing objects.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/data-sources"
+   ]
+  },
+  {
+   "id": "tf049",
+   "d": "config",
+   "q": "How do you reference the id attribute of resource aws_vpc named main?",
+   "o": [
+    "aws_vpc.main.id",
+    "resource.aws_vpc.main.id",
+    "var.aws_vpc.main",
+    "${aws_vpc}.main.id"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Resource references use TYPE.NAME.ATTRIBUTE.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/expressions/references"
+   ]
+  },
+  {
+   "id": "tf050",
+   "d": "config",
+   "q": "How do you reference an attribute of a data source aws_caller_identity named current?",
+   "o": [
+    "data.aws_caller_identity.current.account_id",
+    "aws_caller_identity.current.account_id",
+    "var.current.account_id",
+    "local.aws_caller_identity"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Data sources are referenced with the data. prefix.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/expressions/references"
+   ]
+  },
+  {
+   "id": "tf051",
+   "d": "config",
+   "q": "Which statement about implicit dependencies is correct?",
+   "o": [
+    "When a resource references another resource's attribute, Terraform creates them in the correct order automatically",
+    "Terraform creates resources in the order they appear in files",
+    "Every dependency must be declared with depends_on",
+    "Dependencies are only supported inside modules"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Terraform builds a dependency graph from references.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/meta-arguments/depends_on"
+   ]
+  },
+  {
+   "id": "tf052",
+   "d": "config",
+   "q": "When should you use depends_on?",
+   "o": [
+    "When a dependency exists that Terraform cannot infer from references, for example a hidden dependency on an IAM policy",
+    "For every resource",
+    "To order variables",
+    "To speed up apply"
+   ],
+   "a": [
+    0
+   ],
+   "e": "depends_on is a last resort for hidden dependencies.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/meta-arguments/depends_on"
+   ]
+  },
+  {
+   "id": "tf053",
+   "d": "config",
+   "q": "Several values are provided for the same input variable. Which source has the HIGHEST precedence?",
+   "o": [
+    "-var or -var-file on the command line",
+    "terraform.tfvars",
+    "*.auto.tfvars files",
+    "TF_VAR_ environment variables"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Order (lowest to highest): environment variables, terraform.tfvars, terraform.tfvars.json, *.auto.tfvars, then -var/-var-file in order given.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/values/variables"
+   ]
+  },
+  {
+   "id": "tf054",
+   "d": "config",
+   "q": "Which source has the LOWEST precedence for input variable values (besides the default)?",
+   "o": [
+    "Environment variables TF_VAR_name",
+    "terraform.tfvars",
+    "*.auto.tfvars",
+    "-var on the command line"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Environment variables are evaluated first and overridden by files and CLI flags.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/values/variables"
+   ]
+  },
+  {
+   "id": "tf055",
+   "d": "config",
+   "q": "How is the value of 'variable \"region\" {}' set through an environment variable?",
+   "o": [
+    "export TF_VAR_region=eu-west-1",
+    "export TERRAFORM_REGION=eu-west-1",
+    "export VAR_region=eu-west-1",
+    "export TF_region=eu-west-1"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Terraform reads TF_VAR_ followed by the variable name.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/values/variables"
+   ]
+  },
+  {
+   "id": "tf056",
+   "d": "config",
+   "q": "What does 'sensitive = true' on an output do?",
+   "o": [
+    "Hides the value in CLI output, but the value is still stored in state",
+    "Encrypts the value in state",
+    "Removes the output from state",
+    "Prevents other modules from using it"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Protect the state itself.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/values/outputs"
+   ]
+  },
+  {
+   "id": "tf057",
+   "d": "config",
+   "q": "Which command prints a single output value without quotes, useful in shell scripts?",
+   "o": [
+    "terraform output -raw NAME",
+    "terraform show NAME",
+    "terraform state get NAME",
+    "terraform console -output NAME"
+   ],
+   "a": [
+    0
+   ],
+   "e": "-json prints all outputs as JSON.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/output"
+   ]
+  },
+  {
+   "id": "tf058",
+   "d": "config",
+   "q": "What is the purpose of a locals block?",
+   "o": [
+    "To name expressions so they can be reused in a module without repeating them",
+    "To accept input from users",
+    "To export values to other configurations",
+    "To store state"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Local values are like a function's temporary variables.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/values/locals"
+   ]
+  },
+  {
+   "id": "tf059",
+   "d": "config",
+   "q": "Which type constraint describes a value like {name = \"web\", port = 80}, with named attributes of different types?",
+   "o": [
+    "object({ name = string, port = number })",
+    "list(string)",
+    "map(string)",
+    "set(number)"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Objects have a fixed set of named attributes, each with its own type.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/expressions/type-constraints"
+   ]
+  },
+  {
+   "id": "tf060",
+   "d": "config",
+   "q": "What is the difference between a list and a set?",
+   "o": [
+    "A list is ordered and allows duplicates; a set is unordered and contains unique values",
+    "They are identical",
+    "A set is ordered; a list is not",
+    "Lists can only contain strings"
+   ],
+   "a": [
+    0
+   ],
+   "e": "for_each accepts sets of strings or maps.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/expressions/type-constraints"
+   ]
+  },
+  {
+   "id": "tf061",
+   "d": "config",
+   "q": "Which statement about a tuple type is correct?",
+   "o": [
+    "It is a sequence where each element can have a different, specific type, such as tuple([string, number])",
+    "It is an unordered collection of unique strings",
+    "It is a map with string keys",
+    "It is a type for secrets"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Tuples are structural types like objects, but positional.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/expressions/type-constraints"
+   ]
+  },
+  {
+   "id": "tf062",
+   "d": "config",
+   "q": "You need to create one IAM user for each name in var.users (a set of strings) and later remove a user in the middle without affecting the others. What should you use?",
+   "o": [
+    "for_each = var.users, referencing each.key",
+    "count = length(var.users), referencing count.index",
+    "A dynamic block",
+    "depends_on"
+   ],
+   "a": [
+    0
+   ],
+   "e": "With count, removing an element in the middle shifts indices and causes replacements; for_each uses stable keys.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/meta-arguments/for_each"
+   ]
+  },
+  {
+   "id": "tf063",
+   "d": "config",
+   "q": "What can for_each iterate over in a resource block?",
+   "o": [
+    "A map or a set of strings",
+    "Only a list of numbers",
+    "Any string",
+    "Only a number"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Convert a list with toset() if needed.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/meta-arguments/for_each"
+   ]
+  },
+  {
+   "id": "tf064",
+   "d": "config",
+   "q": "What does a dynamic block do?",
+   "o": [
+    "Generates repeated nested blocks (such as ingress rules) from a collection",
+    "Creates multiple resources",
+    "Makes a resource optional",
+    "Imports existing resources"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Dynamic blocks are for nested blocks inside a resource; overuse reduces readability.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/expressions/dynamic-blocks"
+   ]
+  },
+  {
+   "id": "tf065",
+   "d": "config",
+   "q": "Which expression returns a list of the ids of all instances created with count in aws_instance.web?",
+   "o": [
+    "aws_instance.web[*].id",
+    "aws_instance.web.id",
+    "aws_instance.web.all.id",
+    "aws_instance[*].web.id"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The splat expression collects an attribute from every element.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/expressions/splat"
+   ]
+  },
+  {
+   "id": "tf066",
+   "d": "config",
+   "q": "Which expression creates a resource only when var.enabled is true?",
+   "o": [
+    "count = var.enabled ? 1 : 0",
+    "count = var.enabled",
+    "enabled = var.enabled",
+    "depends_on = var.enabled"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Conditional expressions are often used with count.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/expressions/conditionals"
+   ]
+  },
+  {
+   "id": "tf067",
+   "d": "config",
+   "q": "Which expression transforms a list of names into a list of uppercase names?",
+   "o": [
+    "[for n in var.names : upper(n)]",
+    "upper(var.names)",
+    "for_each upper(var.names)",
+    "map(upper, var.names)"
+   ],
+   "a": [
+    0
+   ],
+   "e": "for expressions transform collections.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/expressions/for"
+   ]
+  },
+  {
+   "id": "tf068",
+   "d": "config",
+   "q": "Which tool lets you experiment with expressions and functions interactively?",
+   "o": [
+    "terraform console",
+    "terraform fmt",
+    "terraform validate",
+    "terraform output"
+   ],
+   "a": [
+    0
+   ],
+   "e": "terraform console evaluates expressions against the current state.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/console"
+   ]
+  },
+  {
+   "id": "tf069",
+   "d": "config",
+   "q": "Which function calculates a subnet address range from a VPC CIDR, such as the third /24 in 10.0.0.0/16?",
+   "o": [
+    "cidrsubnet(\"10.0.0.0/16\", 8, 2)",
+    "cidrhost(\"10.0.0.0/16\", 2)",
+    "subnet(\"10.0.0.0/16\", 24)",
+    "split(\"10.0.0.0/16\", 2)"
+   ],
+   "a": [
+    0
+   ],
+   "e": "cidrsubnet(prefix, newbits, netnum).",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/functions"
+   ]
+  },
+  {
+   "id": "tf070",
+   "d": "config",
+   "q": "Which function renders a file with variables, such as a cloud-init script?",
+   "o": [
+    "templatefile(path, vars)",
+    "file(path, vars)",
+    "format(path)",
+    "jsondecode(path)"
+   ],
+   "a": [
+    0
+   ],
+   "e": "file() reads a file as-is; templatefile() renders a template.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/functions"
+   ]
+  },
+  {
+   "id": "tf071",
+   "d": "config",
+   "q": "Which function combines two maps, with values of the second overriding the first?",
+   "o": [
+    "merge(map1, map2)",
+    "concat(map1, map2)",
+    "join(map1, map2)",
+    "zipmap(map1, map2)"
+   ],
+   "a": [
+    0
+   ],
+   "e": "concat works on lists; merge on maps or objects.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/functions"
+   ]
+  },
+  {
+   "id": "tf072",
+   "d": "config",
+   "q": "You want to reject values of var.environment other than dev, staging, or prod before any plan is computed. What should you add?",
+   "o": [
+    "A validation block in the variable, with condition and error_message",
+    "A precondition on every resource",
+    "A check block",
+    "An output"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Variable validation runs when values are assigned.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/values/variables"
+   ]
+  },
+  {
+   "id": "tf073",
+   "d": "config",
+   "q": "What happens when a check block assertion fails?",
+   "o": [
+    "Terraform reports a warning, but the plan or apply continues",
+    "The apply is blocked and rolled back",
+    "The resource is destroyed",
+    "The state is deleted"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Check blocks validate infrastructure without blocking operations; preconditions and postconditions block.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/checks"
+   ]
+  },
+  {
+   "id": "tf074",
+   "d": "config",
+   "q": "You want apply to fail if the AMI selected by a data source is not for x86_64 architecture, before creating the instance. What should you use?",
+   "o": [
+    "A precondition in the lifecycle block of the resource",
+    "A check block",
+    "An output",
+    "terraform fmt"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Preconditions are evaluated before the resource is planned; postconditions after.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/expressions/custom-conditions"
+   ]
+  },
+  {
+   "id": "tf075",
+   "d": "config",
+   "q": "Which lifecycle arguments exist?",
+   "o": [
+    "create_before_destroy",
+    "prevent_destroy",
+    "ignore_changes",
+    "auto_rollback",
+    "skip_on_error"
+   ],
+   "a": [
+    0,
+    1,
+    2
+   ],
+   "e": "replace_triggered_by, precondition, and postcondition also exist in lifecycle.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle"
+   ]
+  },
+  {
+   "id": "tf076",
+   "d": "config",
+   "q": "Tags on an instance are modified by an external tool and you do not want Terraform to revert them. What should you add?",
+   "o": [
+    "lifecycle { ignore_changes = [tags] }",
+    "lifecycle { prevent_destroy = true }",
+    "depends_on = [tags]",
+    "sensitive = true"
+   ],
+   "a": [
+    0
+   ],
+   "e": "ignore_changes tells Terraform to ignore differences for those attributes.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle"
+   ]
+  },
+  {
+   "id": "tf077",
+   "d": "config",
+   "q": "A database must never be destroyed accidentally by Terraform. What should you add?",
+   "o": [
+    "lifecycle { prevent_destroy = true }",
+    "lifecycle { create_before_destroy = true }",
+    "count = 1",
+    "sensitive = true"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Plans that would destroy the resource fail with an error.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle"
+   ]
+  },
+  {
+   "id": "tf078",
+   "d": "config",
+   "q": "Which practices reduce the risk of leaking secrets with Terraform?",
+   "o": [
+    "Read secrets at runtime from a secrets manager such as Vault instead of hard-coding them",
+    "Use ephemeral resources and write-only arguments, which are not persisted in plan or state",
+    "Commit terraform.tfvars with passwords to Git",
+    "Print passwords as non-sensitive outputs",
+    "Store state in a public bucket"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "Since Terraform 1.10/1.11, ephemeral values and write-only arguments help keep secrets out of state.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/resources/ephemeral",
+    "https://developer.hashicorp.com/terraform/language/resources/ephemeral/write-only",
+    "https://registry.terraform.io/providers/hashicorp/vault/latest/docs"
+   ]
+  },
+  {
+   "id": "tf079",
+   "d": "config",
+   "q": "Which statement about ephemeral resources is correct?",
+   "o": [
+    "They provide temporary values, such as a secret read from Vault, that Terraform never stores in plan or state",
+    "They are resources destroyed after each apply",
+    "They are the same as data sources",
+    "They are only available in HCP Terraform"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Ephemeral resources were introduced in Terraform 1.10.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/resources/ephemeral"
+   ]
+  },
+  {
+   "id": "tf080",
+   "d": "config",
+   "q": "Which statement about 'sensitive = true' on a variable is correct?",
+   "o": [
+    "Terraform redacts the value in plan and apply output, but it can still be stored in state",
+    "The value is not stored anywhere",
+    "The value is encrypted with Vault",
+    "The value cannot be used in resources"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Use ephemeral values to avoid persistence.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/values/variables"
+   ]
+  },
+  {
+   "id": "tf081",
+   "d": "modules",
+   "q": "What is a Terraform module?",
+   "o": [
+    "A container for multiple resources used together; every configuration has at least the root module",
+    "A provider plugin",
+    "A state file",
+    "A workspace"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Modules organize and reuse configuration.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/modules"
+   ]
+  },
+  {
+   "id": "tf082",
+   "d": "modules",
+   "q": "Which module sources does Terraform support?",
+   "o": [
+    "Local paths",
+    "The Terraform Registry and private registries",
+    "Git repositories",
+    "Docker Hub images",
+    "Email attachments"
+   ],
+   "a": [
+    0,
+    1,
+    2
+   ],
+   "e": "HTTP URLs and object storage (S3, GCS) are also supported.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/modules/sources"
+   ]
+  },
+  {
+   "id": "tf083",
+   "d": "modules",
+   "q": "When can you use the version argument in a module block?",
+   "o": [
+    "When the module comes from a module registry (public or private)",
+    "With any source, including local paths",
+    "Only for Git sources",
+    "Never"
+   ],
+   "a": [
+    0
+   ],
+   "e": "For Git sources, pin a version with ?ref=tag.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/modules/syntax"
+   ]
+  },
+  {
+   "id": "tf084",
+   "d": "modules",
+   "q": "How do you pin a module from a Git repository to the tag v1.3.0?",
+   "o": [
+    "source = \"git::https://example.com/net.git?ref=v1.3.0\"",
+    "version = \"1.3.0\" with a Git source",
+    "source = \"git::https://example.com/net.git\" tag = \"v1.3.0\"",
+    "It is not possible"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The ref query parameter selects a branch, tag, or commit.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/modules/sources"
+   ]
+  },
+  {
+   "id": "tf085",
+   "d": "modules",
+   "q": "What is the source format of a public Terraform Registry module?",
+   "o": [
+    "NAMESPACE/NAME/PROVIDER, for example terraform-aws-modules/vpc/aws",
+    "PROVIDER/NAME",
+    "https://registry/NAME.zip",
+    "NAME@VERSION"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Registry modules use a three-part address.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/registry/modules/use"
+   ]
+  },
+  {
+   "id": "tf086",
+   "d": "modules",
+   "q": "A child module needs the VPC ID created in the root module. How do you pass it?",
+   "o": [
+    "Declare an input variable in the child module and set it in the module block",
+    "The child module automatically sees all root resources",
+    "Use a global variable",
+    "Reference aws_vpc.main directly in the child module"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Modules only see their own variables, locals, and resources.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/modules/develop"
+   ]
+  },
+  {
+   "id": "tf087",
+   "d": "modules",
+   "q": "How does the root module use a value created inside a child module named network?",
+   "o": [
+    "The child module declares an output, and the root references module.network.OUTPUT_NAME",
+    "The root references network.aws_subnet.a.id directly",
+    "Through terraform.tfvars",
+    "It is not possible"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Outputs are the interface of a module.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/modules/develop"
+   ]
+  },
+  {
+   "id": "tf088",
+   "d": "modules",
+   "q": "After adding a new module block, which command must you run before plan?",
+   "o": [
+    "terraform init (or terraform get) to install the module",
+    "terraform fmt",
+    "terraform validate only",
+    "terraform import"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Modules are installed in .terraform/modules.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/init"
+   ]
+  },
+  {
+   "id": "tf089",
+   "d": "modules",
+   "q": "A child module needs to use a non-default provider configuration, such as aws.west. How do you pass it?",
+   "o": [
+    "Use the providers argument in the module block: providers = { aws = aws.west }",
+    "Modules cannot use aliased providers",
+    "Declare a new provider block with credentials inside the module",
+    "Set the region with an environment variable only"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Reusable modules should not contain provider configurations; they receive them from the caller.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/modules/develop/providers"
+   ]
+  },
+  {
+   "id": "tf090",
+   "d": "modules",
+   "q": "Which statement about module input variables and scope is correct?",
+   "o": [
+    "Variables declared in a module are only accessible inside that module",
+    "Variables of the root module are automatically visible in all child modules",
+    "Child module variables can be set with TF_VAR_ directly",
+    "Outputs of a module are global"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Each module has its own namespace.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/modules/develop"
+   ]
+  },
+  {
+   "id": "tf091",
+   "d": "modules",
+   "q": "Which practices are recommended when consuming modules from a registry?",
+   "o": [
+    "Pin versions with constraints and upgrade deliberately",
+    "Review the module's inputs, outputs, and documentation",
+    "Always use the latest version without constraints in production",
+    "Copy modules into state",
+    "Modify the downloaded files in .terraform/modules"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "Pinning avoids unexpected changes.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/registry/modules/use"
+   ]
+  },
+  {
+   "id": "tf092",
+   "d": "modules",
+   "q": "Can you use count or for_each on a module block?",
+   "o": [
+    "Yes, to create multiple instances of a module",
+    "No, only on resources",
+    "Only count",
+    "Only for local modules"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Module instances are referenced as module.NAME[KEY].",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/modules/syntax"
+   ]
+  },
+  {
+   "id": "tf093",
+   "d": "modules",
+   "q": "Where can a company publish modules for internal use only, with versioning?",
+   "o": [
+    "The HCP Terraform private registry (or a Git repository with tags)",
+    "The public Terraform Registry only",
+    "The state file",
+    "The .terraform.lock.hcl file"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Private registries support versions and discovery.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cloud-docs/registry"
+   ]
+  },
+  {
+   "id": "tf094",
+   "d": "modules",
+   "q": "What is the recommended minimal structure of a reusable module?",
+   "o": [
+    "main.tf, variables.tf, outputs.tf, and a README",
+    "A single file named module.hcl",
+    "terraform.tfstate and main.tf",
+    "Only provider blocks"
+   ],
+   "a": [
+    0
+   ],
+   "e": "This is the standard module structure.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/modules/develop"
+   ]
+  },
+  {
+   "id": "tf095",
+   "d": "state",
+   "q": "What is the default backend and where does it store state?",
+   "o": [
+    "The local backend, in terraform.tfstate on the local filesystem",
+    "The s3 backend",
+    "HCP Terraform",
+    "The remote backend in a Git repository"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Local state is fine for learning but not for teams.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/backend/local"
+   ]
+  },
+  {
+   "id": "tf096",
+   "d": "state",
+   "q": "Why is local state a problem for a team?",
+   "o": [
+    "Each person has a different copy, there is no locking, and the file may be lost or contain secrets on laptops",
+    "Local state is slower",
+    "Local state cannot store outputs",
+    "Local state requires HCP Terraform"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Remote backends provide shared state, locking, and protection.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/backend"
+   ]
+  },
+  {
+   "id": "tf097",
+   "d": "state",
+   "q": "What is the purpose of state locking?",
+   "o": [
+    "To prevent two operations from writing to the same state at the same time",
+    "To encrypt the state",
+    "To lock provider versions",
+    "To prevent resources from being destroyed"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Locking happens automatically on supported backends for operations that write state.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/state/locking"
+   ]
+  },
+  {
+   "id": "tf098",
+   "d": "state",
+   "q": "A previous run crashed and the state lock remained. After verifying no other run is active, what should you do?",
+   "o": [
+    "terraform force-unlock LOCK_ID",
+    "Delete the state file",
+    "terraform init -reconfigure",
+    "terraform state rm"
+   ],
+   "a": [
+    0
+   ],
+   "e": "force-unlock removes a stuck lock; use with care.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/force-unlock"
+   ]
+  },
+  {
+   "id": "tf099",
+   "d": "state",
+   "q": "Which statement about the backend block is correct?",
+   "o": [
+    "It cannot use input variables or locals; values can be supplied with partial configuration via -backend-config",
+    "It can reference resources",
+    "It can use var.region directly",
+    "It is defined in terraform.tfvars"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Backend configuration is evaluated before variables.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/backend"
+   ]
+  },
+  {
+   "id": "tf100",
+   "d": "state",
+   "q": "With the S3 backend in recent Terraform versions, how can state locking be enabled without DynamoDB?",
+   "o": [
+    "use_lockfile = true, which uses S3 native lock files",
+    "lock = \"s3\"",
+    "dynamodb_table is always required",
+    "S3 does not support locking"
+   ],
+   "a": [
+    0
+   ],
+   "e": "S3 native locking was introduced in Terraform 1.10; DynamoDB-based locking is deprecated.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/backend/s3"
+   ]
+  },
+  {
+   "id": "tf101",
+   "d": "state",
+   "q": "You changed the backend configuration from local to a remote backend. What should you run?",
+   "o": [
+    "terraform init -migrate-state",
+    "terraform apply -backend",
+    "terraform state push only",
+    "terraform workspace new"
+   ],
+   "a": [
+    0
+   ],
+   "e": "init detects the change and offers to migrate state.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/init"
+   ]
+  },
+  {
+   "id": "tf102",
+   "d": "state",
+   "q": "Which backend supports state locking natively in Google Cloud?",
+   "o": [
+    "gcs",
+    "http without lock endpoints",
+    "local on a shared NFS disk",
+    "None"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The gcs backend supports locking.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/backend/gcs"
+   ]
+  },
+  {
+   "id": "tf103",
+   "d": "state",
+   "q": "Another team's configuration needs the VPC ID output by your configuration. What can they use?",
+   "o": [
+    "The terraform_remote_state data source (or, better, a data source of the provider or a shared parameter store)",
+    "Copy your state file into their repository",
+    "Reference your resources directly",
+    "Use the same working directory"
+   ],
+   "a": [
+    0
+   ],
+   "e": "terraform_remote_state reads root module outputs; it requires read access to the whole state.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/state/remote-state-data"
+   ]
+  },
+  {
+   "id": "tf104",
+   "d": "state",
+   "q": "What is resource drift?",
+   "o": [
+    "A difference between real infrastructure and what Terraform's state and configuration expect, often caused by manual changes",
+    "A provider version change",
+    "A module moved to another folder",
+    "A slow plan"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Drift is detected during refresh and plan.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/tutorials/state/resource-drift"
+   ]
+  },
+  {
+   "id": "tf105",
+   "d": "state",
+   "q": "Someone changed a security group manually. You want to accept the change into state without modifying infrastructure, then update the code. What do you run?",
+   "o": [
+    "terraform apply -refresh-only",
+    "terraform apply -replace",
+    "terraform destroy",
+    "terraform fmt"
+   ],
+   "a": [
+    0
+   ],
+   "e": "refresh-only updates state to match reality; then align the configuration.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/refresh"
+   ]
+  },
+  {
+   "id": "tf106",
+   "d": "state",
+   "q": "Someone changed a security group manually, and you want to restore the configuration's version. What do you do?",
+   "o": [
+    "Run terraform plan and apply: Terraform proposes changes to bring the resource back to the configuration",
+    "Run terraform apply -refresh-only",
+    "Delete the state",
+    "Run terraform validate"
+   ],
+   "a": [
+    0
+   ],
+   "e": "A normal plan detects drift and reverts it.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/tutorials/state/resource-drift"
+   ]
+  },
+  {
+   "id": "tf107",
+   "d": "state",
+   "q": "What are CLI workspaces in Terraform Community Edition?",
+   "o": [
+    "Separate state instances for the same configuration and backend, such as default and test",
+    "Separate folders with different code",
+    "HCP Terraform projects",
+    "Git branches"
+   ],
+   "a": [
+    0
+   ],
+   "e": "terraform.workspace returns the current workspace name.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/workspaces"
+   ]
+  },
+  {
+   "id": "tf108",
+   "d": "state",
+   "q": "Which commands manage CLI workspaces?",
+   "o": [
+    "terraform workspace new test",
+    "terraform workspace select test",
+    "terraform workspace push test",
+    "terraform workspace lock test",
+    "terraform workspace apply"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "list, show, and delete also exist.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/workspaces"
+   ]
+  },
+  {
+   "id": "tf109",
+   "d": "state",
+   "q": "Which flag reconfigures the backend ignoring existing configuration, without migrating state?",
+   "o": [
+    "terraform init -reconfigure",
+    "terraform init -migrate-state",
+    "terraform init -upgrade",
+    "terraform init -backend=false"
+   ],
+   "a": [
+    0
+   ],
+   "e": "-reconfigure disregards saved backend configuration.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/init"
+   ]
+  },
+  {
+   "id": "tf110",
+   "d": "state",
+   "q": "Should the state file be committed to Git?",
+   "o": [
+    "No: it can contain secrets and conflicts arise; use a remote backend",
+    "Yes, always",
+    "Only in public repositories",
+    "Only the lock file of state"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Commit .terraform.lock.hcl, not terraform.tfstate.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/state/sensitive-data"
+   ]
+  },
+  {
+   "id": "tf111",
+   "d": "maintain",
+   "q": "Existing resources were created manually. You want Terraform to manage them with a reviewable, plannable process. What is recommended?",
+   "o": [
+    "Add import blocks with the resource address and id, then run plan and apply",
+    "Delete and recreate them",
+    "Edit the state file manually",
+    "Use terraform taint"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Import blocks (Terraform 1.5+) make import part of the plan workflow.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/import"
+   ]
+  },
+  {
+   "id": "tf112",
+   "d": "maintain",
+   "q": "You have import blocks but no resource configuration yet. Which command can generate it for you?",
+   "o": [
+    "terraform plan -generate-config-out=generated.tf",
+    "terraform import -write",
+    "terraform show -generate",
+    "terraform fmt -import"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Generated configuration should be reviewed and cleaned.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/import/generating-configuration"
+   ]
+  },
+  {
+   "id": "tf113",
+   "d": "maintain",
+   "q": "Which command lists all resources tracked in the state?",
+   "o": [
+    "terraform state list",
+    "terraform show -list",
+    "terraform output -all",
+    "terraform providers"
+   ],
+   "a": [
+    0
+   ],
+   "e": "state show ADDRESS displays one resource's attributes.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/state"
+   ]
+  },
+  {
+   "id": "tf114",
+   "d": "maintain",
+   "q": "You renamed a resource in configuration from aws_instance.web to aws_instance.app. How do you avoid Terraform destroying and recreating it?",
+   "o": [
+    "Add a moved block from aws_instance.web to aws_instance.app",
+    "Run terraform apply -replace",
+    "Delete the state",
+    "Rename it back"
+   ],
+   "a": [
+    0
+   ],
+   "e": "moved blocks are reviewable; terraform state mv also works but is not in code.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/moved"
+   ]
+  },
+  {
+   "id": "tf115",
+   "d": "maintain",
+   "q": "You want Terraform to stop managing a resource without destroying it. What is the declarative way?",
+   "o": [
+    "A removed block with lifecycle { destroy = false }",
+    "Delete the resource from the cloud console",
+    "terraform destroy -target",
+    "terraform apply -refresh-only"
+   ],
+   "a": [
+    0
+   ],
+   "e": "terraform state rm is the imperative alternative.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/resources/syntax#removing-resources"
+   ]
+  },
+  {
+   "id": "tf116",
+   "d": "maintain",
+   "q": "Which commands inspect state without modifying it?",
+   "o": [
+    "terraform state list",
+    "terraform state show ADDRESS",
+    "terraform state rm ADDRESS",
+    "terraform state mv A B",
+    "terraform force-unlock"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "rm and mv modify state.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/state"
+   ]
+  },
+  {
+   "id": "tf117",
+   "d": "maintain",
+   "q": "Terraform behaves unexpectedly and you need detailed logs. What do you set?",
+   "o": [
+    "TF_LOG=DEBUG (or TRACE) and optionally TF_LOG_PATH to write logs to a file",
+    "TERRAFORM_VERBOSE=1",
+    "terraform apply -verbose",
+    "TF_DEBUG=true"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Levels: TRACE, DEBUG, INFO, WARN, ERROR; JSON outputs TRACE in JSON.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/internals/debugging"
+   ]
+  },
+  {
+   "id": "tf118",
+   "d": "maintain",
+   "q": "You suspect a problem in a provider, not in Terraform core. How can you increase logging only for providers?",
+   "o": [
+    "Set TF_LOG_PROVIDER",
+    "Set TF_LOG_CORE only",
+    "Use terraform validate -debug",
+    "Use -compact-warnings"
+   ],
+   "a": [
+    0
+   ],
+   "e": "TF_LOG_CORE and TF_LOG_PROVIDER control the two components separately.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/internals/debugging"
+   ]
+  },
+  {
+   "id": "tf119",
+   "d": "maintain",
+   "q": "Which command outputs the dependency graph in DOT format?",
+   "o": [
+    "terraform graph",
+    "terraform show -graph",
+    "terraform plan -graph",
+    "terraform providers graph"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The output can be rendered with Graphviz.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/graph"
+   ]
+  },
+  {
+   "id": "tf120",
+   "d": "maintain",
+   "q": "With import blocks, can you import several resources using for_each?",
+   "o": [
+    "Yes, since Terraform 1.7 import blocks support for_each",
+    "No, only one per command",
+    "Only with HCP Terraform",
+    "Only with the CLI terraform import"
+   ],
+   "a": [
+    0
+   ],
+   "e": "This simplifies importing many similar resources.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/import"
+   ]
+  },
+  {
+   "id": "tf121",
+   "d": "maintain",
+   "q": "What should you do after importing resources?",
+   "o": [
+    "Run terraform plan and adjust configuration until plan shows no unexpected changes",
+    "Delete the import blocks before apply",
+    "Run terraform destroy",
+    "Commit the state file to Git"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Import brings objects into state; configuration must match them.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/language/import"
+   ]
+  },
+  {
+   "id": "tf122",
+   "d": "hcp",
+   "q": "What is HCP Terraform?",
+   "o": [
+    "HashiCorp's managed service that runs Terraform remotely with shared state, collaboration, and governance features",
+    "A Terraform provider for HashiCorp products",
+    "A plugin that formats code",
+    "A local backend"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Formerly Terraform Cloud.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cloud-docs"
+   ]
+  },
+  {
+   "id": "tf123",
+   "d": "hcp",
+   "q": "How do you authenticate the Terraform CLI with HCP Terraform?",
+   "o": [
+    "terraform login",
+    "terraform auth",
+    "terraform init -login",
+    "export HCP_PASSWORD"
+   ],
+   "a": [
+    0
+   ],
+   "e": "login obtains an API token and stores it in the CLI credentials file.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/commands/login"
+   ]
+  },
+  {
+   "id": "tf124",
+   "d": "hcp",
+   "q": "Which block connects a configuration to HCP Terraform for CLI-driven runs?",
+   "o": [
+    "The cloud block inside the terraform block, with organization and workspaces",
+    "A provider \"hcp\" block",
+    "A backend \"local\" block",
+    "A module named cloud"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The cloud block replaced the remote backend as the preferred integration.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cli/cloud/settings"
+   ]
+  },
+  {
+   "id": "tf125",
+   "d": "hcp",
+   "q": "In HCP Terraform, what does a workspace contain?",
+   "o": [
+    "The state, variables, run history, and settings for one configuration's infrastructure",
+    "Only Git credentials",
+    "Only a list of users",
+    "Provider binaries"
+   ],
+   "a": [
+    0
+   ],
+   "e": "HCP Terraform workspaces differ from CLI workspaces.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cloud-docs/workspaces"
+   ]
+  },
+  {
+   "id": "tf126",
+   "d": "hcp",
+   "q": "How are HCP Terraform workspaces grouped to organize permissions and settings?",
+   "o": [
+    "Projects",
+    "Folders",
+    "Modules",
+    "Providers"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Projects group workspaces; teams can be granted access per project.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cloud-docs/projects/manage"
+   ]
+  },
+  {
+   "id": "tf127",
+   "d": "hcp",
+   "q": "Which run workflows does HCP Terraform support?",
+   "o": [
+    "VCS-driven (runs triggered by commits and pull requests)",
+    "CLI-driven (terraform plan/apply from the local CLI, executed remotely)",
+    "Email-driven",
+    "FTP-driven",
+    "Spreadsheet-driven"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "API-driven runs are also supported.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cloud-docs/run/ui",
+    "https://developer.hashicorp.com/terraform/cloud-docs/run/cli"
+   ]
+  },
+  {
+   "id": "tf128",
+   "d": "hcp",
+   "q": "In a VCS-driven workspace, what happens when a pull request is opened?",
+   "o": [
+    "HCP Terraform runs a speculative plan and reports the result on the pull request",
+    "Infrastructure is applied immediately",
+    "Nothing until merge",
+    "The repository is locked"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Speculative plans cannot be applied.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cloud-docs/run/ui"
+   ]
+  },
+  {
+   "id": "tf129",
+   "d": "hcp",
+   "q": "Which HCP Terraform features help enforce organization rules on every run, for example forbidding public buckets?",
+   "o": [
+    "Policy enforcement with Sentinel or OPA policy sets",
+    "Run tasks integrating external tools such as security scanners",
+    "terraform fmt",
+    "Local state",
+    "CLI workspaces"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "Policies and run tasks are part of governance.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cloud-docs/policy-enforcement",
+    "https://developer.hashicorp.com/terraform/cloud-docs/workspaces/settings/run-tasks"
+   ]
+  },
+  {
+   "id": "tf130",
+   "d": "hcp",
+   "q": "Several workspaces need the same cloud credentials and common variables. What is the simplest way to share them?",
+   "o": [
+    "Variable sets applied to multiple workspaces or projects",
+    "Copy them into every workspace",
+    "Commit them to Git",
+    "Put them in the state"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Variable sets reduce duplication.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cloud-docs/workspaces/variables/managing-variables"
+   ]
+  },
+  {
+   "id": "tf131",
+   "d": "hcp",
+   "q": "How should HCP Terraform authenticate to AWS or Google Cloud without static long-lived keys?",
+   "o": [
+    "Dynamic provider credentials using workload identity (OIDC)",
+    "Store access keys in a public variable",
+    "Use the root account",
+    "Commit credentials to the VCS repository"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Dynamic credentials are short-lived and scoped per run.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cloud-docs/workspaces/dynamic-provider-credentials"
+   ]
+  },
+  {
+   "id": "tf132",
+   "d": "hcp",
+   "q": "Which feature lets HCP Terraform detect when real infrastructure has drifted from state, on a schedule?",
+   "o": [
+    "Health assessments with drift detection",
+    "terraform fmt",
+    "Variable sets",
+    "The private registry"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Health assessments run checks and drift detection periodically.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cloud-docs/workspaces/health"
+   ]
+  },
+  {
+   "id": "tf133",
+   "d": "hcp",
+   "q": "Infrastructure is in a private network that HCP Terraform cannot reach. What allows runs to execute there?",
+   "o": [
+    "HCP Terraform agents installed in the private network",
+    "A public IP on every resource",
+    "Local execution only",
+    "Sentinel"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Agents poll HCP Terraform and execute runs inside your network.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cloud-docs/agents"
+   ]
+  },
+  {
+   "id": "tf134",
+   "d": "hcp",
+   "q": "How are access permissions to workspaces managed in HCP Terraform?",
+   "o": [
+    "Through teams with permissions on organizations, projects, and workspaces",
+    "Through Linux file permissions",
+    "Through the lock file",
+    "Through module versions"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Teams group users and receive permissions.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cloud-docs/users-teams-organizations/teams"
+   ]
+  },
+  {
+   "id": "tf135",
+   "d": "hcp",
+   "q": "What does remote execution mode mean for a workspace?",
+   "o": [
+    "Plans and applies run on HCP Terraform's infrastructure, and the CLI streams the output",
+    "Terraform runs only on the developer's laptop and stores nothing",
+    "Terraform never stores state",
+    "Runs need to be manually copied"
+   ],
+   "a": [
+    0
+   ],
+   "e": "In local execution mode HCP Terraform stores state only.",
+   "r": [
+    "https://developer.hashicorp.com/terraform/cloud-docs/run/remote-operations"
+   ]
+  }
+ ]
+}

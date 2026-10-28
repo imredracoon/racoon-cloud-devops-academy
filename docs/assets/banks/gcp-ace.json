@@ -1,0 +1,2068 @@
+{
+ "id": "gcp-ace",
+ "title": "Google Cloud Associate Cloud Engineer · Practice exam",
+ "lang": "en",
+ "format": {
+  "questions": 50,
+  "minutes": 120,
+  "passPct": 70,
+  "note": "The real exam has 50-60 multiple choice and multiple select questions in 2 hours.",
+  "scoring": "Google does not publish the passing score; results are pass/fail. 70% here is an indicative target."
+ },
+ "domains": [
+  {
+   "id": "setup",
+   "name": "Setting up a cloud solution environment",
+   "weight": 20
+  },
+  {
+   "id": "plan",
+   "name": "Planning and implementing a cloud solution",
+   "weight": 30
+  },
+  {
+   "id": "ops",
+   "name": "Ensuring successful operation of a cloud solution",
+   "weight": 30
+  },
+  {
+   "id": "access",
+   "name": "Configuring access and security",
+   "weight": 20
+  }
+ ],
+ "questions": [
+  {
+   "id": "ace001",
+   "d": "setup",
+   "q": "A company is starting on Google Cloud. It wants separate environments for development and production, with different administrators, and central policies applied to everything. Which resource hierarchy is MOST appropriate?",
+   "o": [
+    "An organization node with folders for dev and prod, each containing its projects",
+    "A single project containing all environments separated by labels",
+    "Separate billing accounts with no organization",
+    "One folder per developer containing a shared project"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Folders group projects so that IAM and organization policies can be applied per environment and inherited by the projects below.",
+   "r": [
+    "https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy"
+   ]
+  },
+  {
+   "id": "ace002",
+   "d": "setup",
+   "q": "Which statement about IAM policy inheritance in the Google Cloud resource hierarchy is correct?",
+   "o": [
+    "Allow policies are inherited downward, and the effective policy of a resource is the union of its own policy and those of its ancestors",
+    "A policy on a project overrides and removes roles granted at the folder level",
+    "Policies are inherited upward, from projects to the organization",
+    "Only organization-level policies are evaluated"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Allow policies are additive. To block access granted higher up you need IAM deny policies, not a lower-level allow policy.",
+   "r": [
+    "https://cloud.google.com/iam/docs/resource-hierarchy-access-control"
+   ]
+  },
+  {
+   "id": "ace003",
+   "d": "setup",
+   "q": "Security wants to make sure that NO virtual machine in the organization can have an external IP address, including in projects created in the future. What should you do?",
+   "o": [
+    "Set the organization policy constraint that restricts VM external IP access at the organization node",
+    "Create a firewall rule in every project that blocks egress",
+    "Remove the Compute Admin role from all users",
+    "Ask developers to use the --no-address flag"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Organization policy constraints are inherited by all current and future projects under the node where they are set.",
+   "r": [
+    "https://cloud.google.com/resource-manager/docs/organization-policy/overview"
+   ]
+  },
+  {
+   "id": "ace004",
+   "d": "setup",
+   "q": "Due to data residency rules, resources must only be created in European locations. What is the MOST effective preventive control?",
+   "o": [
+    "An organization policy using the resource locations constraint, restricted to EU locations",
+    "A label named region=eu on every resource",
+    "A weekly script that deletes non-EU resources",
+    "A budget alert for non-EU regions"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The resource locations constraint prevents the creation of location-based resources outside the allowed list.",
+   "r": [
+    "https://cloud.google.com/resource-manager/docs/organization-policy/overview"
+   ]
+  },
+  {
+   "id": "ace005",
+   "d": "setup",
+   "q": "You run 'gcloud compute instances create' and receive an error saying the Compute Engine API has not been used in the project or is disabled. What should you do?",
+   "o": [
+    "Enable the API with 'gcloud services enable compute.googleapis.com'",
+    "Create a new billing account",
+    "Grant yourself the Owner role at the organization",
+    "Install the compute component of the gcloud CLI"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Most Google Cloud APIs must be enabled per project before use.",
+   "r": [
+    "https://cloud.google.com/service-usage/docs/enable-disable"
+   ]
+  },
+  {
+   "id": "ace006",
+   "d": "setup",
+   "q": "An engineer works on three projects every day and keeps creating resources in the wrong one. Which gcloud feature helps the MOST?",
+   "o": [
+    "Named configurations ('gcloud config configurations create' and 'activate'), each with its own project, account, and default region",
+    "Running 'gcloud init' before every command",
+    "Using one project for everything",
+    "Editing the ~/.bashrc file to rename projects"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Named configurations store sets of properties and switching between them is a single command.",
+   "r": [
+    "https://cloud.google.com/sdk/gcloud"
+   ]
+  },
+  {
+   "id": "ace007",
+   "d": "setup",
+   "q": "Which command sets the default project for the active gcloud configuration?",
+   "o": [
+    "gcloud config set project PROJECT_ID",
+    "gcloud projects set-default PROJECT_ID",
+    "gcloud init --project-only PROJECT_ID",
+    "gcloud auth project PROJECT_ID"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Properties of the active configuration are set with 'gcloud config set'.",
+   "r": [
+    "https://cloud.google.com/sdk/gcloud"
+   ]
+  },
+  {
+   "id": "ace008",
+   "d": "setup",
+   "q": "A new project must be able to create resources that cost money. Which roles are needed to link the project to an existing Cloud Billing account?",
+   "o": [
+    "Billing Account User on the billing account, plus Project Billing Manager (or Owner) on the project",
+    "Billing Account Viewer on the billing account only",
+    "Viewer on the project only",
+    "Compute Admin on the project"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Linking needs permission on both sides: the billing account and the project.",
+   "r": [
+    "https://cloud.google.com/billing/docs/concepts"
+   ]
+  },
+  {
+   "id": "ace009",
+   "d": "setup",
+   "q": "Finance wants to be notified by email when monthly spend in a project reaches 50%, 90%, and 100% of a target amount. What should you configure?",
+   "o": [
+    "A Cloud Billing budget with threshold rules for that project",
+    "A quota limit on the Compute Engine API",
+    "An organization policy constraint",
+    "An uptime check"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Budgets send alerts at thresholds. They do not stop spending by themselves.",
+   "r": [
+    "https://cloud.google.com/billing/docs/how-to/budgets"
+   ]
+  },
+  {
+   "id": "ace010",
+   "d": "setup",
+   "q": "A manager believes that a budget of 1,000 EUR will automatically stop all resources when it is exceeded. What is correct?",
+   "o": [
+    "Budgets only send notifications; to act automatically you must send budget notifications to Pub/Sub and handle them programmatically",
+    "Budgets shut down all resources at 100%",
+    "Budgets delete the project at 100%",
+    "Budgets reduce quotas automatically"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Programmatic notifications via Pub/Sub can trigger a function that, for example, disables billing; this is a deliberate and disruptive choice.",
+   "r": [
+    "https://cloud.google.com/billing/docs/how-to/budgets"
+   ]
+  },
+  {
+   "id": "ace011",
+   "d": "setup",
+   "q": "The data team wants to analyze detailed daily costs per service and per label using SQL. What should you set up?",
+   "o": [
+    "Cloud Billing export to BigQuery",
+    "A CSV download from the console every month",
+    "Cloud Logging sinks for billing",
+    "Cloud Monitoring dashboards only"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Billing export to BigQuery provides detailed usage and cost data that can be queried and visualized.",
+   "r": [
+    "https://cloud.google.com/billing/docs/how-to/export-data-bigquery"
+   ]
+  },
+  {
+   "id": "ace012",
+   "d": "setup",
+   "q": "Developers want to see which team owns which cost in the billing reports. What is the simplest practice?",
+   "o": [
+    "Apply labels such as team and environment to resources and filter or group reports by them",
+    "Create a separate billing account per developer",
+    "Use network tags",
+    "Rename all resources with the team name"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Labels are key-value pairs that propagate to billing data.",
+   "r": [
+    "https://cloud.google.com/resource-manager/docs/labels-overview"
+   ]
+  },
+  {
+   "id": "ace013",
+   "d": "setup",
+   "q": "A deployment fails because the project has reached the maximum number of CPUs allowed in a region. What should you do?",
+   "o": [
+    "Request a quota increase for that region in the console (IAM & Admin > Quotas)",
+    "Enable a new API",
+    "Create a new billing account",
+    "Change the organization policy"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Quotas limit resources per project and region; increases can be requested.",
+   "r": [
+    "https://cloud.google.com/docs/quotas/overview"
+   ]
+  },
+  {
+   "id": "ace014",
+   "d": "setup",
+   "q": "Which statement about Google Cloud projects is correct?",
+   "o": [
+    "The project ID is globally unique and cannot be changed after creation, while the project name can be changed",
+    "The project name is globally unique and immutable",
+    "The project number is chosen by the user",
+    "A project can belong to several folders at the same time"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Project ID is unique and permanent; the display name is editable; the number is assigned by Google.",
+   "r": [
+    "https://cloud.google.com/resource-manager/docs/creating-managing-projects"
+   ]
+  },
+  {
+   "id": "ace015",
+   "d": "setup",
+   "q": "A company already uses an external identity provider for employees. It wants them to sign in to the Google Cloud console with their existing corporate identities, without creating Google accounts. Which feature fits?",
+   "o": [
+    "Workforce Identity Federation",
+    "Service account keys for each employee",
+    "Workload Identity Federation for GKE",
+    "Shared Owner credentials"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Workforce Identity Federation lets an external IdP authenticate workforce users for Google Cloud access.",
+   "r": [
+    "https://cloud.google.com/iam/docs/workforce-identity-federation"
+   ]
+  },
+  {
+   "id": "ace016",
+   "d": "setup",
+   "q": "Your company manages users and groups for Google Cloud centrally. Which product provides managed Google identities for users who do not need Google Workspace?",
+   "o": [
+    "Cloud Identity",
+    "Cloud Armor",
+    "Identity-Aware Proxy",
+    "Secret Manager"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Cloud Identity is the identity-as-a-service offering that provides users, groups and the organization resource.",
+   "r": [
+    "https://cloud.google.com/identity/docs/overview"
+   ]
+  },
+  {
+   "id": "ace017",
+   "d": "setup",
+   "q": "When granting IAM roles to many people with the same job, which approach is recommended?",
+   "o": [
+    "Grant roles to a Google group and manage membership of the group",
+    "Grant roles individually to each user",
+    "Share one user account among the team",
+    "Give everybody the Owner role and audit later"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Groups simplify administration and reduce errors.",
+   "r": [
+    "https://cloud.google.com/iam/docs/using-iam-securely"
+   ]
+  },
+  {
+   "id": "ace018",
+   "d": "setup",
+   "q": "An analyst needs to explore all VM instances and their IAM bindings across 40 projects in the organization. Which service helps search resources and policies across the hierarchy?",
+   "o": [
+    "Cloud Asset Inventory",
+    "Cloud Trace",
+    "Cloud Scheduler",
+    "Cloud Profiler"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Cloud Asset Inventory searches and exports resource and IAM policy metadata.",
+   "r": [
+    "https://cloud.google.com/asset-inventory/docs/overview"
+   ]
+  },
+  {
+   "id": "ace019",
+   "d": "setup",
+   "q": "A team wants AI assistance in the console to understand an error, design a deployment, and get optimization suggestions about its Google Cloud resources. Which product is designed for this?",
+   "o": [
+    "Gemini Cloud Assist",
+    "Cloud Shell Editor",
+    "Cloud Profiler",
+    "Cloud Scheduler"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Gemini Cloud Assist provides AI help across the lifecycle of Google Cloud applications and infrastructure.",
+   "r": [
+    "https://cloud.google.com/gemini/docs/cloud-assist/overview"
+   ]
+  },
+  {
+   "id": "ace020",
+   "d": "setup",
+   "q": "Which actions are part of the recommended setup of a new organization? ",
+   "o": [
+    "Create groups for administrative functions and grant roles to the groups",
+    "Configure the organization's billing account and budgets",
+    "Give every user the Organization Administrator role",
+    "Disable Cloud Audit Logs to save costs",
+    "Create all resources in the organization node directly without projects"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "Groups-based administration and billing setup are part of the foundation; resources always live in projects.",
+   "r": [
+    "https://cloud.google.com/iam/docs/using-iam-securely",
+    "https://cloud.google.com/billing/docs/concepts"
+   ]
+  },
+  {
+   "id": "ace021",
+   "d": "setup",
+   "q": "A small team wants to try commands without installing anything locally. Which environment has the gcloud CLI, kubectl, and Terraform preinstalled and is authenticated with their identity?",
+   "o": [
+    "Cloud Shell",
+    "A Compute Engine VM with a public image",
+    "Cloud Build",
+    "Cloud Run"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Cloud Shell is a browser-based shell with common tools and a persistent home directory.",
+   "r": [
+    "https://cloud.google.com/shell/docs"
+   ]
+  },
+  {
+   "id": "ace022",
+   "d": "setup",
+   "q": "Which free option helps a newcomer estimate the cost of a planned architecture before creating any resource?",
+   "o": [
+    "The Google Cloud pricing calculator",
+    "Cloud Monitoring",
+    "Cloud Logging",
+    "Billing export"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The pricing calculator estimates costs based on configuration and usage.",
+   "r": [
+    "https://cloud.google.com/products/calculator"
+   ]
+  },
+  {
+   "id": "ace023",
+   "d": "plan",
+   "q": "A legacy application runs on a specific operating system and requires full control of the kernel parameters. Which compute service fits?",
+   "o": [
+    "Compute Engine",
+    "Cloud Run",
+    "App Engine standard",
+    "Cloud Run functions"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Compute Engine provides VMs with full OS control (IaaS).",
+   "r": [
+    "https://cloud.google.com/compute/docs/instances"
+   ]
+  },
+  {
+   "id": "ace024",
+   "d": "plan",
+   "q": "A stateless containerized HTTP API has unpredictable traffic, including long periods with no requests. The team does not want to manage servers or clusters. Which service is MOST appropriate?",
+   "o": [
+    "Cloud Run",
+    "GKE Standard",
+    "Compute Engine with a managed instance group",
+    "Bare Metal Solution"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Cloud Run runs containers serverlessly and can scale to zero.",
+   "r": [
+    "https://cloud.google.com/run/docs/overview/what-is-cloud-run"
+   ]
+  },
+  {
+   "id": "ace025",
+   "d": "plan",
+   "q": "Your team needs Kubernetes but does not want to manage nodes, node pools, or their capacity. Which option fits?",
+   "o": [
+    "GKE Autopilot",
+    "GKE Standard with a single node pool",
+    "Self-managed Kubernetes on Compute Engine",
+    "Cloud Run functions"
+   ],
+   "a": [
+    0
+   ],
+   "e": "In Autopilot, Google manages nodes and you pay for Pod resource requests.",
+   "r": [
+    "https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview"
+   ]
+  },
+  {
+   "id": "ace026",
+   "d": "plan",
+   "q": "A batch job processes images overnight, can be interrupted and restarted at any time, and must be as cheap as possible. Which VM option is BEST?",
+   "o": [
+    "Spot VMs",
+    "Sole-tenant nodes",
+    "Standard VMs with a 3-year commitment",
+    "VMs with local SSD and a reservation"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Spot VMs offer large discounts but can be preempted at any time.",
+   "r": [
+    "https://cloud.google.com/compute/docs/instances/spot"
+   ]
+  },
+  {
+   "id": "ace027",
+   "d": "plan",
+   "q": "An application needs 6 vCPUs and 20 GB of memory, which does not match any predefined machine type well. What can you do?",
+   "o": [
+    "Create a VM with a custom machine type",
+    "Always choose a machine with 16 vCPUs",
+    "Use two VMs with 3 vCPUs each",
+    "Use Cloud Run with 6 instances"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Custom machine types let you choose vCPUs and memory within the allowed ratios.",
+   "r": [
+    "https://cloud.google.com/compute/docs/instances/creating-instance-with-custom-machine-type"
+   ]
+  },
+  {
+   "id": "ace028",
+   "d": "plan",
+   "q": "A web tier on Compute Engine must scale automatically with load and replace unhealthy instances, across zones of a region. What should you create?",
+   "o": [
+    "A regional managed instance group from an instance template, with autoscaling and an autohealing health check",
+    "An unmanaged instance group",
+    "One large VM with a startup script",
+    "A sole-tenant node group"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Regional MIGs spread instances across zones; autoscaling and autohealing are MIG features.",
+   "r": [
+    "https://cloud.google.com/compute/docs/instance-groups",
+    "https://cloud.google.com/compute/docs/autoscaler"
+   ]
+  },
+  {
+   "id": "ace029",
+   "d": "plan",
+   "q": "A licensing agreement requires that your VMs run on physical servers that are not shared with other customers. Which option fits?",
+   "o": [
+    "Sole-tenant nodes",
+    "Spot VMs",
+    "Shielded VMs",
+    "Cloud Run"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Sole-tenant nodes are physical servers dedicated to your project.",
+   "r": [
+    "https://cloud.google.com/compute/docs/nodes/sole-tenant-nodes"
+   ]
+  },
+  {
+   "id": "ace030",
+   "d": "plan",
+   "q": "Which storage class is the MOST cost-effective for backups that are kept for years and are read less than once a year?",
+   "o": [
+    "Archive",
+    "Nearline",
+    "Standard",
+    "Coldline"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Archive has the lowest storage cost and a 365-day minimum storage duration; access costs are higher.",
+   "r": [
+    "https://cloud.google.com/storage/docs/storage-classes"
+   ]
+  },
+  {
+   "id": "ace031",
+   "d": "plan",
+   "q": "Log files are read often in the first 30 days, rarely after, and must be deleted after 1 year. What should you configure on the bucket?",
+   "o": [
+    "Object Lifecycle Management rules: change the storage class after 30 days and delete after 365 days",
+    "Object versioning only",
+    "A retention policy of 30 days",
+    "Uniform bucket-level access"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Lifecycle rules automate class transitions and deletion.",
+   "r": [
+    "https://cloud.google.com/storage/docs/lifecycle"
+   ]
+  },
+  {
+   "id": "ace032",
+   "d": "plan",
+   "q": "Which bucket location type stores data redundantly across two specific regions you choose?",
+   "o": [
+    "Dual-region",
+    "Region",
+    "Multi-region",
+    "Zone"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Dual-region buckets replicate across a pair of regions.",
+   "r": [
+    "https://cloud.google.com/storage/docs/locations"
+   ]
+  },
+  {
+   "id": "ace033",
+   "d": "plan",
+   "q": "An application needs a managed relational database (PostgreSQL) for a regional workload of moderate size with automatic backups. Which service is the simplest choice?",
+   "o": [
+    "Cloud SQL for PostgreSQL",
+    "Spanner",
+    "Bigtable",
+    "Firestore"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Cloud SQL is managed MySQL, PostgreSQL, and SQL Server for typical regional workloads.",
+   "r": [
+    "https://cloud.google.com/sql/docs/introduction"
+   ]
+  },
+  {
+   "id": "ace034",
+   "d": "plan",
+   "q": "A global financial application needs a relational database with strong consistency, horizontal scaling, and high availability across continents. Which service fits?",
+   "o": [
+    "Spanner",
+    "Cloud SQL",
+    "Memorystore",
+    "Cloud Storage"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Spanner is a globally distributed, strongly consistent relational database.",
+   "r": [
+    "https://cloud.google.com/spanner/docs/overview"
+   ]
+  },
+  {
+   "id": "ace035",
+   "d": "plan",
+   "q": "An IoT platform writes millions of time-series measurements per second and needs low-latency reads by row key. Which database fits BEST?",
+   "o": [
+    "Bigtable",
+    "Cloud SQL",
+    "BigQuery",
+    "Firestore"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Bigtable is a wide-column NoSQL store for high throughput and low latency at scale.",
+   "r": [
+    "https://cloud.google.com/bigtable/docs/overview"
+   ]
+  },
+  {
+   "id": "ace036",
+   "d": "plan",
+   "q": "A mobile app needs a serverless document database with real-time updates and offline support. Which service fits?",
+   "o": [
+    "Firestore",
+    "Bigtable",
+    "Spanner",
+    "Cloud SQL"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Firestore is a serverless NoSQL document database with real-time listeners and offline SDKs.",
+   "r": [
+    "https://cloud.google.com/firestore/docs/overview"
+   ]
+  },
+  {
+   "id": "ace037",
+   "d": "plan",
+   "q": "Analysts want to run SQL over terabytes of data without managing infrastructure. Which service fits?",
+   "o": [
+    "BigQuery",
+    "Cloud SQL",
+    "Memorystore",
+    "Persistent Disk"
+   ],
+   "a": [
+    0
+   ],
+   "e": "BigQuery is a serverless data warehouse.",
+   "r": [
+    "https://cloud.google.com/bigquery/docs/introduction"
+   ]
+  },
+  {
+   "id": "ace038",
+   "d": "plan",
+   "q": "An application needs an in-memory cache to reduce latency of repeated database reads. Which managed service fits?",
+   "o": [
+    "Memorystore",
+    "Cloud Storage Nearline",
+    "Filestore Basic",
+    "BigQuery"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Memorystore provides managed Redis and Valkey/Memcached-compatible caches.",
+   "r": [
+    "https://cloud.google.com/memorystore/docs/redis/memorystore-for-redis-overview"
+   ]
+  },
+  {
+   "id": "ace039",
+   "d": "plan",
+   "q": "Which statement about VPC networks in Google Cloud is correct?",
+   "o": [
+    "A VPC network is a global resource and its subnets are regional",
+    "A VPC network is zonal and subnets are global",
+    "Each region requires a separate VPC network",
+    "Subnets span all regions automatically"
+   ],
+   "a": [
+    0
+   ],
+   "e": "This is why VMs in different regions of the same VPC can communicate on internal IPs.",
+   "r": [
+    "https://cloud.google.com/vpc/docs/vpc"
+   ]
+  },
+  {
+   "id": "ace040",
+   "d": "plan",
+   "q": "Your security team requires control over IP ranges and wants subnets only in the regions you use. Which VPC mode should you choose?",
+   "o": [
+    "Custom mode",
+    "Auto mode",
+    "Default network",
+    "Legacy network"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Custom mode lets you define every subnet and range; auto mode creates one subnet per region.",
+   "r": [
+    "https://cloud.google.com/vpc/docs/subnets"
+   ]
+  },
+  {
+   "id": "ace041",
+   "d": "plan",
+   "q": "A subnet is running out of IP addresses. What can you do without recreating it?",
+   "o": [
+    "Expand the primary IP range with 'gcloud compute networks subnets expand-ip-range'",
+    "Shrink the range and add a new one",
+    "Change the VPC to auto mode",
+    "Assign external IPs to all VMs"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Primary ranges can be expanded (not shrunk) if the new range does not overlap others.",
+   "r": [
+    "https://cloud.google.com/vpc/docs/create-modify-vpc-networks#expand-subnet"
+   ]
+  },
+  {
+   "id": "ace042",
+   "d": "plan",
+   "q": "Several teams have their own projects, but the network team must manage a single network centrally for all of them. Which feature fits?",
+   "o": [
+    "Shared VPC with a host project and service projects",
+    "VPC Network Peering between every pair of projects",
+    "A separate VPC per project with external IPs",
+    "Cloud VPN between projects"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Shared VPC lets service projects use subnets of a central host project.",
+   "r": [
+    "https://cloud.google.com/vpc/docs/shared-vpc"
+   ]
+  },
+  {
+   "id": "ace043",
+   "d": "plan",
+   "q": "VPC A is peered with VPC B, and VPC B is peered with VPC C. Can VMs in A reach VMs in C through B?",
+   "o": [
+    "No, VPC Network Peering is not transitive",
+    "Yes, always",
+    "Yes, if firewall rules allow it",
+    "Only for IPv6"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Peering connects two networks only. Use other designs (for example NCC) for hub-and-spoke routing.",
+   "r": [
+    "https://cloud.google.com/vpc/docs/vpc-peering"
+   ]
+  },
+  {
+   "id": "ace044",
+   "d": "plan",
+   "q": "Private VMs without external IPs must download OS updates from the internet. What should you configure?",
+   "o": [
+    "Cloud NAT on a Cloud Router in that region",
+    "External IP addresses on every VM",
+    "Private Google Access only",
+    "A VPC peering with the internet"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Cloud NAT provides outbound internet access for resources without external IPs.",
+   "r": [
+    "https://cloud.google.com/nat/docs/overview"
+   ]
+  },
+  {
+   "id": "ace045",
+   "d": "plan",
+   "q": "VMs without external IPs must reach Cloud Storage and BigQuery APIs. What is the simplest configuration?",
+   "o": [
+    "Enable Private Google Access on the subnet",
+    "Assign external IPs",
+    "Create a VPN to Google",
+    "Create a VPC peering with Cloud Storage"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Private Google Access lets internal-only VMs reach Google APIs.",
+   "r": [
+    "https://cloud.google.com/vpc/docs/private-google-access"
+   ]
+  },
+  {
+   "id": "ace046",
+   "d": "plan",
+   "q": "A global website needs a single anycast IP, HTTPS termination, URL-based routing, and backends in several regions. Which load balancer fits?",
+   "o": [
+    "Global external Application Load Balancer",
+    "Regional external passthrough Network Load Balancer",
+    "Internal passthrough Network Load Balancer",
+    "Cloud NAT"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The global external Application Load Balancer is a layer 7 proxy with a global anycast IP.",
+   "r": [
+    "https://cloud.google.com/load-balancing/docs/choosing-load-balancer"
+   ]
+  },
+  {
+   "id": "ace047",
+   "d": "plan",
+   "q": "A game server uses UDP and needs to preserve the client source IP, with backends in one region. Which load balancer fits?",
+   "o": [
+    "External passthrough Network Load Balancer",
+    "Global external Application Load Balancer",
+    "Internal Application Load Balancer",
+    "Cloud CDN"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Passthrough Network Load Balancers handle TCP/UDP and preserve the client IP.",
+   "r": [
+    "https://cloud.google.com/load-balancing/docs/choosing-load-balancer"
+   ]
+  },
+  {
+   "id": "ace048",
+   "d": "plan",
+   "q": "An on-premises data center needs a private connection to Google Cloud quickly, over the internet, with a 99.99% availability SLA. What should you choose?",
+   "o": [
+    "HA VPN with two tunnels configured as recommended",
+    "Classic VPN with one tunnel",
+    "Dedicated Interconnect",
+    "VPC Network Peering"
+   ],
+   "a": [
+    0
+   ],
+   "e": "HA VPN offers a 99.99% SLA when configured with redundant tunnels; Interconnect requires provisioning time.",
+   "r": [
+    "https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview"
+   ]
+  },
+  {
+   "id": "ace049",
+   "d": "plan",
+   "q": "A company needs 10 Gbps of private, low-latency connectivity and its data center is in a Google colocation facility. Which option fits?",
+   "o": [
+    "Dedicated Interconnect",
+    "HA VPN",
+    "Cloud NAT",
+    "Private Google Access"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Dedicated Interconnect gives a direct physical connection; Partner Interconnect goes through a provider.",
+   "r": [
+    "https://cloud.google.com/network-connectivity/docs/interconnect/concepts/overview"
+   ]
+  },
+  {
+   "id": "ace050",
+   "d": "plan",
+   "q": "Internal applications must resolve names such as db.internal.example only inside the VPC. What should you create?",
+   "o": [
+    "A Cloud DNS private zone visible to the VPC",
+    "A public DNS zone",
+    "A firewall rule",
+    "A static external IP"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Private zones are visible only to the authorized VPC networks.",
+   "r": [
+    "https://cloud.google.com/dns/docs/zones#create-private-zone"
+   ]
+  },
+  {
+   "id": "ace051",
+   "d": "plan",
+   "q": "The team wants to manage Google Cloud infrastructure declaratively, with code reviewed in Git and a plan before every change. What is the most common tool?",
+   "o": [
+    "Terraform with the Google provider",
+    "Manual changes in the console",
+    "Bash scripts with gcloud and no state",
+    "Cloud Shell history"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Terraform is Google Cloud's recommended IaC tool; Infrastructure Manager can run it as a managed service.",
+   "r": [
+    "https://cloud.google.com/docs/terraform",
+    "https://cloud.google.com/infrastructure-manager/docs/overview"
+   ]
+  },
+  {
+   "id": "ace052",
+   "d": "plan",
+   "q": "A platform team already uses Kubernetes and wants to manage Cloud SQL instances and Pub/Sub topics as Kubernetes resources. Which tool fits?",
+   "o": [
+    "Config Connector",
+    "Cloud Build triggers only",
+    "Cloud Scheduler",
+    "Deployment Manager templates in Python"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Config Connector is a Kubernetes add-on that manages Google Cloud resources through custom resources.",
+   "r": [
+    "https://cloud.google.com/config-connector/docs/overview"
+   ]
+  },
+  {
+   "id": "ace053",
+   "d": "plan",
+   "q": "Which service lets you run Terraform deployments managed by Google, with state stored for you?",
+   "o": [
+    "Infrastructure Manager",
+    "Cloud Deploy",
+    "Artifact Registry",
+    "Cloud Composer"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Infrastructure Manager automates deployment of infrastructure defined with Terraform.",
+   "r": [
+    "https://cloud.google.com/infrastructure-manager/docs/overview"
+   ]
+  },
+  {
+   "id": "ace054",
+   "d": "plan",
+   "q": "Where should you store container images that Cloud Run and GKE will pull?",
+   "o": [
+    "Artifact Registry",
+    "Cloud Storage Archive",
+    "Secret Manager",
+    "Cloud Source Repositories"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Artifact Registry stores container images and language packages with IAM control.",
+   "r": [
+    "https://cloud.google.com/artifact-registry/docs/overview"
+   ]
+  },
+  {
+   "id": "ace055",
+   "d": "plan",
+   "q": "An event-driven function must run every time an object is uploaded to a bucket. Which options can deliver this event?",
+   "o": [
+    "Eventarc triggering a Cloud Run service or function",
+    "A Cloud Storage trigger on Cloud Run functions",
+    "A firewall rule",
+    "A budget alert",
+    "A static IP address"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "Cloud Run functions use Eventarc for Cloud Storage events.",
+   "r": [
+    "https://cloud.google.com/eventarc/docs/overview",
+    "https://cloud.google.com/functions/docs/concepts/overview"
+   ]
+  },
+  {
+   "id": "ace056",
+   "d": "plan",
+   "q": "An application must decouple producers and consumers, absorbing traffic spikes asynchronously. Which service fits?",
+   "o": [
+    "Pub/Sub",
+    "Cloud DNS",
+    "Cloud NAT",
+    "Cloud SQL"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Pub/Sub is a managed asynchronous messaging service.",
+   "r": [
+    "https://cloud.google.com/pubsub/docs/overview"
+   ]
+  },
+  {
+   "id": "ace057",
+   "d": "plan",
+   "q": "You must migrate 300 TB from an on-premises data center with limited bandwidth to Cloud Storage in a few weeks. What is the most practical option?",
+   "o": [
+    "Transfer Appliance",
+    "gcloud storage cp over the internet connection",
+    "Email the disks",
+    "VPC Network Peering"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Transfer Appliance is a physical device for large offline transfers.",
+   "r": [
+    "https://cloud.google.com/transfer-appliance/docs/4.0/overview"
+   ]
+  },
+  {
+   "id": "ace058",
+   "d": "plan",
+   "q": "You need to copy data from an Amazon S3 bucket to Cloud Storage on a recurring schedule. Which managed service fits?",
+   "o": [
+    "Storage Transfer Service",
+    "Transfer Appliance",
+    "Database Migration Service",
+    "Datastream"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Storage Transfer Service moves data from other clouds, HTTP sources, and file systems.",
+   "r": [
+    "https://cloud.google.com/storage-transfer/docs/overview"
+   ]
+  },
+  {
+   "id": "ace059",
+   "d": "ops",
+   "q": "You need to SSH to a VM that has no external IP from your laptop, without a VPN or bastion host. What should you use?",
+   "o": [
+    "Identity-Aware Proxy TCP forwarding, with a firewall rule allowing ingress from 35.235.240.0/20 on port 22",
+    "Cloud NAT",
+    "A public IP temporarily for every session",
+    "VPC peering with your laptop"
+   ],
+   "a": [
+    0
+   ],
+   "e": "IAP TCP forwarding tunnels SSH through Google; the IAP range must be allowed by the firewall.",
+   "r": [
+    "https://cloud.google.com/iap/docs/using-tcp-forwarding"
+   ]
+  },
+  {
+   "id": "ace060",
+   "d": "ops",
+   "q": "Your company wants SSH access to Linux VMs to be controlled by IAM roles, not by keys copied into metadata. What should you enable?",
+   "o": [
+    "OS Login",
+    "Project-wide SSH keys",
+    "Serial console for everyone",
+    "Shielded VM"
+   ],
+   "a": [
+    0
+   ],
+   "e": "OS Login links Linux accounts to Google identities and IAM roles such as roles/compute.osLogin.",
+   "r": [
+    "https://cloud.google.com/compute/docs/oslogin"
+   ]
+  },
+  {
+   "id": "ace061",
+   "d": "ops",
+   "q": "You need a daily, automatic backup of a VM's boot disk, kept for 14 days. What should you configure?",
+   "o": [
+    "A snapshot schedule attached to the disk with a 14-day retention",
+    "A cron job that copies files to the same disk",
+    "An instance template",
+    "Live migration"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Snapshot schedules create incremental snapshots and delete old ones automatically.",
+   "r": [
+    "https://cloud.google.com/compute/docs/disks/scheduled-snapshots"
+   ]
+  },
+  {
+   "id": "ace062",
+   "d": "ops",
+   "q": "You must roll out a new instance template to a managed instance group gradually, with no reduction in serving capacity. What do you use?",
+   "o": [
+    "A rolling update of the MIG with maxUnavailable 0 and maxSurge greater than 0",
+    "Delete the MIG and create it again",
+    "Stop all instances and restart them",
+    "Change the template of each VM manually"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Rolling updates replace instances progressively according to surge and unavailability settings.",
+   "r": [
+    "https://cloud.google.com/compute/docs/instance-groups"
+   ]
+  },
+  {
+   "id": "ace063",
+   "d": "ops",
+   "q": "Which command fetches credentials so that kubectl can talk to an existing GKE cluster?",
+   "o": [
+    "gcloud container clusters get-credentials CLUSTER --location LOCATION",
+    "kubectl login CLUSTER",
+    "gcloud auth kubectl CLUSTER",
+    "gcloud container clusters connect CLUSTER"
+   ],
+   "a": [
+    0
+   ],
+   "e": "get-credentials writes a kubeconfig entry for the cluster.",
+   "r": [
+    "https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl"
+   ]
+  },
+  {
+   "id": "ace064",
+   "d": "ops",
+   "q": "On a GKE Standard cluster, a workload needs GPUs while other workloads do not. What should you do?",
+   "o": [
+    "Add a separate node pool with GPU machines and schedule the workload on it",
+    "Recreate the whole cluster with GPUs on all nodes",
+    "Use Cloud Run",
+    "Increase the number of nodes in the default pool"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Node pools group nodes with the same configuration within a cluster.",
+   "r": [
+    "https://cloud.google.com/kubernetes-engine/docs/concepts/node-pools"
+   ]
+  },
+  {
+   "id": "ace065",
+   "d": "ops",
+   "q": "Pods in a GKE Standard cluster stay Pending because there is not enough capacity. What enables nodes to be added automatically?",
+   "o": [
+    "Cluster autoscaler on the node pool",
+    "Horizontal Pod Autoscaler",
+    "Vertical Pod Autoscaler",
+    "A larger PodDisruptionBudget"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Cluster autoscaler resizes node pools; HPA changes the number of Pods.",
+   "r": [
+    "https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-autoscaler"
+   ]
+  },
+  {
+   "id": "ace066",
+   "d": "ops",
+   "q": "You deployed revision 'v2' of a Cloud Run service with '--no-traffic'. How do you send 10% of traffic to it?",
+   "o": [
+    "gcloud run services update-traffic SERVICE --to-revisions=v2=10",
+    "gcloud run deploy SERVICE --percent 10",
+    "Delete revision v1",
+    "Create a second service and a DNS weight"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Cloud Run supports gradual rollouts by splitting traffic between revisions.",
+   "r": [
+    "https://cloud.google.com/run/docs/rollouts-rollbacks-traffic-migration"
+   ]
+  },
+  {
+   "id": "ace067",
+   "d": "ops",
+   "q": "A Cloud Run service has slow first requests after idle periods. What reduces cold starts?",
+   "o": [
+    "Set a minimum number of instances",
+    "Set the maximum instances to 1",
+    "Reduce the memory",
+    "Use a bigger container image"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Minimum instances keep containers warm, at an extra cost.",
+   "r": [
+    "https://cloud.google.com/run/docs/about-instance-autoscaling"
+   ]
+  },
+  {
+   "id": "ace068",
+   "d": "ops",
+   "q": "Which command uploads a local file to a Cloud Storage bucket with the current CLI?",
+   "o": [
+    "gcloud storage cp report.pdf gs://my-bucket/",
+    "gcloud storage upload report.pdf my-bucket",
+    "gcloud compute scp report.pdf gs://my-bucket",
+    "bq load gs://my-bucket report.pdf"
+   ],
+   "a": [
+    0
+   ],
+   "e": "'gcloud storage' is the recommended CLI for Cloud Storage operations.",
+   "r": [
+    "https://cloud.google.com/storage/docs/discover-object-storage-gcloud"
+   ]
+  },
+  {
+   "id": "ace069",
+   "d": "ops",
+   "q": "Users accidentally overwrite and delete objects in a bucket. You want to be able to recover previous versions. What should you enable?",
+   "o": [
+    "Object Versioning (with lifecycle rules to limit the number of noncurrent versions)",
+    "Uniform bucket-level access",
+    "Requester Pays",
+    "Autoclass"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Versioning keeps noncurrent versions when objects are overwritten or deleted.",
+   "r": [
+    "https://cloud.google.com/storage/docs/object-versioning"
+   ]
+  },
+  {
+   "id": "ace070",
+   "d": "ops",
+   "q": "A partner without a Google account must download one object for the next 2 hours. What is the BEST approach?",
+   "o": [
+    "Generate a signed URL that expires in 2 hours",
+    "Make the bucket public",
+    "Create a Google account for the partner and grant Storage Admin",
+    "Send the service account key"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Signed URLs grant time-limited access to a specific object.",
+   "r": [
+    "https://cloud.google.com/storage/docs/access-control/signed-urls"
+   ]
+  },
+  {
+   "id": "ace071",
+   "d": "ops",
+   "q": "A Cloud SQL for MySQL instance must survive a zone failure with automatic failover. What should you configure?",
+   "o": [
+    "High availability (regional) configuration with a standby in another zone",
+    "A read replica in the same zone",
+    "Daily exports to Cloud Storage only",
+    "A larger machine type"
+   ],
+   "a": [
+    0
+   ],
+   "e": "HA uses synchronous replication to a standby instance in another zone.",
+   "r": [
+    "https://cloud.google.com/sql/docs/mysql/high-availability"
+   ]
+  },
+  {
+   "id": "ace072",
+   "d": "ops",
+   "q": "Read traffic is overwhelming a Cloud SQL primary instance. What helps scale reads?",
+   "o": [
+    "Create read replicas and send read queries to them",
+    "Enable high availability",
+    "Increase the backup frequency",
+    "Enable deletion protection"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Read replicas offload read traffic; HA alone does not serve reads.",
+   "r": [
+    "https://cloud.google.com/sql/docs/mysql/replication"
+   ]
+  },
+  {
+   "id": "ace073",
+   "d": "ops",
+   "q": "You need to restore a Cloud SQL database to the state it had 10 minutes before a faulty migration. What feature is needed?",
+   "o": [
+    "Point-in-time recovery, enabled before the incident",
+    "Read replicas",
+    "Query insights",
+    "Maintenance windows"
+   ],
+   "a": [
+    0
+   ],
+   "e": "PITR uses logs to restore to a specific moment; it must be enabled beforehand.",
+   "r": [
+    "https://cloud.google.com/sql/docs/mysql/backup-recovery/backups"
+   ]
+  },
+  {
+   "id": "ace074",
+   "d": "ops",
+   "q": "Before running a BigQuery query, an analyst wants to know how many bytes it will process. What should they use?",
+   "o": [
+    "A dry run (for example 'bq query --dry_run')",
+    "LIMIT 10 in the query",
+    "The query history",
+    "A smaller machine type"
+   ],
+   "a": [
+    0
+   ],
+   "e": "A dry run validates the query and estimates bytes processed; LIMIT does not reduce scanned bytes in most cases.",
+   "r": [
+    "https://cloud.google.com/bigquery/docs/running-queries#dry-run"
+   ]
+  },
+  {
+   "id": "ace075",
+   "d": "ops",
+   "q": "Which practices reduce BigQuery on-demand query costs?",
+   "o": [
+    "Select only the needed columns instead of SELECT *",
+    "Partition tables and filter on the partitioning column",
+    "Add LIMIT to every query, since it always reduces bytes scanned",
+    "Run queries twice to warm the cache",
+    "Store data in CSV instead of tables"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "On-demand pricing is based on bytes processed; columns and partitions matter.",
+   "r": [
+    "https://cloud.google.com/bigquery/pricing"
+   ]
+  },
+  {
+   "id": "ace076",
+   "d": "ops",
+   "q": "A firewall rule allows SSH from 0.0.0.0/0 with priority 1000, and another denies SSH from 0.0.0.0/0 with priority 900. What happens?",
+   "o": [
+    "SSH is denied, because the lower number has higher priority",
+    "SSH is allowed, because allow rules win",
+    "Both rules are ignored",
+    "The newer rule wins"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Priority 0 is highest, 65535 lowest.",
+   "r": [
+    "https://cloud.google.com/firewall/docs/firewalls"
+   ]
+  },
+  {
+   "id": "ace077",
+   "d": "ops",
+   "q": "With no custom firewall rules in a new VPC, what is the behavior?",
+   "o": [
+    "Implied rules deny all ingress and allow all egress",
+    "All ingress and egress are allowed",
+    "All egress is denied",
+    "Only SSH is allowed"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Every VPC has implied deny-ingress and allow-egress rules at the lowest priority.",
+   "r": [
+    "https://cloud.google.com/firewall/docs/firewalls"
+   ]
+  },
+  {
+   "id": "ace078",
+   "d": "ops",
+   "q": "A firewall rule must apply only to web servers, not all VMs in the network. How should you target it?",
+   "o": [
+    "Use a target network tag or, preferably, a target service account attached to the web servers",
+    "Create a separate VPC per VM",
+    "Use the source range 0.0.0.0/0",
+    "Use labels"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Targets limit which instances a rule applies to; service accounts are more controlled than tags.",
+   "r": [
+    "https://cloud.google.com/firewall/docs/firewalls"
+   ]
+  },
+  {
+   "id": "ace079",
+   "d": "ops",
+   "q": "A connection to a VM fails and you suspect a firewall issue. Which tools help diagnose it?",
+   "o": [
+    "Connectivity Tests in Network Intelligence Center",
+    "Firewall Rules Logging",
+    "Cloud Profiler",
+    "Cloud Scheduler",
+    "Billing export"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "Connectivity Tests analyze the path; firewall logging shows which rules matched.",
+   "r": [
+    "https://cloud.google.com/firewall/docs/firewalls"
+   ]
+  },
+  {
+   "id": "ace080",
+   "d": "ops",
+   "q": "You need memory utilization and application logs from Compute Engine VMs. What should you install?",
+   "o": [
+    "The Ops Agent",
+    "The Cloud SQL Auth Proxy",
+    "kubectl",
+    "Cloud Profiler only"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Memory metrics and guest logs need the Ops Agent.",
+   "r": [
+    "https://cloud.google.com/stackdriver/docs/solutions/agents/ops-agent"
+   ]
+  },
+  {
+   "id": "ace081",
+   "d": "ops",
+   "q": "The operations team must be paged when a website does not respond from multiple locations. What should you configure?",
+   "o": [
+    "An uptime check with an alerting policy and a notification channel",
+    "A log sink to BigQuery",
+    "A budget",
+    "A snapshot schedule"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Uptime checks probe endpoints; alerting policies notify on failure.",
+   "r": [
+    "https://cloud.google.com/monitoring/alerts"
+   ]
+  },
+  {
+   "id": "ace082",
+   "d": "ops",
+   "q": "One team wants to view metrics from 20 projects in a single Cloud Monitoring dashboard. What should they configure?",
+   "o": [
+    "A metrics scope in a scoping project that includes the 20 projects",
+    "A billing export",
+    "An aggregated sink",
+    "Shared VPC"
+   ],
+   "a": [
+    0
+   ],
+   "e": "A metrics scope defines which projects' metrics a project can view.",
+   "r": [
+    "https://cloud.google.com/monitoring/docs/monitoring-overview"
+   ]
+  },
+  {
+   "id": "ace083",
+   "d": "ops",
+   "q": "Compliance requires that all audit logs of all projects in the organization be stored in a central location, including future projects. What should you create?",
+   "o": [
+    "An aggregated log sink at the organization level with include-children, routed to a central log bucket or BigQuery dataset",
+    "A sink in every existing project",
+    "A dashboard",
+    "A metrics scope"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Aggregated sinks route logs from all child resources.",
+   "r": [
+    "https://cloud.google.com/logging/docs/routing/overview"
+   ]
+  },
+  {
+   "id": "ace084",
+   "d": "ops",
+   "q": "Which audit logs are always written and cannot be disabled?",
+   "o": [
+    "Admin Activity audit logs",
+    "Data Access audit logs for Cloud Storage",
+    "VPC Flow Logs",
+    "Firewall Rules Logging"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Data Access logs (except BigQuery) are disabled by default and must be enabled.",
+   "r": [
+    "https://cloud.google.com/logging/docs/audit"
+   ]
+  },
+  {
+   "id": "ace085",
+   "d": "ops",
+   "q": "Security wants to know who READ objects in a sensitive bucket. What must be enabled?",
+   "o": [
+    "Data Access audit logs for Cloud Storage",
+    "Admin Activity logs, which already include reads",
+    "VPC Flow Logs",
+    "Object versioning"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Reads of data are Data Access operations, which are off by default for most services.",
+   "r": [
+    "https://cloud.google.com/logging/docs/audit"
+   ]
+  },
+  {
+   "id": "ace086",
+   "d": "ops",
+   "q": "Logs must be analyzed with SQL directly in Cloud Logging without exporting them. Which feature fits?",
+   "o": [
+    "Log Analytics on an upgraded log bucket",
+    "Cloud Trace",
+    "Error Reporting",
+    "Cloud Profiler"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Log Analytics lets you query logs with SQL.",
+   "r": [
+    "https://cloud.google.com/logging/docs/log-analytics"
+   ]
+  },
+  {
+   "id": "ace087",
+   "d": "ops",
+   "q": "A microservices application has slow requests and you need to find which service adds latency. Which tool is designed for this?",
+   "o": [
+    "Cloud Trace",
+    "Cloud Billing",
+    "Cloud Asset Inventory",
+    "Cloud DNS"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Cloud Trace collects latency data for distributed requests.",
+   "r": [
+    "https://cloud.google.com/trace/docs/overview"
+   ]
+  },
+  {
+   "id": "ace088",
+   "d": "ops",
+   "q": "Which tool shows CPU and memory usage per function in production code with low overhead?",
+   "o": [
+    "Cloud Profiler",
+    "Cloud Trace",
+    "Uptime checks",
+    "VPC Flow Logs"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Cloud Profiler samples resource consumption by code location.",
+   "r": [
+    "https://cloud.google.com/profiler/docs/about-profiler"
+   ]
+  },
+  {
+   "id": "ace089",
+   "d": "ops",
+   "q": "You want automatic suggestions to delete idle VMs and right-size over-provisioned ones. Where do you find them?",
+   "o": [
+    "Recommender (Active Assist recommendations)",
+    "Cloud Trace",
+    "Cloud Build",
+    "Cloud DNS"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Recommender analyzes usage and suggests optimizations.",
+   "r": [
+    "https://cloud.google.com/recommender/docs/overview"
+   ]
+  },
+  {
+   "id": "ace090",
+   "d": "ops",
+   "q": "A workload needs Prometheus-format metrics from GKE collected without running your own Prometheus storage. What fits?",
+   "o": [
+    "Google Cloud Managed Service for Prometheus",
+    "Cloud Profiler",
+    "Cloud Trace",
+    "Error Reporting"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Managed Service for Prometheus collects and stores Prometheus metrics at scale.",
+   "r": [
+    "https://cloud.google.com/stackdriver/docs/managed-prometheus"
+   ]
+  },
+  {
+   "id": "ace091",
+   "d": "access",
+   "q": "Following least privilege, a developer only needs to start and stop VMs in one project. What should you grant?",
+   "o": [
+    "A predefined or custom role with only the needed permissions, on that project",
+    "Editor on the project",
+    "Owner on the organization",
+    "Compute Admin on the organization"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Basic roles (Owner, Editor, Viewer) are very broad; prefer predefined or custom roles at the narrowest scope.",
+   "r": [
+    "https://cloud.google.com/iam/docs/roles-overview"
+   ]
+  },
+  {
+   "id": "ace092",
+   "d": "access",
+   "q": "No predefined role matches exactly the permissions required by an auditor. What can you do?",
+   "o": [
+    "Create a custom role with the specific permissions at the organization or project level",
+    "Grant Viewer and Editor together",
+    "Modify a predefined role",
+    "Share a service account key"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Predefined roles cannot be modified; custom roles can.",
+   "r": [
+    "https://cloud.google.com/iam/docs/creating-custom-roles"
+   ]
+  },
+  {
+   "id": "ace093",
+   "d": "access",
+   "q": "An application on Compute Engine must write to a Cloud Storage bucket. What is the recommended way to give it credentials?",
+   "o": [
+    "Attach a user-managed service account with the minimum role on the bucket to the VM",
+    "Store a user's password in the code",
+    "Download a service account key and copy it to the VM",
+    "Use the default service account with the Editor role"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Attached service accounts provide automatic, short-lived credentials via the metadata server.",
+   "r": [
+    "https://cloud.google.com/iam/docs/best-practices-service-accounts"
+   ]
+  },
+  {
+   "id": "ace094",
+   "d": "access",
+   "q": "To attach a service account to a new VM, what permission does the user creating the VM need in addition to compute permissions?",
+   "o": [
+    "Service Account User (roles/iam.serviceAccountUser) on that service account",
+    "Service Account Key Admin",
+    "Organization Administrator",
+    "Billing Account User"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Using a service account as an identity for a resource requires actAs permission.",
+   "r": [
+    "https://cloud.google.com/iam/docs/service-account-overview"
+   ]
+  },
+  {
+   "id": "ace095",
+   "d": "access",
+   "q": "An administrator wants to test commands with the permissions of a service account without downloading keys. What should they use?",
+   "o": [
+    "Service account impersonation, for example the --impersonate-service-account flag, with roles/iam.serviceAccountTokenCreator",
+    "Download a JSON key",
+    "Log in as the service account in the console",
+    "Grant themselves Owner"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Impersonation creates short-lived credentials.",
+   "r": [
+    "https://cloud.google.com/iam/docs/service-account-impersonation"
+   ]
+  },
+  {
+   "id": "ace096",
+   "d": "access",
+   "q": "A GitHub Actions pipeline must deploy to Google Cloud. Security forbids long-lived service account keys. What is the recommended approach?",
+   "o": [
+    "Workload Identity Federation with GitHub as an OIDC identity provider",
+    "Store a service account key in a GitHub secret",
+    "Use a personal user's credentials",
+    "Make the project public"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Workload Identity Federation exchanges external tokens for short-lived Google credentials.",
+   "r": [
+    "https://cloud.google.com/iam/docs/workload-identity-federation"
+   ]
+  },
+  {
+   "id": "ace097",
+   "d": "access",
+   "q": "Pods in GKE must call Google Cloud APIs with their own identity and without keys. What should you configure?",
+   "o": [
+    "Workload Identity Federation for GKE",
+    "Node service account with Editor",
+    "Keys mounted as Kubernetes Secrets",
+    "OS Login"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Workload Identity lets Kubernetes service accounts act as IAM principals.",
+   "r": [
+    "https://cloud.google.com/kubernetes-engine/docs/concepts/workload-identity"
+   ]
+  },
+  {
+   "id": "ace098",
+   "d": "access",
+   "q": "Security wants to block the creation of service account keys across the whole organization. What should they use?",
+   "o": [
+    "The organization policy constraint that disables service account key creation",
+    "A firewall rule",
+    "A budget alert",
+    "VPC Service Controls only"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Org policy constraints can prevent key creation organization-wide.",
+   "r": [
+    "https://cloud.google.com/iam/docs/best-practices-for-managing-service-account-keys"
+   ]
+  },
+  {
+   "id": "ace099",
+   "d": "access",
+   "q": "Which statements about the default Compute Engine service account are correct?",
+   "o": [
+    "It can have very broad permissions in many projects, so a dedicated user-managed service account is recommended",
+    "Best practice is to grant it only the roles the workload needs, or not use it",
+    "It cannot be used by any VM",
+    "It is shared across all customers of Google Cloud",
+    "It never has any role"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "Historically the default service account received the Editor role; follow least privilege.",
+   "r": [
+    "https://cloud.google.com/iam/docs/best-practices-service-accounts"
+   ]
+  },
+  {
+   "id": "ace100",
+   "d": "access",
+   "q": "Database passwords used by a Cloud Run service must not be stored in the image or in plain environment files. Where should you store them?",
+   "o": [
+    "Secret Manager, exposed to the service as a secret environment variable or volume",
+    "In the source code",
+    "In a public bucket",
+    "In labels"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Secret Manager stores, versions, and controls access to secrets.",
+   "r": [
+    "https://cloud.google.com/secret-manager/docs/overview"
+   ]
+  },
+  {
+   "id": "ace101",
+   "d": "access",
+   "q": "A regulator requires that you control the encryption keys of data in Cloud Storage and can rotate or disable them. What should you use?",
+   "o": [
+    "Customer-managed encryption keys (CMEK) in Cloud KMS",
+    "Default Google-managed encryption only",
+    "Signed URLs",
+    "Object versioning"
+   ],
+   "a": [
+    0
+   ],
+   "e": "CMEK lets you manage keys in Cloud KMS.",
+   "r": [
+    "https://cloud.google.com/kms/docs/cmek"
+   ]
+  },
+  {
+   "id": "ace102",
+   "d": "access",
+   "q": "Which roles exist at the bucket level and grant progressively more control over objects?",
+   "o": [
+    "Storage Object Viewer, Storage Object Creator, Storage Object Admin",
+    "Viewer, Editor, Owner only",
+    "Compute Viewer and Compute Admin",
+    "BigQuery User and BigQuery Admin"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Predefined Cloud Storage roles let you grant only object read, create, or full control.",
+   "r": [
+    "https://cloud.google.com/storage/docs/uniform-bucket-level-access"
+   ]
+  },
+  {
+   "id": "ace103",
+   "d": "access",
+   "q": "A bucket must never become public, even if someone grants allUsers by mistake. What should you enforce?",
+   "o": [
+    "Public access prevention on the bucket or via organization policy",
+    "Object versioning",
+    "A lifecycle rule",
+    "A retention policy"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Public access prevention blocks public ACLs and IAM bindings.",
+   "r": [
+    "https://cloud.google.com/storage/docs/public-access-prevention"
+   ]
+  },
+  {
+   "id": "ace104",
+   "d": "access",
+   "q": "Security wants consistent IAM-only access control on a bucket, without object ACLs. What should be enabled?",
+   "o": [
+    "Uniform bucket-level access",
+    "Fine-grained ACLs",
+    "Requester Pays",
+    "Autoclass"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Uniform bucket-level access disables ACLs and uses only IAM.",
+   "r": [
+    "https://cloud.google.com/storage/docs/uniform-bucket-level-access"
+   ]
+  },
+  {
+   "id": "ace105",
+   "d": "access",
+   "q": "Which command grants the BigQuery Data Viewer role to a group on a project?",
+   "o": [
+    "gcloud projects add-iam-policy-binding PROJECT_ID --member=group:analysts@example.com --role=roles/bigquery.dataViewer",
+    "gcloud iam roles grant bigquery.dataViewer analysts@example.com",
+    "bq grant analysts@example.com",
+    "gcloud projects set-iam-role PROJECT_ID analysts"
+   ],
+   "a": [
+    0
+   ],
+   "e": "add-iam-policy-binding adds a member-role binding to the resource's allow policy.",
+   "r": [
+    "https://cloud.google.com/iam/docs/roles-overview"
+   ]
+  },
+  {
+   "id": "ace106",
+   "d": "access",
+   "q": "An auditor needs to see all resources and their configuration in a project but must not change anything. Which basic or predefined role is the simplest fit?",
+   "o": [
+    "Viewer (or a more specific viewer role, such as Security Reviewer, for IAM policies)",
+    "Editor",
+    "Owner",
+    "Service Account Admin"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Viewer gives read-only access; prefer more specific roles if possible.",
+   "r": [
+    "https://cloud.google.com/iam/docs/roles-overview"
+   ]
+  },
+  {
+   "id": "ace107",
+   "d": "access",
+   "q": "You must give a contractor temporary access that expires automatically at the end of the month. What feature helps?",
+   "o": [
+    "An IAM condition with a date/time expression on the role binding",
+    "A label with the expiration date",
+    "A budget alert",
+    "A firewall rule"
+   ],
+   "a": [
+    0
+   ],
+   "e": "IAM Conditions allow time-based access.",
+   "r": [
+    "https://cloud.google.com/iam/docs/overview"
+   ]
+  },
+  {
+   "id": "ace108",
+   "d": "access",
+   "q": "Sensitive data in BigQuery and Cloud Storage must not be copied to projects outside a defined perimeter, even by users with valid credentials. What fits?",
+   "o": [
+    "VPC Service Controls",
+    "Cloud NAT",
+    "Firewall rules only",
+    "Shared VPC"
+   ],
+   "a": [
+    0
+   ],
+   "e": "VPC Service Controls create perimeters around Google-managed services to reduce data exfiltration risk.",
+   "r": [
+    "https://cloud.google.com/vpc-service-controls/docs/overview"
+   ]
+  },
+  {
+   "id": "ace109",
+   "d": "access",
+   "q": "Which service gives a central view of misconfigurations, vulnerabilities, and threats across the organization?",
+   "o": [
+    "Security Command Center",
+    "Cloud Trace",
+    "Cloud Scheduler",
+    "Cloud Build"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Security Command Center is Google Cloud's security and risk management platform.",
+   "r": [
+    "https://cloud.google.com/security-command-center/docs/security-command-center-overview"
+   ]
+  },
+  {
+   "id": "ace110",
+   "d": "access",
+   "q": "A web application must be protected against DDoS and common web attacks such as SQL injection, at the load balancer. What should you configure?",
+   "o": [
+    "Google Cloud Armor security policies on the backend service",
+    "Cloud NAT",
+    "Private Google Access",
+    "OS Login"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Cloud Armor provides WAF rules and DDoS protection for external load balancers.",
+   "r": [
+    "https://cloud.google.com/armor/docs/cloud-armor-overview"
+   ]
+  },
+  {
+   "id": "ace111",
+   "d": "access",
+   "q": "An internal web application must be reachable only by authenticated employees, without a VPN. What should you use?",
+   "o": [
+    "Identity-Aware Proxy (IAP) in front of the application",
+    "A public load balancer without authentication",
+    "VPC peering with every laptop",
+    "A static external IP"
+   ],
+   "a": [
+    0
+   ],
+   "e": "IAP checks identity and context before granting access to applications.",
+   "r": [
+    "https://cloud.google.com/beyondcorp-enterprise/docs/overview"
+   ]
+  },
+  {
+   "id": "ace112",
+   "d": "access",
+   "q": "Which statements about service account keys are correct?",
+   "o": [
+    "They are long-lived credentials that, if leaked, can be used by anyone until revoked",
+    "Alternatives such as attached service accounts, impersonation, and Workload Identity Federation are preferred",
+    "Keys rotate automatically every hour",
+    "Keys can only be used inside Google Cloud",
+    "Keys are required for Cloud Shell"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "Avoid keys whenever possible; if used, manage and rotate them carefully.",
+   "r": [
+    "https://cloud.google.com/iam/docs/best-practices-for-managing-service-account-keys"
+   ]
+  }
+ ]
+}

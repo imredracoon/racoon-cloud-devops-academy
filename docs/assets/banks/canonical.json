@@ -1,0 +1,1843 @@
+{
+ "id": "canonical",
+ "title": "Canonical Academy · Linux SysAdmin qualification · Knowledge practice",
+ "lang": "en",
+ "format": {
+  "questions": 40,
+  "minutes": 75,
+  "passPct": 70,
+  "note": "The real exams are hybrid (multiple choice plus hands-on tasks in a remote Ubuntu environment). This simulator covers the knowledge part; use training mode per domain to prepare one exam at a time.",
+  "scoring": "Canonical weights items by steps, complexity, and importance. 70% here is an indicative target."
+ },
+ "domains": [
+  {
+   "id": "terminal",
+   "name": "Using Linux Terminal",
+   "weight": 25
+  },
+  {
+   "id": "desktop",
+   "name": "Using Ubuntu Desktop",
+   "weight": 25
+  },
+  {
+   "id": "server",
+   "name": "Using Ubuntu Server",
+   "weight": 25
+  },
+  {
+   "id": "devops",
+   "name": "Using DevOps Principles",
+   "weight": 25
+  }
+ ],
+ "questions": [
+  {
+   "id": "can001",
+   "d": "terminal",
+   "q": "On Ubuntu, which command shows only the error-level (and more severe) messages from the current boot?",
+   "o": [
+    "journalctl -b -p err",
+    "journalctl --errors-only",
+    "cat /var/log/errors",
+    "dmesg --level=all"
+   ],
+   "a": [
+    0
+   ],
+   "e": "journalctl filters by boot (-b) and priority (-p).",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/journalctl.1.html"
+   ]
+  },
+  {
+   "id": "can002",
+   "d": "terminal",
+   "q": "Where do you configure log rotation for a custom application's log files on Ubuntu?",
+   "o": [
+    "A file in /etc/logrotate.d/",
+    "/etc/rsyslog.conf only",
+    "/var/log/rotate.conf",
+    "/etc/cron.hourly/logs"
+   ],
+   "a": [
+    0
+   ],
+   "e": "logrotate reads /etc/logrotate.conf, which includes /etc/logrotate.d/.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/logrotate.8.html"
+   ]
+  },
+  {
+   "id": "can003",
+   "d": "terminal",
+   "q": "Which crontab line runs a script at 02:30 every Monday?",
+   "o": [
+    "30 2 * * 1 /usr/local/bin/backup.sh",
+    "2 30 * * 1 /usr/local/bin/backup.sh",
+    "30 2 1 * * /usr/local/bin/backup.sh",
+    "* * 2 30 1 /usr/local/bin/backup.sh"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Fields: minute, hour, day of month, month, day of week.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/crontab.5.html"
+   ]
+  },
+  {
+   "id": "can004",
+   "d": "terminal",
+   "q": "What is the difference between a line in /etc/crontab and a line in a user's crontab edited with crontab -e?",
+   "o": [
+    "/etc/crontab has an extra field with the user name that runs the command",
+    "There is no difference",
+    "User crontabs have an extra year field",
+    "/etc/crontab does not support minutes"
+   ],
+   "a": [
+    0
+   ],
+   "e": "System crontabs (and files in /etc/cron.d/) include a user field.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/crontab.5.html"
+   ]
+  },
+  {
+   "id": "can005",
+   "d": "terminal",
+   "q": "Before running fsck on an ext4 filesystem, what should you ensure?",
+   "o": [
+    "The filesystem is unmounted (or mounted read-only)",
+    "The filesystem is mounted read-write",
+    "The disk is formatted",
+    "The system is connected to the internet"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Checking a mounted read-write filesystem can cause damage.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/fsck.8.html"
+   ]
+  },
+  {
+   "id": "can006",
+   "d": "terminal",
+   "q": "Which tools can create or modify partition tables from the terminal?",
+   "o": [
+    "fdisk",
+    "parted",
+    "fsck",
+    "mkdir",
+    "lsblk"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "lsblk lists block devices; fsck checks filesystems.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/fdisk.8.html",
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/parted.8.html"
+   ]
+  },
+  {
+   "id": "can007",
+   "d": "terminal",
+   "q": "User 'marco' must change password every 90 days. Which command applies this?",
+   "o": [
+    "sudo chage -M 90 marco",
+    "sudo passwd --days 90 marco",
+    "sudo usermod -e 90 marco",
+    "sudo chmod 90 marco"
+   ],
+   "a": [
+    0
+   ],
+   "e": "chage -l marco shows the current aging policy.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/chage.1.html"
+   ]
+  },
+  {
+   "id": "can008",
+   "d": "terminal",
+   "q": "Where are password complexity rules such as minimum length typically configured on Ubuntu with pam_pwquality?",
+   "o": [
+    "/etc/security/pwquality.conf",
+    "/etc/passwd",
+    "/etc/shadow",
+    "/etc/group"
+   ],
+   "a": [
+    0
+   ],
+   "e": "pam_pwquality reads its settings from pwquality.conf.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/pwquality.conf.5.html"
+   ]
+  },
+  {
+   "id": "can009",
+   "d": "terminal",
+   "q": "What is the safest way to give the group 'deploy' permission to restart nginx with sudo?",
+   "o": [
+    "Create a file in /etc/sudoers.d/ with visudo -f and a rule limited to that command",
+    "Edit /etc/sudoers with nano and add ALL=(ALL) ALL",
+    "Add the group to /etc/shadow",
+    "chmod 777 /usr/sbin/nginx"
+   ],
+   "a": [
+    0
+   ],
+   "e": "visudo checks syntax before saving; limiting commands follows least privilege.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/sudoers.5.html"
+   ]
+  },
+  {
+   "id": "can010",
+   "d": "terminal",
+   "q": "On Ubuntu, which group grants a user full sudo rights by default?",
+   "o": [
+    "sudo",
+    "wheel",
+    "root",
+    "admin-users"
+   ],
+   "a": [
+    0
+   ],
+   "e": "RHEL-family systems use wheel; Ubuntu uses sudo.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/sudoers.5.html"
+   ]
+  },
+  {
+   "id": "can011",
+   "d": "terminal",
+   "q": "Which commands create an Ed25519 SSH key pair and copy the public key to a server?",
+   "o": [
+    "ssh-keygen -t ed25519, then ssh-copy-id user@server",
+    "ssh-add -new, then scp ~/.ssh/id_ed25519 server:",
+    "openssl genrsa, then ssh-agent",
+    "ssh -keygen user@server"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Only the public key is copied; the private key stays on the client.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/ssh-keygen.1.html"
+   ]
+  },
+  {
+   "id": "can012",
+   "d": "terminal",
+   "q": "Which permissions are appropriate for ~/.ssh/authorized_keys?",
+   "o": [
+    "600 (read and write for the owner only)",
+    "777",
+    "644 with group write",
+    "755 executable"
+   ],
+   "a": [
+    0
+   ],
+   "e": "sshd refuses keys if files are writable by others (StrictModes).",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/sshd_config.5.html"
+   ]
+  },
+  {
+   "id": "can013",
+   "d": "terminal",
+   "q": "A shared directory must ensure that new files inherit the directory's group. Which permission bit should be set?",
+   "o": [
+    "setgid on the directory (chmod g+s)",
+    "sticky bit",
+    "setuid on the directory",
+    "execute for others"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The sticky bit prevents users from deleting others' files.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/chmod.1.html"
+   ]
+  },
+  {
+   "id": "can014",
+   "d": "terminal",
+   "q": "Which command finds files in /var/log modified in the last 24 hours?",
+   "o": [
+    "find /var/log -type f -mtime -1",
+    "find /var/log -mtime +1",
+    "ls -t /var/log | head -1",
+    "grep -r 24h /var/log"
+   ],
+   "a": [
+    0
+   ],
+   "e": "-mtime -1 means less than one day ago.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/find.1.html"
+   ]
+  },
+  {
+   "id": "can015",
+   "d": "terminal",
+   "q": "Which command prints lines in app.log that contain either ERROR or FATAL?",
+   "o": [
+    "grep -E 'ERROR|FATAL' app.log",
+    "grep 'ERROR&FATAL' app.log",
+    "grep -v 'ERROR|FATAL' app.log",
+    "find ERROR FATAL app.log"
+   ],
+   "a": [
+    0
+   ],
+   "e": "-E enables extended regular expressions; -v would invert the match.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/grep.1.html"
+   ]
+  },
+  {
+   "id": "can016",
+   "d": "terminal",
+   "q": "Which command replaces every 'http://' with 'https://' in config.txt, editing the file in place?",
+   "o": [
+    "sed -i 's#http://#https://#g' config.txt",
+    "sed 's/http/https/' > config.txt",
+    "grep -r https config.txt",
+    "awk -i http https config.txt"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Redirecting to the same file you read would truncate it.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/sed.1.html"
+   ]
+  },
+  {
+   "id": "can017",
+   "d": "terminal",
+   "q": "Which redirection appends both standard output and standard error of a command to out.log?",
+   "o": [
+    "command >> out.log 2>&1",
+    "command > out.log 2>1",
+    "command 2> out.log",
+    "command | out.log"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The order matters: redirect stdout first, then duplicate stderr onto it.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/bash.1.html"
+   ]
+  },
+  {
+   "id": "can018",
+   "d": "terminal",
+   "q": "Which command shows the differences between two configuration files in unified format?",
+   "o": [
+    "diff -u old.conf new.conf",
+    "cmp -u old.conf new.conf",
+    "cat old.conf new.conf",
+    "comm -diff old.conf new.conf"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Unified diffs are the format used by patch and Git.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/diff.1.html"
+   ]
+  },
+  {
+   "id": "can019",
+   "d": "terminal",
+   "q": "Which commands manage users and groups on Ubuntu?",
+   "o": [
+    "adduser alice (interactive, Debian/Ubuntu helper)",
+    "usermod -aG docker alice (add to a supplementary group)",
+    "chmod -aG docker alice",
+    "passwd -g docker alice",
+    "groupdel -a alice"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "usermod -aG keeps existing groups while adding a new one.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/adduser.8.html",
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/useradd.8.html"
+   ]
+  },
+  {
+   "id": "can020",
+   "d": "terminal",
+   "q": "A file is owned by root:root and must be owned by user 'app' and group 'www-data'. Which command?",
+   "o": [
+    "sudo chown app:www-data file",
+    "sudo chmod app:www-data file",
+    "sudo chgrp app file",
+    "sudo usermod file app"
+   ],
+   "a": [
+    0
+   ],
+   "e": "chown user:group changes both.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/chmod.1.html"
+   ]
+  },
+  {
+   "id": "can021",
+   "d": "terminal",
+   "q": "Where are most traditional system logs written on Ubuntu, in addition to the journal?",
+   "o": [
+    "/var/log/syslog",
+    "/var/log/messages",
+    "/etc/log/system",
+    "/tmp/syslog"
+   ],
+   "a": [
+    0
+   ],
+   "e": "RHEL-family systems use /var/log/messages; Ubuntu uses /var/log/syslog via rsyslog.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/journalctl.1.html"
+   ]
+  },
+  {
+   "id": "can022",
+   "d": "terminal",
+   "q": "What does the octal mode 750 mean for a directory?",
+   "o": [
+    "Owner rwx, group r-x, others no access",
+    "Owner rw-, group r--, others ---",
+    "Everyone full access",
+    "Owner r-x, group rwx, others ---"
+   ],
+   "a": [
+    0
+   ],
+   "e": "4 = read, 2 = write, 1 = execute.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/chmod.1.html"
+   ]
+  },
+  {
+   "id": "can023",
+   "d": "terminal",
+   "q": "Which file defines system-wide defaults such as PASS_MAX_DAYS for new users?",
+   "o": [
+    "/etc/login.defs",
+    "/etc/profile",
+    "/etc/fstab",
+    "/etc/hosts"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Changes apply to newly created users; use chage for existing ones.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/chage.1.html"
+   ]
+  },
+  {
+   "id": "can024",
+   "d": "terminal",
+   "q": "Which command shows the last 50 lines of a log and keeps printing new lines?",
+   "o": [
+    "tail -n 50 -f /var/log/syslog",
+    "head -f 50 /var/log/syslog",
+    "less -50 /var/log/syslog",
+    "cat -f /var/log/syslog"
+   ],
+   "a": [
+    0
+   ],
+   "e": "journalctl -f is the equivalent for the journal.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/journalctl.1.html"
+   ]
+  },
+  {
+   "id": "can025",
+   "d": "terminal",
+   "q": "A login problem must be investigated. Which log on Ubuntu records authentication events such as sudo and SSH logins?",
+   "o": [
+    "/var/log/auth.log",
+    "/var/log/dpkg.log",
+    "/var/log/kern.log",
+    "/var/log/boot.log"
+   ],
+   "a": [
+    0
+   ],
+   "e": "auth.log is written by rsyslog; the same events are in the journal.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/security/openssh-server/"
+   ]
+  },
+  {
+   "id": "can026",
+   "d": "desktop",
+   "q": "Where are persistent network configurations defined on modern Ubuntu releases?",
+   "o": [
+    "YAML files in /etc/netplan/",
+    "/etc/network/interfaces only",
+    "/etc/sysconfig/network-scripts/",
+    "/etc/hosts"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Netplan generates configuration for systemd-networkd or NetworkManager.",
+   "r": [
+    "https://netplan.readthedocs.io/en/stable/"
+   ]
+  },
+  {
+   "id": "can027",
+   "d": "desktop",
+   "q": "You edited a netplan file on a remote machine. Which command applies it but rolls back automatically if you lose connectivity and do not confirm?",
+   "o": [
+    "sudo netplan try",
+    "sudo netplan apply --force",
+    "sudo systemctl restart netplan",
+    "sudo netplan generate --rollback"
+   ],
+   "a": [
+    0
+   ],
+   "e": "netplan try waits for confirmation before keeping the change.",
+   "r": [
+    "https://netplan.readthedocs.io/en/stable/"
+   ]
+  },
+  {
+   "id": "can028",
+   "d": "desktop",
+   "q": "On Ubuntu Desktop, which renderer does netplan usually delegate to?",
+   "o": [
+    "NetworkManager",
+    "systemd-networkd only",
+    "ifupdown",
+    "dhclient scripts"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Desktop uses NetworkManager; Server usually uses systemd-networkd.",
+   "r": [
+    "https://netplan.readthedocs.io/en/stable/"
+   ]
+  },
+  {
+   "id": "can029",
+   "d": "desktop",
+   "q": "Which command shows the ARP/neighbour table that maps IP addresses to MAC addresses?",
+   "o": [
+    "ip neigh",
+    "ip route",
+    "ss -t",
+    "dig -x"
+   ],
+   "a": [
+    0
+   ],
+   "e": "ARP resolves IPv4 addresses to layer 2 MAC addresses in the local network.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/ip-neighbour.8.html"
+   ]
+  },
+  {
+   "id": "can030",
+   "d": "desktop",
+   "q": "Which statements about MAC addresses and layer 2 are correct?",
+   "o": [
+    "A MAC address is 48 bits, usually written as six hexadecimal pairs",
+    "The broadcast MAC address ff:ff:ff:ff:ff:ff reaches all hosts in the same layer 2 domain",
+    "Routers forward layer 2 broadcasts to the internet",
+    "A MAC address is the same as an IPv4 address",
+    "ARP is used to find the IP of a domain name"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "Broadcasts stay in their layer 2 segment; DNS resolves names.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/ip-neighbour.8.html"
+   ]
+  },
+  {
+   "id": "can031",
+   "d": "desktop",
+   "q": "How often are Ubuntu LTS releases published, and how long is standard security maintenance?",
+   "o": [
+    "Every two years in April, with 5 years of standard support (extendable with Ubuntu Pro)",
+    "Every 6 months, with 9 months of support",
+    "Every year, with 3 years of support",
+    "Every 4 years, with 10 years of standard support"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Interim releases come every six months and get 9 months of support.",
+   "r": [
+    "https://ubuntu.com/about/release-cycle"
+   ]
+  },
+  {
+   "id": "can032",
+   "d": "desktop",
+   "q": "What does the version number 24.04 mean?",
+   "o": [
+    "Released in April 2024",
+    "Version 24, revision 4",
+    "The 24th release with 4 updates",
+    "Kernel 24.04"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Ubuntu uses YY.MM versioning; point releases are 24.04.1, 24.04.2, and so on.",
+   "r": [
+    "https://ubuntu.com/about/release-cycle"
+   ]
+  },
+  {
+   "id": "can033",
+   "d": "desktop",
+   "q": "Which command upgrades an Ubuntu system to the next release?",
+   "o": [
+    "sudo do-release-upgrade",
+    "sudo apt upgrade --release",
+    "sudo snap refresh ubuntu",
+    "sudo dpkg --upgrade-release"
+   ],
+   "a": [
+    0
+   ],
+   "e": "LTS-to-LTS upgrades are normally offered after the first point release.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/software/upgrade-your-release/"
+   ]
+  },
+  {
+   "id": "can034",
+   "d": "desktop",
+   "q": "Which bodies are part of Ubuntu community governance?",
+   "o": [
+    "Community Council",
+    "Technical Board",
+    "The Linux Foundation board of directors",
+    "The Debian Project Leader only",
+    "The W3C"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "See the Ubuntu governance pages for the roles of each body.",
+   "r": [
+    "https://ubuntu.com/community/governance"
+   ]
+  },
+  {
+   "id": "can035",
+   "d": "desktop",
+   "q": "Which statement about the GPL and permissive licenses such as MIT is correct?",
+   "o": [
+    "The GPL is copyleft: distributed derivative works must be released under the same license; MIT allows reuse in proprietary software with attribution",
+    "MIT is copyleft and GPL is permissive",
+    "Both forbid commercial use",
+    "Open source software cannot be sold"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The Apache License 2.0 is permissive and includes an explicit patent grant.",
+   "r": [
+    "https://opensource.org/licenses"
+   ]
+  },
+  {
+   "id": "can036",
+   "d": "desktop",
+   "q": "You changed GRUB_CMDLINE_LINUX_DEFAULT in /etc/default/grub. What must you run for the change to take effect at next boot?",
+   "o": [
+    "sudo update-grub",
+    "sudo grub-install --reload",
+    "sudo systemctl restart grub",
+    "Nothing, it is read at boot"
+   ],
+   "a": [
+    0
+   ],
+   "e": "update-grub regenerates /boot/grub/grub.cfg.",
+   "r": [
+    "https://help.ubuntu.com/community/Grub2"
+   ]
+  },
+  {
+   "id": "can037",
+   "d": "desktop",
+   "q": "After adding a kernel module that must be available early in boot, which command regenerates the initial RAM filesystem?",
+   "o": [
+    "sudo update-initramfs -u",
+    "sudo update-grub",
+    "sudo depmod -r",
+    "sudo mkfs.initramfs"
+   ],
+   "a": [
+    0
+   ],
+   "e": "initramfs contains the drivers and scripts needed to mount the root filesystem.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/update-initramfs.8.html"
+   ]
+  },
+  {
+   "id": "can038",
+   "d": "desktop",
+   "q": "Which tool lists the recommended proprietary drivers (for example GPU or Wi-Fi) for the hardware and can install them?",
+   "o": [
+    "ubuntu-drivers",
+    "lspci -install",
+    "modprobe --recommend",
+    "apt-drivers"
+   ],
+   "a": [
+    0
+   ],
+   "e": "ubuntu-drivers list and ubuntu-drivers install.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/graphics/install-nvidia-drivers/"
+   ]
+  },
+  {
+   "id": "can039",
+   "d": "desktop",
+   "q": "Which sequence creates an LVM logical volume on a new disk /dev/sdb?",
+   "o": [
+    "pvcreate /dev/sdb, vgcreate data /dev/sdb, lvcreate -n lv1 -L 10G data",
+    "lvcreate first, then pvcreate",
+    "mkfs /dev/sdb, then vgcreate",
+    "fdisk only"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Physical volume, volume group, logical volume; then create a filesystem on the LV.",
+   "r": [
+    "https://documentation.ubuntu.com/server/explanation/storage/about-lvm/"
+   ]
+  },
+  {
+   "id": "can040",
+   "d": "desktop",
+   "q": "Which command extends a logical volume by 5 GiB and resizes its filesystem in one step?",
+   "o": [
+    "sudo lvextend -r -L +5G /dev/data/lv1",
+    "sudo lvextend -L 5G /dev/data/lv1 (no resize needed)",
+    "sudo resize2fs -L +5G /dev/data/lv1",
+    "sudo vgextend -L +5G data"
+   ],
+   "a": [
+    0
+   ],
+   "e": "-r (--resizefs) calls the appropriate filesystem resize tool.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/lvcreate.8.html"
+   ]
+  },
+  {
+   "id": "can041",
+   "d": "desktop",
+   "q": "Before a risky upgrade, you want a point-in-time copy of an LVM volume. Which command creates an LVM snapshot?",
+   "o": [
+    "sudo lvcreate -s -L 2G -n before-upgrade /dev/data/lv1",
+    "sudo lvsnapshot /dev/data/lv1",
+    "sudo vgcreate -s",
+    "sudo cp -a /dev/data/lv1 /backup"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The snapshot needs enough space to store changes made after it.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/lvcreate.8.html"
+   ]
+  },
+  {
+   "id": "can042",
+   "d": "desktop",
+   "q": "Which statements about snaps compared to deb packages are correct?",
+   "o": [
+    "Snaps bundle their dependencies and run with confinement",
+    "Snaps update automatically in the background by default",
+    "Snaps are installed with dpkg -i",
+    "Deb packages are always confined",
+    "Snaps cannot be removed"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "snap list, snap refresh, and snap revert manage snaps.",
+   "r": [
+    "https://snapcraft.io/docs"
+   ]
+  },
+  {
+   "id": "can043",
+   "d": "desktop",
+   "q": "Which command shows which version of a package would be installed and from which repository?",
+   "o": [
+    "apt-cache policy PACKAGE",
+    "apt search --version",
+    "dpkg -S PACKAGE",
+    "snap info --apt"
+   ],
+   "a": [
+    0
+   ],
+   "e": "apt show PACKAGE shows its description and metadata.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/software/package-management/"
+   ]
+  },
+  {
+   "id": "can044",
+   "d": "desktop",
+   "q": "Which command lists packages that have upgrades available?",
+   "o": [
+    "apt list --upgradable",
+    "apt upgrade --list-only-installed",
+    "dpkg -l --upgrade",
+    "apt-cache upgrades"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Run sudo apt update first to refresh the package lists.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/software/package-management/"
+   ]
+  },
+  {
+   "id": "can045",
+   "d": "desktop",
+   "q": "What is the difference between 'apt upgrade' and 'apt full-upgrade'?",
+   "o": [
+    "full-upgrade can remove installed packages if needed to resolve dependencies",
+    "They are identical",
+    "upgrade installs a new Ubuntu release",
+    "full-upgrade only updates snaps"
+   ],
+   "a": [
+    0
+   ],
+   "e": "upgrade never removes packages.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/software/package-management/"
+   ]
+  },
+  {
+   "id": "can046",
+   "d": "desktop",
+   "q": "Which package and configuration files enable automatic security updates?",
+   "o": [
+    "unattended-upgrades, configured in /etc/apt/apt.conf.d/50unattended-upgrades and 20auto-upgrades",
+    "cron-apt in /etc/crontab",
+    "snapd in /etc/snap.conf",
+    "update-notifier in /etc/hosts"
+   ],
+   "a": [
+    0
+   ],
+   "e": "By default Ubuntu installs security updates automatically.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/software/automatic-updates/"
+   ]
+  },
+  {
+   "id": "can047",
+   "d": "desktop",
+   "q": "How do you add an internal root CA certificate to Ubuntu's system trust store?",
+   "o": [
+    "Copy the .crt file to /usr/local/share/ca-certificates/ and run sudo update-ca-certificates",
+    "Copy it to /etc/ssl/private/ and reboot",
+    "Import it with apt install",
+    "Add it to /etc/hosts"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Applications using the system store will trust it.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/security/install-a-root-ca-certificate-in-the-trust-store/"
+   ]
+  },
+  {
+   "id": "can048",
+   "d": "desktop",
+   "q": "Which tools are commonly used to join an Ubuntu machine to an Active Directory domain?",
+   "o": [
+    "realm join (realmd) with SSSD",
+    "adcli and SSSD",
+    "netplan join",
+    "ufw join",
+    "snap join-domain"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "realmd discovers the domain and configures SSSD.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/sssd/with-active-directory/"
+   ]
+  },
+  {
+   "id": "can049",
+   "d": "desktop",
+   "q": "User 'giulia' must have read and write access to /srv/project without changing the owner or group. Which command?",
+   "o": [
+    "sudo setfacl -m u:giulia:rwX /srv/project",
+    "sudo chmod giulia+rw /srv/project",
+    "sudo chown giulia /srv/project",
+    "sudo usermod -d /srv/project giulia"
+   ],
+   "a": [
+    0
+   ],
+   "e": "getfacl shows ACLs; -d sets default ACLs for new files.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/setfacl.1.html"
+   ]
+  },
+  {
+   "id": "can050",
+   "d": "desktop",
+   "q": "In PKI, what does a certificate authority (CA) do?",
+   "o": [
+    "It signs certificates, vouching that a public key belongs to an identity",
+    "It stores everyone's private keys",
+    "It encrypts all network traffic itself",
+    "It assigns IP addresses"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Private keys must remain with their owners.",
+   "r": [
+    "https://documentation.ubuntu.com/server/explanation/crypto/introduction-to-crypto-libraries/"
+   ]
+  },
+  {
+   "id": "can051",
+   "d": "server",
+   "q": "Which command enables a service to start at boot and starts it immediately?",
+   "o": [
+    "sudo systemctl enable --now nginx",
+    "sudo systemctl start --boot nginx",
+    "sudo service nginx enable",
+    "sudo systemctl restart --enable nginx"
+   ],
+   "a": [
+    0
+   ],
+   "e": "enable creates the symlinks; --now also starts it.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/systemctl.1.html"
+   ]
+  },
+  {
+   "id": "can052",
+   "d": "server",
+   "q": "You want a backup script to run daily, even if the server was off at the scheduled time. Which systemd timer setting helps?",
+   "o": [
+    "OnCalendar=daily with Persistent=true",
+    "OnBootSec=1d",
+    "Restart=always",
+    "WantedBy=multi-user.target only"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Persistent=true runs missed jobs at the next boot.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/systemd.timer.5.html"
+   ]
+  },
+  {
+   "id": "can053",
+   "d": "server",
+   "q": "Which command lists systemd timers and when they will run next?",
+   "o": [
+    "systemctl list-timers",
+    "crontab -l",
+    "systemctl status timers",
+    "journalctl --timers"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Each .timer activates a matching .service unit.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man5/systemd.timer.5.html"
+   ]
+  },
+  {
+   "id": "can054",
+   "d": "server",
+   "q": "You added a line to /etc/exports for an NFS share. Which command applies the change without restarting the server?",
+   "o": [
+    "sudo exportfs -ra",
+    "sudo mount -a",
+    "sudo nfs reload",
+    "sudo systemctl daemon-reload"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The NFS server package on Ubuntu is nfs-kernel-server.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/networking/install-nfs/"
+   ]
+  },
+  {
+   "id": "can055",
+   "d": "server",
+   "q": "Which command adds a Samba password for an existing Linux user?",
+   "o": [
+    "sudo smbpasswd -a USER",
+    "sudo passwd --samba USER",
+    "sudo useradd -smb USER",
+    "sudo testparm -a USER"
+   ],
+   "a": [
+    0
+   ],
+   "e": "testparm checks smb.conf syntax.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/samba/file-server/"
+   ]
+  },
+  {
+   "id": "can056",
+   "d": "server",
+   "q": "Before reloading nginx, how do you check that the configuration is valid?",
+   "o": [
+    "sudo nginx -t",
+    "sudo nginx --dry-run",
+    "sudo systemctl check nginx",
+    "sudo apachectl -t nginx"
+   ],
+   "a": [
+    0
+   ],
+   "e": "apache2ctl configtest is the Apache equivalent.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/web-services/install-nginx/"
+   ]
+  },
+  {
+   "id": "can057",
+   "d": "server",
+   "q": "How do you enable an Apache site defined in /etc/apache2/sites-available/app.conf on Ubuntu?",
+   "o": [
+    "sudo a2ensite app && sudo systemctl reload apache2",
+    "sudo ln -s app.conf /var/www",
+    "sudo apache2 enable app",
+    "sudo a2enmod app"
+   ],
+   "a": [
+    0
+   ],
+   "e": "a2enmod enables modules; a2ensite enables sites.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/web-services/install-apache2/"
+   ]
+  },
+  {
+   "id": "can058",
+   "d": "server",
+   "q": "What is Ubuntu autoinstall?",
+   "o": [
+    "A way to automate Ubuntu Server installation with a YAML configuration, often delivered through cloud-init user data",
+    "A tool that installs all available packages",
+    "A snap that upgrades the kernel",
+    "A GUI wizard"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Autoinstall answers the installer's questions in advance.",
+   "r": [
+    "https://canonical-subiquity.readthedocs-hosted.com/en/latest/intro-to-autoinstall.html"
+   ]
+  },
+  {
+   "id": "can059",
+   "d": "server",
+   "q": "Which services are needed to boot the Ubuntu Server installer over the network with PXE (legacy BIOS)?",
+   "o": [
+    "DHCP to provide the boot information",
+    "TFTP (or HTTP for UEFI) to serve the boot files",
+    "SMTP",
+    "Samba",
+    "NTP only"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "The client obtains an address and boot file location from DHCP, then downloads the files.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/installation/how-to-netboot-the-server-installer-on-amd64/"
+   ]
+  },
+  {
+   "id": "can060",
+   "d": "server",
+   "q": "A cloud-init configuration did not apply as expected. Where do you look first?",
+   "o": [
+    "/var/log/cloud-init.log and /var/log/cloud-init-output.log, plus 'cloud-init status --long'",
+    "/etc/cloud-init.conf only",
+    "/var/log/dpkg.log",
+    "~/.bash_history"
+   ],
+   "a": [
+    0
+   ],
+   "e": "cloud-init status --wait is useful in scripts.",
+   "r": [
+    "https://cloudinit.readthedocs.io/en/latest/"
+   ]
+  },
+  {
+   "id": "can061",
+   "d": "server",
+   "q": "What must the first line of a cloud-init user-data file in YAML format be?",
+   "o": [
+    "#cloud-config",
+    "---cloud",
+    "#!/bin/cloud",
+    "version: cloud-init"
+   ],
+   "a": [
+    0
+   ],
+   "e": "cloud-init uses the header to recognize the format.",
+   "r": [
+    "https://cloudinit.readthedocs.io/en/latest/"
+   ]
+  },
+  {
+   "id": "can062",
+   "d": "server",
+   "q": "You forgot the root password and must boot into a minimal maintenance environment. What can you add to the kernel command line in GRUB?",
+   "o": [
+    "systemd.unit=rescue.target (or emergency.target for an even more minimal shell)",
+    "init=graphical.target",
+    "single-user=yes",
+    "nomodeset only"
+   ],
+   "a": [
+    0
+   ],
+   "e": "rescue.target is the single-user mode in systemd.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man7/systemd.special.7.html"
+   ]
+  },
+  {
+   "id": "can063",
+   "d": "server",
+   "q": "Which ufw commands allow SSH and then activate the firewall with the default policies?",
+   "o": [
+    "sudo ufw allow OpenSSH, then sudo ufw enable",
+    "sudo ufw enable, then sudo ufw allow 22 from another session",
+    "sudo iptables -F, then sudo ufw on",
+    "sudo ufw start ssh"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Allow SSH before enabling to avoid locking yourself out.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/security/firewalls/"
+   ]
+  },
+  {
+   "id": "can064",
+   "d": "server",
+   "q": "Which command shows ufw rules with default policies and logging status?",
+   "o": [
+    "sudo ufw status verbose",
+    "sudo ufw list",
+    "sudo iptables -ufw",
+    "sudo ufw show all"
+   ],
+   "a": [
+    0
+   ],
+   "e": "ufw is a front end that writes iptables/nftables rules.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/security/firewalls/"
+   ]
+  },
+  {
+   "id": "can065",
+   "d": "server",
+   "q": "How do you list the current iptables rules with packet counters and numeric addresses?",
+   "o": [
+    "sudo iptables -L -n -v",
+    "sudo iptables -show",
+    "sudo iptables --print",
+    "sudo iptables -F -v"
+   ],
+   "a": [
+    0
+   ],
+   "e": "-F flushes rules; do not use it to list.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/security/firewalls/"
+   ]
+  },
+  {
+   "id": "can066",
+   "d": "server",
+   "q": "How do you create a system user for a service, without a home directory or a login shell?",
+   "o": [
+    "sudo adduser --system --group --no-create-home myservice",
+    "sudo adduser myservice --admin",
+    "sudo usermod -s /bin/bash myservice",
+    "sudo passwd -s myservice"
+   ],
+   "a": [
+    0
+   ],
+   "e": "System users have UIDs below 1000 and typically a nologin shell.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/adduser.8.html"
+   ]
+  },
+  {
+   "id": "can067",
+   "d": "server",
+   "q": "Which settings harden the OpenSSH server?",
+   "o": [
+    "PasswordAuthentication no, using keys",
+    "PermitRootLogin no",
+    "PermitEmptyPasswords yes",
+    "Port 22 opened to everyone with no logs",
+    "Disabling all host keys"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "On Ubuntu, drop-in files go in /etc/ssh/sshd_config.d/.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/security/openssh-server/"
+   ]
+  },
+  {
+   "id": "can068",
+   "d": "server",
+   "q": "Which command lists running services?",
+   "o": [
+    "systemctl list-units --type=service --state=running",
+    "systemctl list-timers --running",
+    "ps --services",
+    "service --status-all --running-only"
+   ],
+   "a": [
+    0
+   ],
+   "e": "--state also accepts values such as failed or inactive.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/systemctl.1.html"
+   ]
+  },
+  {
+   "id": "can069",
+   "d": "server",
+   "q": "Which command lists unit files that are disabled?",
+   "o": [
+    "systemctl list-unit-files --state=disabled",
+    "systemctl list-units --disabled-only",
+    "systemctl status --disabled",
+    "journalctl --disabled"
+   ],
+   "a": [
+    0
+   ],
+   "e": "list-unit-files shows installed units and their enablement state.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/systemctl.1.html"
+   ]
+  },
+  {
+   "id": "can070",
+   "d": "server",
+   "q": "A process ignores SIGTERM and must be stopped. Which signal cannot be caught or ignored?",
+   "o": [
+    "SIGKILL (9)",
+    "SIGHUP (1)",
+    "SIGINT (2)",
+    "SIGTERM (15)"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Try SIGTERM first so the process can exit cleanly.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/kill.1.html"
+   ]
+  },
+  {
+   "id": "can071",
+   "d": "server",
+   "q": "Which command lowers the priority of the running process with PID 4242?",
+   "o": [
+    "sudo renice -n 10 -p 4242",
+    "sudo nice -p 4242",
+    "sudo kill -10 4242",
+    "sudo chrt 4242"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Higher nice values mean lower priority.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/renice.1.html"
+   ]
+  },
+  {
+   "id": "can072",
+   "d": "server",
+   "q": "Which command shows all processes with their user, CPU, and memory usage?",
+   "o": [
+    "ps aux",
+    "ps -p",
+    "ls /proc",
+    "top -n 0"
+   ],
+   "a": [
+    0
+   ],
+   "e": "top and htop show the same information interactively.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/ps.1.html"
+   ]
+  },
+  {
+   "id": "can073",
+   "d": "server",
+   "q": "Which package provides a PostgreSQL server on Ubuntu, and how is it managed?",
+   "o": [
+    "postgresql, managed with systemctl and the postgres system user",
+    "pgsql-server from snap only",
+    "mysql-server with the postgres plugin",
+    "postgres via pip"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Ubuntu documentation describes installing and configuring PostgreSQL.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/databases/install-postgresql/"
+   ]
+  },
+  {
+   "id": "can074",
+   "d": "server",
+   "q": "Which command shows the logs of the nginx service since one hour ago?",
+   "o": [
+    "journalctl -u nginx --since '1 hour ago'",
+    "systemctl logs nginx -1h",
+    "tail /var/log/nginx.service",
+    "dmesg -u nginx"
+   ],
+   "a": [
+    0
+   ],
+   "e": "nginx also writes access and error logs under /var/log/nginx/.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/journalctl.1.html"
+   ]
+  },
+  {
+   "id": "can075",
+   "d": "server",
+   "q": "After editing a systemd unit file, what must you run before restarting the service?",
+   "o": [
+    "sudo systemctl daemon-reload",
+    "sudo systemctl reload-units",
+    "sudo update-grub",
+    "sudo systemctl reset-failed only"
+   ],
+   "a": [
+    0
+   ],
+   "e": "daemon-reload makes systemd re-read unit files.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/systemctl.1.html"
+   ]
+  },
+  {
+   "id": "can076",
+   "d": "devops",
+   "q": "Which statements about keeping automation scripts in git are correct?",
+   "o": [
+    "Changes are tracked and can be reviewed and reverted",
+    "Secrets should not be committed; use a secrets manager or environment-specific files excluded with .gitignore",
+    "Git automatically runs the scripts on servers",
+    "Git replaces the need for testing",
+    "Every commit must be signed by Canonical"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "Version control is the base of DevOps workflows.",
+   "r": [
+    "https://git-scm.com/docs"
+   ]
+  },
+  {
+   "id": "can077",
+   "d": "devops",
+   "q": "What is the role of Ansible in a server automation workflow?",
+   "o": [
+    "Configure many hosts in an idempotent way over SSH, with playbooks written in YAML",
+    "Provide a hypervisor",
+    "Replace the Linux kernel",
+    "Capture network packets"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Ansible is agentless and uses SSH.",
+   "r": [
+    "https://docs.ansible.com/"
+   ]
+  },
+  {
+   "id": "can078",
+   "d": "devops",
+   "q": "What is Landscape?",
+   "o": [
+    "Canonical's tool to manage, monitor, and patch many Ubuntu machines centrally",
+    "A GNOME theme",
+    "A container runtime",
+    "A file system"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Landscape is part of the Ubuntu Pro offering and can also be self-hosted.",
+   "r": [
+    "https://documentation.ubuntu.com/landscape/"
+   ]
+  },
+  {
+   "id": "can079",
+   "d": "devops",
+   "q": "Which command attaches a machine to an Ubuntu Pro subscription?",
+   "o": [
+    "sudo pro attach TOKEN",
+    "sudo apt pro TOKEN",
+    "sudo snap pro TOKEN",
+    "sudo ubuntu-pro login"
+   ],
+   "a": [
+    0
+   ],
+   "e": "pro status shows which services are enabled.",
+   "r": [
+    "https://documentation.ubuntu.com/pro/"
+   ]
+  },
+  {
+   "id": "can080",
+   "d": "devops",
+   "q": "What does Livepatch provide?",
+   "o": [
+    "Critical kernel security fixes applied without rebooting",
+    "Automatic upgrades to the next Ubuntu release",
+    "Live migration of VMs",
+    "Backups of home directories"
+   ],
+   "a": [
+    0
+   ],
+   "e": "A reboot is still needed eventually to load a new kernel.",
+   "r": [
+    "https://ubuntu.com/security/livepatch/docs"
+   ]
+  },
+  {
+   "id": "can081",
+   "d": "devops",
+   "q": "What does Expanded Security Maintenance (ESM) provide?",
+   "o": [
+    "Security updates beyond standard support, for main (esm-infra) and universe (esm-apps) packages",
+    "Faster boot times",
+    "Free hardware support",
+    "Automatic GUI updates"
+   ],
+   "a": [
+    0
+   ],
+   "e": "ESM is available through Ubuntu Pro.",
+   "r": [
+    "https://ubuntu.com/security/esm"
+   ]
+  },
+  {
+   "id": "can082",
+   "d": "devops",
+   "q": "Which command launches an Ubuntu 24.04 system container with LXD?",
+   "o": [
+    "lxc launch ubuntu:24.04 web1",
+    "lxd create ubuntu 24.04",
+    "docker run lxd:24.04",
+    "virsh launch ubuntu:24.04"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Add --vm to launch a virtual machine instead.",
+   "r": [
+    "https://documentation.ubuntu.com/lxd/latest/"
+   ]
+  },
+  {
+   "id": "can083",
+   "d": "devops",
+   "q": "What is the difference between an LXD system container and a Docker application container?",
+   "o": [
+    "An LXD system container runs a full Linux userspace with init and multiple services; a Docker container typically runs a single application process",
+    "They are the same",
+    "LXD containers include their own kernel",
+    "Docker containers are virtual machines"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Both share the host kernel; LXD can also run VMs.",
+   "r": [
+    "https://documentation.ubuntu.com/lxd/latest/"
+   ]
+  },
+  {
+   "id": "can084",
+   "d": "devops",
+   "q": "Which command opens a shell inside an LXD instance named web1?",
+   "o": [
+    "lxc exec web1 -- bash",
+    "lxc ssh web1",
+    "docker exec web1 bash",
+    "virsh console web1 --bash"
+   ],
+   "a": [
+    0
+   ],
+   "e": "lxc list shows instances and their addresses.",
+   "r": [
+    "https://documentation.ubuntu.com/lxd/latest/"
+   ]
+  },
+  {
+   "id": "can085",
+   "d": "devops",
+   "q": "Which command lists all libvirt virtual machines, including stopped ones?",
+   "o": [
+    "virsh list --all",
+    "virsh show",
+    "lxc list --vm",
+    "virt-manager --list"
+   ],
+   "a": [
+    0
+   ],
+   "e": "virt-manager is the graphical client.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/virtualisation/libvirt/"
+   ]
+  },
+  {
+   "id": "can086",
+   "d": "devops",
+   "q": "How do you check whether a host supports KVM hardware acceleration on Ubuntu?",
+   "o": [
+    "kvm-ok (from the cpu-checker package)",
+    "lsmod | grep docker",
+    "virsh kvm-test",
+    "uname -kvm"
+   ],
+   "a": [
+    0
+   ],
+   "e": "KVM needs CPU virtualization extensions enabled in firmware.",
+   "r": [
+    "https://documentation.ubuntu.com/server/how-to/virtualisation/libvirt/"
+   ]
+  },
+  {
+   "id": "can087",
+   "d": "devops",
+   "q": "Which Docker command runs an nginx container in the background, mapping host port 8080 to container port 80?",
+   "o": [
+    "docker run -d -p 8080:80 nginx",
+    "docker run -p 80:8080 nginx",
+    "docker start nginx -port 8080",
+    "docker run -d -expose 8080 nginx"
+   ],
+   "a": [
+    0
+   ],
+   "e": "The format is HOST:CONTAINER.",
+   "r": [
+    "https://docs.docker.com/engine/install/ubuntu/"
+   ]
+  },
+  {
+   "id": "can088",
+   "d": "devops",
+   "q": "Which command shows listening TCP and UDP sockets with the owning processes?",
+   "o": [
+    "sudo ss -tulpn",
+    "netstat -route",
+    "ip neigh",
+    "dig -l"
+   ],
+   "a": [
+    0
+   ],
+   "e": "ss is part of iproute2 and replaces netstat.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/ss.8.html"
+   ]
+  },
+  {
+   "id": "can089",
+   "d": "devops",
+   "q": "Which command queries the A record of example.com using the DNS server 1.1.1.1 and prints only the answer?",
+   "o": [
+    "dig @1.1.1.1 example.com A +short",
+    "dig example.com -server 1.1.1.1",
+    "nslookup -short example.com",
+    "ping example.com @1.1.1.1"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Comparing answers from different resolvers helps isolate DNS problems.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/dig.1.html"
+   ]
+  },
+  {
+   "id": "can090",
+   "d": "devops",
+   "q": "Which command captures DNS traffic on interface eth0 without resolving names?",
+   "o": [
+    "sudo tcpdump -i eth0 -n port 53",
+    "sudo tcpdump -dns eth0",
+    "sudo ss -i eth0 53",
+    "sudo dig -i eth0"
+   ],
+   "a": [
+    0
+   ],
+   "e": "-w file.pcap saves the capture for analysis.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/tcpdump.1.html"
+   ]
+  },
+  {
+   "id": "can091",
+   "d": "devops",
+   "q": "Which iproute2 commands show addresses and routes?",
+   "o": [
+    "ip addr",
+    "ip route",
+    "ip dns",
+    "ip firewall",
+    "ip apt"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "ip -s link shows interface statistics such as errors and drops.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/ip.8.html"
+   ]
+  },
+  {
+   "id": "can092",
+   "d": "devops",
+   "q": "A server is slow. The load average is high, but CPU usage is low and vmstat shows a high 'wa' value. What does this suggest?",
+   "o": [
+    "Processes are waiting for I/O, so storage is a likely bottleneck",
+    "The CPU is overloaded",
+    "The network is down",
+    "There is too much free memory"
+   ],
+   "a": [
+    0
+   ],
+   "e": "iostat (sysstat) shows per-device utilization.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/vmstat.8.html"
+   ]
+  },
+  {
+   "id": "can093",
+   "d": "devops",
+   "q": "An application was killed unexpectedly and memory was low. How do you confirm the OOM killer stopped it?",
+   "o": [
+    "Search kernel messages, for example journalctl -k | grep -i oom",
+    "Check /etc/oom.conf",
+    "Run free -h only",
+    "Look in ~/.bash_history"
+   ],
+   "a": [
+    0
+   ],
+   "e": "free -h shows memory usage now, not past events.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/journalctl.1.html",
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/free.1.html"
+   ]
+  },
+  {
+   "id": "can094",
+   "d": "devops",
+   "q": "Large packets fail between two networks while small pings work. What is a likely cause?",
+   "o": [
+    "An MTU mismatch along the path",
+    "Wrong DNS server",
+    "Expired password",
+    "Missing crontab"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Test with ping -M do -s SIZE to find the maximum MTU.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/ip.8.html"
+   ]
+  },
+  {
+   "id": "can095",
+   "d": "devops",
+   "q": "Which practices help respond to resource contention on a busy server?",
+   "o": [
+    "Identify the top consumers with top, ps, or iotop",
+    "Limit services with systemd resource controls such as CPUQuota and MemoryMax",
+    "Disable all logs permanently",
+    "Reboot every hour",
+    "Remove swap without analysis"
+   ],
+   "a": [
+    0,
+    1
+   ],
+   "e": "systemd uses cgroups to limit resources per unit.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man1/systemctl.1.html"
+   ]
+  },
+  {
+   "id": "can096",
+   "d": "devops",
+   "q": "What is the benefit of using cloud-init in automated deployments?",
+   "o": [
+    "The same user-data configures users, packages, and files on first boot across clouds, LXD, and VMs",
+    "It replaces the Linux kernel",
+    "It only works on AWS",
+    "It only works on Desktop"
+   ],
+   "a": [
+    0
+   ],
+   "e": "cloud-init is the industry-standard first-boot initialization tool.",
+   "r": [
+    "https://cloudinit.readthedocs.io/en/latest/"
+   ]
+  },
+  {
+   "id": "can097",
+   "d": "devops",
+   "q": "Which command shows whether Livepatch and ESM services are enabled on a machine?",
+   "o": [
+    "pro status",
+    "snap status pro",
+    "apt pro-status",
+    "systemctl status ubuntu"
+   ],
+   "a": [
+    0
+   ],
+   "e": "pro enable livepatch enables the service.",
+   "r": [
+    "https://documentation.ubuntu.com/pro/"
+   ]
+  },
+  {
+   "id": "can098",
+   "d": "devops",
+   "q": "Which statement about deploying a web app and its database with containers is correct?",
+   "o": [
+    "Database data should be stored on a volume so it survives container replacement",
+    "Data in a container's writable layer is kept forever",
+    "Databases cannot run in containers",
+    "All containers must use host networking"
+   ],
+   "a": [
+    0
+   ],
+   "e": "Docker volumes and LXD storage volumes persist data.",
+   "r": [
+    "https://docs.docker.com/engine/install/ubuntu/"
+   ]
+  },
+  {
+   "id": "can099",
+   "d": "devops",
+   "q": "A host cannot reach another subnet. Which command shows which route the kernel would use for a destination?",
+   "o": [
+    "ip route get 10.20.0.5",
+    "ss -r 10.20.0.5",
+    "dig 10.20.0.5",
+    "tcpdump route 10.20.0.5"
+   ],
+   "a": [
+    0
+   ],
+   "e": "ip route get shows the selected route and source address.",
+   "r": [
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/ip.8.html"
+   ]
+  }
+ ]
+}
