@@ -5,7 +5,7 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
        bash-completion dnsutils iproute2 iputils-ping traceroute netcat-openbsd tcpdump \
-       jq tree less nano vim shellcheck sqlite3 postgresql-client apt-transport-https \
+       openssh-client jq tree less nano vim shellcheck sqlite3 postgresql-client apt-transport-https \
        ca-certificates gnupg curl \
     && rm -rf /var/lib/apt/lists/*
 

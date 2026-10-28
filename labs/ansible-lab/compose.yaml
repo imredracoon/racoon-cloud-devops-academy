@@ -1,0 +1,41 @@
+# Laboratorio Ansible: quattro nodi gestiti (due tipo Debian/Ubuntu, due tipo RHEL) raggiungibili via SSH.
+# Avvio: ./prepara.sh && docker compose up -d --build
+x-nodo: &nodo
+  cgroup: host
+  tmpfs:
+    - /run
+    - /run/lock
+    - /tmp
+  volumes:
+    - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    - ./.chiavi:/chiavi:ro
+  networks: [lab]
+
+services:
+  web1:
+    <<: *nodo
+    build: { context: nodo, dockerfile: Dockerfile.debian }
+    image: ansible-lab-debian
+    hostname: web1
+    ports: ["2221:22", "8091:80"]
+  web2:
+    <<: *nodo
+    build: { context: nodo, dockerfile: Dockerfile.debian }
+    image: ansible-lab-debian
+    hostname: web2
+    ports: ["2222:22", "8092:80"]
+  db1:
+    <<: *nodo
+    build: { context: nodo, dockerfile: Dockerfile.rhel }
+    image: ansible-lab-rhel
+    hostname: db1
+    ports: ["2223:22"]
+  app1:
+    <<: *nodo
+    build: { context: nodo, dockerfile: Dockerfile.rhel }
+    image: ansible-lab-rhel
+    hostname: app1
+    ports: ["2224:22", "8094:80"]
+
+networks:
+  lab:

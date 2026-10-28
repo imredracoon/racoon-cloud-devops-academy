@@ -1,0 +1,12 @@
+# Nodo gestito "tipo RHEL" per il laboratorio Ansible: AlmaLinux 9 con systemd e SSH.
+FROM almalinux:9
+RUN dnf install -y systemd openssh-server openssh-clients sudo python3 procps-ng iproute \
+    && dnf clean all \
+    && systemctl enable sshd \
+    && useradd -m ansible \
+    && echo 'ansible ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/ansible \
+    && chmod 0440 /etc/sudoers.d/ansible
+COPY chiave-autorizzata.service /etc/systemd/system/
+RUN systemctl enable chiave-autorizzata.service
+STOPSIGNAL SIGRTMIN+3
+CMD ["/usr/sbin/init"]

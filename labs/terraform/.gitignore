@@ -1,0 +1,12 @@
+# Cartelle e file creati da Terraform sul tuo computer: non vanno nel repository.
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+out/
+
+# In un progetto reale il file .terraform.lock.hcl si versiona (vedi lezione 6.3). Qui lo ignoriamo perché ogni
+# studente lo genera con "terraform init" sulla propria piattaforma.
+.terraform.lock.hcl

@@ -1,0 +1,14 @@
+# Nodo gestito "tipo Debian/Ubuntu" per il laboratorio Ansible: Ubuntu 24.04 con systemd e SSH.
+FROM ubuntu:24.04
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+       systemd systemd-sysv openssh-server sudo python3 iproute2 \
+    && rm -rf /var/lib/apt/lists/* \
+    && systemctl enable ssh \
+    && useradd -m -s /bin/bash ansible \
+    && echo 'ansible ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/ansible \
+    && chmod 0440 /etc/sudoers.d/ansible
+COPY chiave-autorizzata.service /etc/systemd/system/
+RUN systemctl enable chiave-autorizzata.service
+STOPSIGNAL SIGRTMIN+3
+CMD ["/sbin/init"]

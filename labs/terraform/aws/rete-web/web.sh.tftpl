@@ -1,0 +1,5 @@
+#!/bin/bash
+# Script di avvio generato da Terraform con templatefile().
+dnf install -y nginx
+echo "<h1>${nome_server}</h1><p>Creato con Terraform.</p>" > /usr/share/nginx/html/index.html
+systemctl enable --now nginx
