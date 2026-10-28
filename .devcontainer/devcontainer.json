@@ -1,0 +1,30 @@
+{
+  // Ambiente di laboratorio del corso: si apre con VS Code (Dev Containers) o con GitHub Codespaces.
+  // Contiene tutti gli strumenti delle fasi 2-8 alle versioni indicate qui sotto.
+  "name": "Racoon Academy Lab",
+  "build": { "dockerfile": "Dockerfile" },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/python:1": { "version": "3.12" },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/aws-cli:1": {},
+    "ghcr.io/devcontainers/features/terraform:1": { "version": "1.12" },
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": { "minikube": "none" }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "hashicorp.terraform",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "timonwong.shellcheck",
+        "yzhang.markdown-all-in-one"
+      ]
+    }
+  },
+  "hostRequirements": { "cpus": 4, "memory": "8gb" },
+  "remoteUser": "vscode"
+}
