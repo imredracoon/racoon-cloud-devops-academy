@@ -1,0 +1,11 @@
+# Configurazione degli strumenti di qualità del codice (Fase 7).
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/W: stile PEP 8, F: errori (Pyflakes), I: ordine degli import, B: bug comuni, UP: sintassi moderna
+select = ["E", "W", "F", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

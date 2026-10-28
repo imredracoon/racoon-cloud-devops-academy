@@ -1,0 +1,554 @@
+{
+ "type": "practical",
+ "id": "cka",
+ "title": "Certified Kubernetes Administrator (CKA) · Simulazione pratica",
+ "lang": "it",
+ "format": {
+  "tasks": 17,
+  "tasksLabel": "15-20",
+  "minutes": 120,
+  "passPct": 66,
+  "note": "L'esame reale è online con sorvegliante, in un ambiente remoto con terminale e browser; durante la prova si può consultare la documentazione ufficiale di Kubernetes. I task sono originali e seguono il programma pubblicato dalla CNCF. Alcuni richiedono il cluster kubeadm della lezione 8.12."
+ },
+ "domains": [
+  {
+   "id": "storage",
+   "name": "Storage",
+   "weight": 10
+  },
+  {
+   "id": "troubleshooting",
+   "name": "Troubleshooting",
+   "weight": 30
+  },
+  {
+   "id": "workloads",
+   "name": "Workloads & Scheduling",
+   "weight": 15
+  },
+  {
+   "id": "architettura",
+   "name": "Cluster Architecture, Installation & Configuration",
+   "weight": 25
+  },
+  {
+   "id": "rete",
+   "name": "Services & Networking",
+   "weight": 20
+  }
+ ],
+ "tasks": [
+  {
+   "d": "storage",
+   "pts": 6,
+   "title": "StorageClass con binding ritardato",
+   "task": "Crea una StorageClass `lenta` che usi lo stesso provisioner della StorageClass predefinita del cluster, con `reclaimPolicy: Retain`, `volumeBindingMode: WaitForFirstConsumer` e `allowVolumeExpansion: true`. **Non** deve diventare la classe predefinita.",
+   "check": "```\nkubectl get sc lenta -o jsonpath='{.reclaimPolicy} {.volumeBindingMode} {.allowVolumeExpansion}{\"\\n\"}'\nkubectl get sc   # la predefinita resta quella di prima, con \"(default)\"\n```",
+   "solution": "Leggi il provisioner della classe predefinita (in kind è `rancher.io/local-path`):\n```\nkubectl get sc\n```\n```yaml\napiVersion: storage.k8s.io/v1\nkind: StorageClass\nmetadata:\n  name: lenta\nprovisioner: rancher.io/local-path\nreclaimPolicy: Retain\nvolumeBindingMode: WaitForFirstConsumer\nallowVolumeExpansion: true\n```\n`WaitForFirstConsumer` crea il volume solo quando un Pod che usa il PVC viene schedulato, così il volume nasce nel nodo (o nella zona) giusto. `Retain` conserva il volume quando il PVC viene cancellato. Una classe è predefinita solo con l'annotazione `storageclass.kubernetes.io/is-default-class: \"true\"`, che qui non mettiamo.",
+   "r": [
+    "https://kubernetes.io/docs/concepts/storage/storage-classes/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka01"
+  },
+  {
+   "d": "storage",
+   "pts": 6,
+   "title": "PVC e Pod che lo monta",
+   "task": "Nel namespace `dati` (crealo se non esiste) crea un PersistentVolumeClaim `archivio` da 200Mi, accesso `ReadWriteOnce`, classe `lenta` (task precedente o la classe predefinita). Crea poi un Pod `scrittore` con immagine `busybox:1.37` che esegue `sh -c \"echo ok > /dati/prova && sleep 3600\"` e monta il PVC in `/dati`.",
+   "check": "```\nkubectl -n dati get pvc archivio          # STATUS Bound\nkubectl -n dati exec scrittore -- cat /dati/prova   # stampa ok\n```",
+   "solution": "```yaml\napiVersion: v1\nkind: PersistentVolumeClaim\nmetadata:\n  name: archivio\n  namespace: dati\nspec:\n  accessModes: [\"ReadWriteOnce\"]\n  storageClassName: lenta\n  resources:\n    requests:\n      storage: 200Mi\n---\napiVersion: v1\nkind: Pod\nmetadata:\n  name: scrittore\n  namespace: dati\nspec:\n  containers:\n  - name: main\n    image: busybox:1.37\n    command: [\"sh\", \"-c\", \"echo ok > /dati/prova && sleep 3600\"]\n    volumeMounts:\n    - name: vol\n      mountPath: /dati\n  volumes:\n  - name: vol\n    persistentVolumeClaim:\n      claimName: archivio\n```\nCon `WaitForFirstConsumer` il PVC resta `Pending` finché il Pod non viene creato: non è un errore.",
+   "r": [
+    "https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
+    "https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka02"
+  },
+  {
+   "d": "storage",
+   "pts": 5,
+   "title": "PersistentVolume statico",
+   "task": "Crea un PersistentVolume `pv-log` da 1Gi, `ReadWriteOnce`, `persistentVolumeReclaimPolicy: Retain`, `storageClassName: manuale`, di tipo `hostPath` sul percorso `/srv/log`. Crea poi nel namespace `default` un PVC `log` che si leghi esattamente a questo PV.",
+   "check": "```\nkubectl get pv pv-log          # STATUS Bound, CLAIM default/log\nkubectl get pvc log            # VOLUME pv-log\n```",
+   "solution": "```yaml\napiVersion: v1\nkind: PersistentVolume\nmetadata:\n  name: pv-log\nspec:\n  capacity:\n    storage: 1Gi\n  accessModes: [\"ReadWriteOnce\"]\n  persistentVolumeReclaimPolicy: Retain\n  storageClassName: manuale\n  hostPath:\n    path: /srv/log\n---\napiVersion: v1\nkind: PersistentVolumeClaim\nmetadata:\n  name: log\n  namespace: default\nspec:\n  accessModes: [\"ReadWriteOnce\"]\n  storageClassName: manuale\n  volumeName: pv-log\n  resources:\n    requests:\n      storage: 1Gi\n```\nIl legame avviene se classe, modalità di accesso e capacità sono compatibili; `volumeName` lo rende esplicito. `hostPath` va bene per un laboratorio, non per la produzione.",
+   "r": [
+    "https://kubernetes.io/docs/concepts/storage/persistent-volumes/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka03"
+  },
+  {
+   "d": "storage",
+   "pts": 5,
+   "title": "Espandere un volume",
+   "task": "Il PVC `archivio` nel namespace `dati` deve passare da 200Mi a 500Mi senza ricrearlo.",
+   "check": "```\nkubectl -n dati get pvc archivio -o jsonpath='{.spec.resources.requests.storage}{\"\\n\"}'\nkubectl -n dati describe pvc archivio   # eventi di resize, se il driver li supporta\n```",
+   "solution": "```\nkubectl -n dati patch pvc archivio -p '{\"spec\":{\"resources\":{\"requests\":{\"storage\":\"500Mi\"}}}}'\n```\nL'espansione è possibile solo se la StorageClass ha `allowVolumeExpansion: true` e se il driver la supporta; la riduzione non è mai consentita. In kind il provisioner local-path non ridimensiona davvero il disco: all'esame conta la modifica corretta della richiesta.",
+   "r": [
+    "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka04"
+  },
+  {
+   "d": "troubleshooting",
+   "pts": 8,
+   "title": "Nodo NotReady",
+   "task": "Il nodo `worker1` è `NotReady`. Trova la causa e riportalo a `Ready` in modo che resti tale anche dopo un riavvio.",
+   "check": "```\nkubectl get nodes        # worker1 Ready\nssh worker1 systemctl is-enabled kubelet && ssh worker1 systemctl is-active kubelet\n```",
+   "solution": "Sul nodo:\n```\nsudo systemctl status kubelet\nsudo journalctl -u kubelet -n 50 --no-pager\n```\nLe cause tipiche sono: kubelet fermo o disabilitato, runtime (containerd) fermo, swap attivo, certificati scaduti, errore nella configurazione in `/var/lib/kubelet/config.yaml`. Se il kubelet è solo fermo e disabilitato:\n```\nsudo systemctl enable --now kubelet\n```\nSe il runtime è fermo: `sudo systemctl enable --now containerd`. Verifica sempre i log prima di cambiare qualcosa.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/debug/debug-cluster/"
+   ],
+   "ctx": "Laboratorio: cluster kubeadm con VM della lezione 8.12 (questo task richiede accesso SSH ai nodi).",
+   "id": "cka05"
+  },
+  {
+   "d": "troubleshooting",
+   "pts": 8,
+   "title": "Componente del control plane guasto",
+   "task": "Dopo una modifica, `kubectl` risponde ma i nuovi Pod restano `Pending` senza eventi di scheduling. Individua il componente guasto e correggilo.",
+   "check": "```\nkubectl -n kube-system get pods -l component=kube-scheduler   # Running\nkubectl run prova --image=nginx:1.29 && kubectl get pod prova -o wide   # ha un NODE\n```",
+   "solution": "Pod `Pending` senza l'evento `Scheduled` indicano che lo scheduler non lavora. In un cluster kubeadm i componenti sono Pod statici:\n```\nkubectl -n kube-system get pods\nsudo ls /etc/kubernetes/manifests/\nsudo crictl ps -a | grep scheduler\nsudo crictl logs <ID-container>\n```\nCorreggi l'errore nel file `/etc/kubernetes/manifests/kube-scheduler.yaml` (per esempio un'opzione scritta male o un percorso del kubeconfig sbagliato). Il kubelet ricrea il Pod statico da solo quando il file cambia.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/debug/debug-cluster/",
+    "https://kubernetes.io/docs/tasks/configure-pod-container/static-pod/"
+   ],
+   "ctx": "Laboratorio: cluster kubeadm con VM della lezione 8.12 (questo task richiede accesso SSH ai nodi).",
+   "id": "cka06"
+  },
+  {
+   "d": "troubleshooting",
+   "pts": 6,
+   "title": "Pod in CrashLoopBackOff",
+   "task": "Nel namespace `negozio` il Deployment `carrello` ha i Pod in `CrashLoopBackOff`. Scopri il motivo dai log del container che si è appena riavviato e scrivi la riga d'errore in `/opt/esame/carrello.txt`. Poi correggi il Deployment.",
+   "check": "```\ncat /opt/esame/carrello.txt\nkubectl -n negozio rollout status deploy/carrello\n```",
+   "solution": "```\nkubectl -n negozio get pods\nkubectl -n negozio describe pod <pod>      # Last State, Exit Code, eventi\nkubectl -n negozio logs <pod> --previous  # log del container precedente, quello andato in crash\nkubectl -n negozio logs <pod> --previous | grep -i error > /opt/esame/carrello.txt\n```\n`--previous` è essenziale: il container attuale potrebbe essere appena partito e non avere log. Correggi poi la causa (variabile mancante, comando errato, probe troppo aggressiva) con `kubectl edit` o `kubectl set env`.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka07"
+  },
+  {
+   "d": "troubleshooting",
+   "pts": 5,
+   "title": "Pod che consuma più CPU",
+   "task": "Tra tutti i Pod con etichetta `app=analisi` in tutti i namespace, trova quello che consuma più CPU e scrivi il suo nome in `/opt/esame/cpu.txt`.",
+   "check": "```\ncat /opt/esame/cpu.txt\nkubectl top pods -A -l app=analisi --sort-by=cpu\n```",
+   "solution": "```\nkubectl top pods -A -l app=analisi --sort-by=cpu --no-headers | head -1 | awk '{print $2}' > /opt/esame/cpu.txt\n```\n`kubectl top` richiede metrics-server. Con `-A` la prima colonna è il namespace, quindi il nome è la seconda.",
+   "r": [
+    "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_top/kubectl_top_pod/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka08"
+  },
+  {
+   "d": "troubleshooting",
+   "pts": 5,
+   "title": "Log di un container specifico",
+   "task": "Il Pod `web` nel namespace `default` ha due container: `app` e `proxy`. Salva in `/opt/esame/proxy.log` le ultime 20 righe di log del container `proxy`.",
+   "check": "```\nwc -l /opt/esame/proxy.log   # 20 righe o meno\n```",
+   "solution": "```\nkubectl logs web -c proxy --tail=20 > /opt/esame/proxy.log\n```\nCon più container serve `-c`; senza, kubectl usa il container predefinito o chiede di sceglierlo. `--all-containers` mostra tutti i container.",
+   "r": [
+    "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_logs/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka09"
+  },
+  {
+   "d": "troubleshooting",
+   "pts": 7,
+   "title": "Service senza endpoint",
+   "task": "Il Service `api` nel namespace `negozio` non risponde. I Pod del Deployment `api` sono `Running` e `Ready`. Correggi il problema senza ricreare il Deployment.",
+   "check": "```\nkubectl -n negozio get endpointslices -l kubernetes.io/service-name=api   # ci sono indirizzi\nkubectl -n negozio run t --rm -it --image=busybox:1.37 --restart=Never -- wget -qO- http://api\n```",
+   "solution": "```\nkubectl -n negozio get svc api -o wide            # SELECTOR\nkubectl -n negozio get pods --show-labels\nkubectl -n negozio get endpointslices -l kubernetes.io/service-name=api\n```\nSe il selettore del Service non corrisponde alle etichette dei Pod non ci sono endpoint. Correggi il selettore (`kubectl edit svc api`). Controlla anche che `targetPort` corrisponda alla porta su cui ascolta il container: in quel caso gli endpoint esistono ma la connessione viene rifiutata.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/debug/debug-application/debug-service/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka10"
+  },
+  {
+   "d": "troubleshooting",
+   "pts": 6,
+   "title": "DNS del cluster non funziona",
+   "task": "I Pod non risolvono più i nomi dei Service (`nslookup kubernetes.default` fallisce). Individua e risolvi il problema.",
+   "check": "```\nkubectl run t --rm -it --image=busybox:1.37 --restart=Never -- nslookup kubernetes.default\n```",
+   "solution": "```\nkubectl -n kube-system get pods -l k8s-app=kube-dns\nkubectl -n kube-system get svc kube-dns\nkubectl -n kube-system get endpointslices -l kubernetes.io/service-name=kube-dns\nkubectl -n kube-system logs -l k8s-app=kube-dns\nkubectl -n kube-system get cm coredns -o yaml\n```\nCause frequenti: Deployment `coredns` scalato a 0 (`kubectl -n kube-system scale deploy coredns --replicas=2`), errore nel Corefile della ConfigMap `coredns`, NetworkPolicy che blocca la porta 53 verso kube-system.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka11"
+  },
+  {
+   "d": "troubleshooting",
+   "pts": 5,
+   "title": "Pod Pending",
+   "task": "Il Pod `batch` nel namespace `default` è `Pending`. Scrivi in `/opt/esame/pending.txt` il motivo riportato dagli eventi, poi fai in modo che venga schedulato senza cambiare i nodi.",
+   "check": "```\ncat /opt/esame/pending.txt\nkubectl get pod batch -o wide   # Running con un NODE\n```",
+   "solution": "```\nkubectl describe pod batch | sed -n '/Events/,$p'\n```\nMessaggi tipici di `FailedScheduling`: `Insufficient cpu/memory` (riduci le richieste), `node(s) had untolerated taint` (aggiungi una toleration se è previsto), `didn't match Pod's node affinity/selector` (correggi il nodeSelector), `unbound immediate PersistentVolumeClaims`. Un Pod non si modifica liberamente: esporta il manifest, correggilo, cancella e ricrea il Pod.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka12"
+  },
+  {
+   "d": "troubleshooting",
+   "pts": 5,
+   "title": "Container con il runtime",
+   "task": "Sul nodo `worker1` elenca con `crictl` i container in esecuzione e salva in `/opt/esame/container.txt` l'ID del container del Pod `kube-proxy` di quel nodo.",
+   "check": "```\nssh worker1 cat /opt/esame/container.txt\n```",
+   "solution": "```\nssh worker1\nsudo crictl ps --name kube-proxy -q > /opt/esame/container.txt\n```\n`crictl` parla con il runtime attraverso la CRI. È lo strumento giusto quando il kubelet o l'API server non funzionano e `kubectl` non basta.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/debug/debug-cluster/crictl/"
+   ],
+   "ctx": "Laboratorio: cluster kubeadm con VM della lezione 8.12 (questo task richiede accesso SSH ai nodi).",
+   "id": "cka13"
+  },
+  {
+   "d": "troubleshooting",
+   "pts": 5,
+   "title": "Eventi ordinati nel tempo",
+   "task": "Salva in `/opt/esame/eventi.txt` gli eventi del namespace `negozio` ordinati per data di creazione.",
+   "check": "```\nhead /opt/esame/eventi.txt\n```",
+   "solution": "```\nkubectl -n negozio get events --sort-by=.metadata.creationTimestamp > /opt/esame/eventi.txt\n```\nGli eventi durano un'ora per impostazione predefinita: guardali presto durante un'indagine.",
+   "r": [
+    "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_events/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka14"
+  },
+  {
+   "d": "troubleshooting",
+   "pts": 6,
+   "title": "Certificati del control plane",
+   "task": "Verifica la data di scadenza dei certificati del cluster kubeadm e salva l'output in `/opt/esame/certificati.txt`.",
+   "check": "```\ncat /opt/esame/certificati.txt\n```",
+   "solution": "```\nsudo kubeadm certs check-expiration > /opt/esame/certificati.txt\n```\nI certificati di kubeadm durano un anno e vengono rinnovati a ogni `kubeadm upgrade`; si possono rinnovare a mano con `kubeadm certs renew all` (poi vanno riavviati i Pod statici).",
+   "r": [
+    "https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/"
+   ],
+   "ctx": "Laboratorio: cluster kubeadm con VM della lezione 8.12 (questo task richiede accesso SSH ai nodi).",
+   "id": "cka15"
+  },
+  {
+   "d": "workloads",
+   "pts": 6,
+   "title": "Aggiornamento e rollback",
+   "task": "Nel namespace `default` crea il Deployment `sito` con 3 repliche e immagine `nginx:1.28`. Aggiornalo a `nginx:1.29` registrando l'operazione, poi torna alla revisione precedente.",
+   "check": "```\nkubectl rollout history deploy/sito\nkubectl get deploy sito -o jsonpath='{.spec.template.spec.containers[0].image}{\"\\n\"}'   # nginx:1.28\n```",
+   "solution": "```\nkubectl create deployment sito --image=nginx:1.28 --replicas=3\nkubectl set image deployment/sito nginx=nginx:1.29\nkubectl annotate deployment/sito kubernetes.io/change-cause=\"nginx 1.29\"\nkubectl rollout status deployment/sito\nkubectl rollout undo deployment/sito\n```\n`kubectl create deployment` chiama il container come l'immagine (`nginx`). `rollout undo --to-revision=N` torna a una revisione precisa.",
+   "r": [
+    "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka16"
+  },
+  {
+   "d": "workloads",
+   "pts": 6,
+   "title": "ConfigMap e Secret nel Pod",
+   "task": "Crea la ConfigMap `impostazioni` con `LIVELLO=debug` e il Secret `credenziali` con `PASSWORD=segreta`. Crea il Pod `app` (`busybox:1.37`, comando `sleep 3600`) che riceve `LIVELLO` come variabile d'ambiente e monta il Secret in sola lettura in `/etc/credenziali`.",
+   "check": "```\nkubectl exec app -- printenv LIVELLO        # debug\nkubectl exec app -- cat /etc/credenziali/PASSWORD   # segreta\n```",
+   "solution": "```\nkubectl create configmap impostazioni --from-literal=LIVELLO=debug\nkubectl create secret generic credenziali --from-literal=PASSWORD=segreta\n```\n```yaml\napiVersion: v1\nkind: Pod\nmetadata:\n  name: app\nspec:\n  containers:\n  - name: app\n    image: busybox:1.37\n    command: [\"sleep\", \"3600\"]\n    env:\n    - name: LIVELLO\n      valueFrom:\n        configMapKeyRef:\n          name: impostazioni\n          key: LIVELLO\n    volumeMounts:\n    - name: cred\n      mountPath: /etc/credenziali\n      readOnly: true\n  volumes:\n  - name: cred\n    secret:\n      secretName: credenziali\n```",
+   "r": [
+    "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "https://kubernetes.io/docs/concepts/configuration/secret/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka17"
+  },
+  {
+   "d": "workloads",
+   "pts": 6,
+   "title": "Autoscaling orizzontale",
+   "task": "Il Deployment `sito` deve scalare tra 2 e 6 repliche mantenendo l'uso medio di CPU al 60% delle richieste. Imposta una richiesta di CPU di `100m` sul container e crea l'HPA `sito`.",
+   "check": "```\nkubectl get hpa sito    # MINPODS 2, MAXPODS 6, TARGETS cpu: x%/60%\n```",
+   "solution": "```\nkubectl set resources deployment sito --requests=cpu=100m\n```\n```yaml\napiVersion: autoscaling/v2\nkind: HorizontalPodAutoscaler\nmetadata:\n  name: sito\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: sito\n  minReplicas: 2\n  maxReplicas: 6\n  metrics:\n  - type: Resource\n    resource:\n      name: cpu\n      target:\n        type: Utilization\n        averageUtilization: 60\n```\nL'utilizzo è calcolato rispetto alle richieste: senza `requests` l'HPA non può calcolarlo. Serve metrics-server.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka18"
+  },
+  {
+   "d": "workloads",
+   "pts": 5,
+   "title": "Probe di salute",
+   "task": "Aggiungi al Deployment `sito` una readiness probe HTTP su `/` porta 80 ogni 5 secondi e una liveness probe TCP sulla porta 80 con ritardo iniziale di 10 secondi.",
+   "check": "```\nkubectl get deploy sito -o jsonpath='{.spec.template.spec.containers[0].readinessProbe}{\"\\n\"}{.spec.template.spec.containers[0].livenessProbe}{\"\\n\"}'\n```",
+   "solution": "Con `kubectl edit deployment sito`, nel container:\n```yaml\nreadinessProbe:\n  httpGet:\n    path: /\n    port: 80\n  periodSeconds: 5\nlivenessProbe:\n  tcpSocket:\n    port: 80\n  initialDelaySeconds: 10\n```\nLa readiness toglie il Pod dagli endpoint finché non è pronto; la liveness riavvia il container se fallisce.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka19"
+  },
+  {
+   "d": "workloads",
+   "pts": 6,
+   "title": "Taint e toleration",
+   "task": "Applica al nodo `academy-worker2` il taint `dedicato=gpu:NoSchedule`. Crea poi il Pod `calcolo` (`busybox:1.37`, `sleep 3600`) che può essere schedulato solo su quel nodo.",
+   "check": "```\nkubectl describe node academy-worker2 | grep Taints\nkubectl get pod calcolo -o wide   # NODE academy-worker2\n```",
+   "solution": "```\nkubectl taint nodes academy-worker2 dedicato=gpu:NoSchedule\n```\n```yaml\napiVersion: v1\nkind: Pod\nmetadata:\n  name: calcolo\nspec:\n  tolerations:\n  - key: dedicato\n    operator: Equal\n    value: gpu\n    effect: NoSchedule\n  nodeSelector:\n    kubernetes.io/hostname: academy-worker2\n  containers:\n  - name: main\n    image: busybox:1.37\n    command: [\"sleep\", \"3600\"]\n```\nLa toleration permette al Pod di andare sul nodo, ma non lo obbliga: per questo serve anche il nodeSelector (o una node affinity).",
+   "r": [
+    "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka20"
+  },
+  {
+   "d": "workloads",
+   "pts": 5,
+   "title": "Limiti di risorse nel namespace",
+   "task": "Nel namespace `squadra-a` ogni container senza risorse dichiarate deve ricevere richieste di `100m` CPU e `128Mi` di memoria e limiti di `500m` e `256Mi`. Inoltre il namespace non deve superare 4 CPU richieste in totale.",
+   "check": "```\nkubectl -n squadra-a get limitrange,resourcequota\nkubectl -n squadra-a run t --image=nginx:1.29 && kubectl -n squadra-a get pod t -o jsonpath='{.spec.containers[0].resources}{\"\\n\"}'\n```",
+   "solution": "```yaml\napiVersion: v1\nkind: LimitRange\nmetadata:\n  name: predefiniti\n  namespace: squadra-a\nspec:\n  limits:\n  - type: Container\n    defaultRequest:\n      cpu: 100m\n      memory: 128Mi\n    default:\n      cpu: 500m\n      memory: 256Mi\n---\napiVersion: v1\nkind: ResourceQuota\nmetadata:\n  name: tetto\n  namespace: squadra-a\nspec:\n  hard:\n    requests.cpu: \"4\"\n```\nLimitRange imposta i valori predefiniti per container; ResourceQuota limita il totale del namespace.",
+   "r": [
+    "https://kubernetes.io/docs/concepts/policy/limit-range/",
+    "https://kubernetes.io/docs/concepts/policy/resource-quotas/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka21"
+  },
+  {
+   "d": "workloads",
+   "pts": 5,
+   "title": "Container sidecar",
+   "task": "Crea il Pod `con-sidecar` con un container principale `app` (`busybox:1.37`) che scrive una riga al secondo in `/var/log/app.log` e un sidecar `lettore` (`busybox:1.37`) che legge lo stesso file con `tail -F`. Usa un volume `emptyDir` condiviso e la forma nativa dei sidecar (init container con `restartPolicy: Always`).",
+   "check": "```\nkubectl logs con-sidecar -c lettore --tail=3\n```",
+   "solution": "```yaml\napiVersion: v1\nkind: Pod\nmetadata:\n  name: con-sidecar\nspec:\n  initContainers:\n  - name: lettore\n    image: busybox:1.37\n    restartPolicy: Always\n    command: [\"sh\", \"-c\", \"touch /var/log/app.log; tail -F /var/log/app.log\"]\n    volumeMounts:\n    - name: log\n      mountPath: /var/log\n  containers:\n  - name: app\n    image: busybox:1.37\n    command: [\"sh\", \"-c\", \"while true; do date >> /var/log/app.log; sleep 1; done\"]\n    volumeMounts:\n    - name: log\n      mountPath: /var/log\n  volumes:\n  - name: log\n    emptyDir: {}\n```\nI sidecar nativi partono prima dei container principali e restano attivi per tutta la vita del Pod.",
+   "r": [
+    "https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka22"
+  },
+  {
+   "d": "architettura",
+   "pts": 7,
+   "title": "Backup di etcd",
+   "task": "Salva uno snapshot di etcd in `/opt/backup/etcd.db` usando i certificati in `/etc/kubernetes/pki/etcd/`, poi verificane l'integrità.",
+   "check": "```\nsudo etcdutl snapshot status /opt/backup/etcd.db -w table\n```",
+   "solution": "```\nsudo ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \\\n  --cacert=/etc/kubernetes/pki/etcd/ca.crt \\\n  --cert=/etc/kubernetes/pki/etcd/server.crt \\\n  --key=/etc/kubernetes/pki/etcd/server.key \\\n  snapshot save /opt/backup/etcd.db\n```\nI percorsi corretti si leggono in `/etc/kubernetes/manifests/etcd.yaml` (opzioni `--cert-file`, `--key-file`, `--trusted-ca-file`, `--listen-client-urls`). Per lo stato e il ripristino si usa `etcdutl`.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/"
+   ],
+   "ctx": "Laboratorio: cluster kubeadm con VM della lezione 8.12 (questo task richiede accesso SSH ai nodi).",
+   "id": "cka23"
+  },
+  {
+   "d": "architettura",
+   "pts": 8,
+   "title": "Ripristino di etcd",
+   "task": "Ripristina lo snapshot `/opt/backup/etcd.db` nella directory `/var/lib/etcd-ripristino` e fai usare quella directory a etcd.",
+   "check": "```\nsudo grep -A2 'hostPath' /etc/kubernetes/manifests/etcd.yaml | grep ripristino\nkubectl get pods -A   # il cluster risponde e mostra lo stato del backup\n```",
+   "solution": "```\nsudo etcdutl snapshot restore /opt/backup/etcd.db --data-dir /var/lib/etcd-ripristino\n```\nModifica in `/etc/kubernetes/manifests/etcd.yaml` il volume `hostPath` di nome `etcd-data` da `/var/lib/etcd` a `/var/lib/etcd-ripristino` (il `mountPath` può restare uguale). Il kubelet ricrea il Pod statico; l'API server può restare irraggiungibile per uno o due minuti.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#restoring-an-etcd-cluster"
+   ],
+   "ctx": "Laboratorio: cluster kubeadm con VM della lezione 8.12 (questo task richiede accesso SSH ai nodi).",
+   "id": "cka24"
+  },
+  {
+   "d": "architettura",
+   "pts": 8,
+   "title": "Aggiornamento del control plane con kubeadm",
+   "task": "Aggiorna il nodo di control plane alla versione patch successiva disponibile della stessa minor (per esempio da 1.37.1 a 1.37.2): kubeadm, componenti del control plane, kubelet e kubectl. Il nodo deve tornare schedulabile.",
+   "check": "```\nkubectl get nodes        # VERSION aggiornata, STATUS Ready, senza SchedulingDisabled\nkubeadm version -o short\n```",
+   "solution": "Su Debian/Ubuntu (su RHEL usa `dnf` con `--disableexcludes=kubernetes`):\n```\nsudo apt-mark unhold kubeadm && sudo apt-get update && sudo apt-get install -y kubeadm=1.37.2-1.1 && sudo apt-mark hold kubeadm\nsudo kubeadm upgrade plan\nsudo kubeadm upgrade apply v1.37.2\nkubectl drain controlplane --ignore-daemonsets\nsudo apt-mark unhold kubelet kubectl && sudo apt-get install -y kubelet=1.37.2-1.1 kubectl=1.37.2-1.1 && sudo apt-mark hold kubelet kubectl\nsudo systemctl daemon-reload && sudo systemctl restart kubelet\nkubectl uncordon controlplane\n```\nSui worker si usa `kubeadm upgrade node` al posto di `upgrade apply`. Per cambiare minor (1.37 → 1.38) va prima cambiato il repository di pkgs.k8s.io, che è separato per ogni minor.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/"
+   ],
+   "ctx": "Laboratorio: cluster kubeadm con VM della lezione 8.12 (questo task richiede accesso SSH ai nodi).",
+   "id": "cka25"
+  },
+  {
+   "d": "architettura",
+   "pts": 6,
+   "title": "Aggiungere un nodo",
+   "task": "Genera il comando per unire un nuovo worker al cluster e salvalo in `/opt/esame/join.sh`.",
+   "check": "```\ncat /opt/esame/join.sh   # kubeadm join ... --token ... --discovery-token-ca-cert-hash sha256:...\n```",
+   "solution": "```\nsudo kubeadm token create --print-join-command > /opt/esame/join.sh\n```\nIl token dura 24 ore per impostazione predefinita; l'hash serve al nuovo nodo per verificare l'identità del control plane.",
+   "r": [
+    "https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-token/"
+   ],
+   "ctx": "Laboratorio: cluster kubeadm con VM della lezione 8.12 (questo task richiede accesso SSH ai nodi).",
+   "id": "cka26"
+  },
+  {
+   "d": "architettura",
+   "pts": 7,
+   "title": "RBAC per un ServiceAccount",
+   "task": "Nel namespace `ci` crea il ServiceAccount `deployer`. Deve poter `get`, `list`, `create`, `update` e `patch` i Deployment del solo namespace `ci`, e nient'altro.",
+   "check": "```\nkubectl auth can-i create deployments -n ci --as=system:serviceaccount:ci:deployer       # yes\nkubectl auth can-i delete deployments -n ci --as=system:serviceaccount:ci:deployer       # no\nkubectl auth can-i create deployments -n default --as=system:serviceaccount:ci:deployer  # no\n```",
+   "solution": "```\nkubectl -n ci create serviceaccount deployer\nkubectl -n ci create role deployer --verb=get,list,create,update,patch --resource=deployments.apps\nkubectl -n ci create rolebinding deployer --role=deployer --serviceaccount=ci:deployer\n```\nRole e RoleBinding valgono in un solo namespace. Una ClusterRole legata con una RoleBinding vale comunque solo nel namespace della RoleBinding.",
+   "r": [
+    "https://kubernetes.io/docs/reference/access-authn-authz/rbac/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka27"
+  },
+  {
+   "d": "architettura",
+   "pts": 6,
+   "title": "ClusterRole per leggere i nodi",
+   "task": "Crea la ClusterRole `lettore-nodi` che permette `get`, `list` e `watch` sui nodi e legala all'utente `monica` in tutto il cluster.",
+   "check": "```\nkubectl auth can-i list nodes --as=monica    # yes\nkubectl auth can-i delete nodes --as=monica  # no\n```",
+   "solution": "```\nkubectl create clusterrole lettore-nodi --verb=get,list,watch --resource=nodes\nkubectl create clusterrolebinding lettore-nodi --clusterrole=lettore-nodi --user=monica\n```\nI nodi non appartengono a un namespace: per loro servono ClusterRole e ClusterRoleBinding.",
+   "r": [
+    "https://kubernetes.io/docs/reference/access-authn-authz/rbac/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka28"
+  },
+  {
+   "d": "architettura",
+   "pts": 6,
+   "title": "Installare con Helm",
+   "task": "Installa il chart `kube-prometheus-stack` dal repository `prometheus-community` come release `monitoraggio` nel namespace `monitoraggio` (crealo con Helm), impostando `grafana.enabled=false`.",
+   "check": "```\nhelm -n monitoraggio list          # monitoraggio deployed\nhelm -n monitoraggio get values monitoraggio\n```",
+   "solution": "```\nhelm repo add prometheus-community https://prometheus-community.github.io/helm-charts\nhelm repo update\nhelm install monitoraggio prometheus-community/kube-prometheus-stack \\\n  --namespace monitoraggio --create-namespace --set grafana.enabled=false\n```\n`helm upgrade --install` è la forma idempotente usata nelle pipeline. `helm show values` mostra le opzioni del chart.",
+   "r": [
+    "https://helm.sh/docs/helm/helm_install/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka29"
+  },
+  {
+   "d": "architettura",
+   "pts": 5,
+   "title": "Kustomize",
+   "task": "La directory `/opt/esame/app` contiene un `kustomization.yaml`. Applica la configurazione al cluster, poi salva in `/opt/esame/render.yaml` il manifest generato senza applicarlo di nuovo.",
+   "check": "```\ngrep -c '^kind:' /opt/esame/render.yaml\n```",
+   "solution": "```\nkubectl apply -k /opt/esame/app\nkubectl kustomize /opt/esame/app > /opt/esame/render.yaml\n```\nKustomize è integrato in kubectl: `-k` applica, `kubectl kustomize` stampa il risultato.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka30"
+  },
+  {
+   "d": "architettura",
+   "pts": 5,
+   "title": "CRD e risorse personalizzate",
+   "task": "Nel cluster è installato un operatore. Elenca le CustomResourceDefinition del gruppo `cert-manager.io` in `/opt/esame/crd.txt` e scrivi in `/opt/esame/campi.txt` la documentazione del campo `spec.secretName` della risorsa `Certificate`.",
+   "check": "```\ncat /opt/esame/crd.txt /opt/esame/campi.txt\n```",
+   "solution": "```\nkubectl get crd | grep cert-manager.io > /opt/esame/crd.txt\nkubectl explain certificate.spec.secretName > /opt/esame/campi.txt\n```\n`kubectl explain` funziona anche con le risorse personalizzate se la CRD ha uno schema OpenAPI.",
+   "r": [
+    "https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka31"
+  },
+  {
+   "d": "architettura",
+   "pts": 5,
+   "title": "Interfacce del cluster",
+   "task": "Scrivi in `/opt/esame/interfacce.txt`: il runtime dei container usato dai nodi, il plugin CNI installato e il nome del provisioner della StorageClass predefinita.",
+   "check": "```\ncat /opt/esame/interfacce.txt\n```",
+   "solution": "```\nkubectl get nodes -o wide                         # colonna CONTAINER-RUNTIME\nkubectl -n kube-system get pods                   # Pod del CNI (calico, cilium, kindnet...)\nls /etc/cni/net.d/                                 # sul nodo\nkubectl get sc                                     # PROVISIONER della classe (default)\n```\nCRI (runtime), CNI (rete dei Pod) e CSI (storage) sono le tre interfacce che permettono di sostituire i componenti.",
+   "r": [
+    "https://kubernetes.io/docs/concepts/architecture/cri/",
+    "https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka32"
+  },
+  {
+   "d": "rete",
+   "pts": 7,
+   "title": "NetworkPolicy in ingresso",
+   "task": "Nel namespace `negozio` i Pod `app=db` devono accettare traffico solo dai Pod `app=api` dello stesso namespace, sulla porta TCP 5432. Tutto il resto in ingresso verso il database va bloccato.",
+   "check": "```\nkubectl -n negozio run t --rm -it --image=busybox:1.37 --restart=Never -l app=api -- nc -zv -w 2 db 5432    # aperto\nkubectl -n negozio run t2 --rm -it --image=busybox:1.37 --restart=Never -- nc -zv -w 2 db 5432          # timeout\n```",
+   "solution": "```yaml\napiVersion: networking.k8s.io/v1\nkind: NetworkPolicy\nmetadata:\n  name: db-solo-da-api\n  namespace: negozio\nspec:\n  podSelector:\n    matchLabels:\n      app: db\n  policyTypes: [\"Ingress\"]\n  ingress:\n  - from:\n    - podSelector:\n        matchLabels:\n          app: api\n    ports:\n    - protocol: TCP\n      port: 5432\n```\nAppena un Pod è selezionato da una policy di tipo Ingress, accetta solo il traffico esplicitamente permesso. Serve un CNI che applichi le policy (Calico, Cilium).",
+   "r": [
+    "https://kubernetes.io/docs/concepts/services-networking/network-policies/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka33"
+  },
+  {
+   "d": "rete",
+   "pts": 6,
+   "title": "NetworkPolicy tra namespace",
+   "task": "I Pod del namespace `negozio` con `app=api` devono accettare traffico sulla porta 8000 solo dai Pod del namespace `ingresso`. Il namespace `ingresso` ha già l'etichetta automatica `kubernetes.io/metadata.name`.",
+   "check": "```\nkubectl -n negozio get netpol\nkubectl -n ingresso run t --rm -it --image=busybox:1.37 --restart=Never -- nc -zv -w 2 api.negozio 8000\n```",
+   "solution": "```yaml\napiVersion: networking.k8s.io/v1\nkind: NetworkPolicy\nmetadata:\n  name: api-da-ingresso\n  namespace: negozio\nspec:\n  podSelector:\n    matchLabels:\n      app: api\n  policyTypes: [\"Ingress\"]\n  ingress:\n  - from:\n    - namespaceSelector:\n        matchLabels:\n          kubernetes.io/metadata.name: ingresso\n    ports:\n    - protocol: TCP\n      port: 8000\n```\nAttenzione: `namespaceSelector` e `podSelector` nello stesso elemento di `from` sono in AND; in due elementi separati sono in OR.",
+   "r": [
+    "https://kubernetes.io/docs/concepts/services-networking/network-policies/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka34"
+  },
+  {
+   "d": "rete",
+   "pts": 5,
+   "title": "Esporre con NodePort",
+   "task": "Esponi il Deployment `sito` con un Service `sito-esterno` di tipo NodePort sulla porta 80 dei Pod e porta del nodo 30080.",
+   "check": "```\nkubectl get svc sito-esterno   # 80:30080/TCP\n```",
+   "solution": "```yaml\napiVersion: v1\nkind: Service\nmetadata:\n  name: sito-esterno\nspec:\n  type: NodePort\n  selector:\n    app: sito\n  ports:\n  - port: 80\n    targetPort: 80\n    nodePort: 30080\n```\n`kubectl expose deployment sito --type=NodePort --port=80 --name=sito-esterno` crea il Service, ma non permette di scegliere la `nodePort`: va poi modificata.",
+   "r": [
+    "https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka35"
+  },
+  {
+   "d": "rete",
+   "pts": 7,
+   "title": "Gateway API: HTTPRoute",
+   "task": "Esiste il Gateway `academy` nel namespace `envoy-gateway-system` che accetta rotte dai namespace autorizzati. Crea nel namespace `negozio` l'HTTPRoute `negozio` per l'host `negozio.localhost`: `/api` va al Service `api` porta 80, tutto il resto al Service `sito` porta 80.",
+   "check": "```\nkubectl -n negozio get httproute negozio -o jsonpath='{.status.parents[0].conditions[?(@.type==\"Accepted\")].status}{\"\\n\"}'   # True\ncurl -H 'Host: negozio.localhost' http://localhost/api\n```",
+   "solution": "```yaml\napiVersion: gateway.networking.k8s.io/v1\nkind: HTTPRoute\nmetadata:\n  name: negozio\n  namespace: negozio\nspec:\n  parentRefs:\n  - name: academy\n    namespace: envoy-gateway-system\n  hostnames: [\"negozio.localhost\"]\n  rules:\n  - matches:\n    - path:\n        type: PathPrefix\n        value: /api\n    backendRefs:\n    - name: api\n      port: 80\n  - backendRefs:\n    - name: sito\n      port: 80\n```\nSe lo stato non è `Accepted`, controlla `allowedRoutes` del listener del Gateway: il namespace deve essere autorizzato.",
+   "r": [
+    "https://gateway-api.sigs.k8s.io/api-types/httproute/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka36"
+  },
+  {
+   "d": "rete",
+   "pts": 6,
+   "title": "Ingress",
+   "task": "Il cluster ha un Ingress controller con IngressClass `nginx`. Crea l'Ingress `sito` per l'host `sito.localhost` che invia `/` al Service `sito` porta 80.",
+   "check": "```\nkubectl get ingress sito\n```",
+   "solution": "```yaml\napiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: sito\nspec:\n  ingressClassName: nginx\n  rules:\n  - host: sito.localhost\n    http:\n      paths:\n      - path: /\n        pathType: Prefix\n        backend:\n          service:\n            name: sito\n            port:\n              number: 80\n```\nL'API Ingress resta parte di Kubernetes ed è ancora nel programma, anche se per i nuovi progetti si preferisce la Gateway API (il progetto Ingress NGINX è stato ritirato a marzo 2026).",
+   "r": [
+    "https://kubernetes.io/docs/concepts/services-networking/ingress/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka37"
+  },
+  {
+   "d": "rete",
+   "pts": 5,
+   "title": "Nomi DNS di Service e Pod",
+   "task": "Dal Pod temporaneo `t` nel namespace `default`, risolvi il nome completo del Service `api` del namespace `negozio` e scrivi il nome FQDN in `/opt/esame/fqdn.txt`.",
+   "check": "```\ncat /opt/esame/fqdn.txt   # api.negozio.svc.cluster.local\n```",
+   "solution": "```\nkubectl run t --rm -it --image=busybox:1.37 --restart=Never -- nslookup api.negozio\necho api.negozio.svc.cluster.local > /opt/esame/fqdn.txt\n```\nFormato: `SERVICE.NAMESPACE.svc.DOMINIO`, con dominio predefinito `cluster.local`. Dentro lo stesso namespace basta il nome del Service.",
+   "r": [
+    "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka38"
+  },
+  {
+   "d": "rete",
+   "pts": 6,
+   "title": "Inoltro DNS personalizzato",
+   "task": "Configura CoreDNS in modo che i nomi del dominio `azienda.interno` vengano risolti dal server DNS `10.0.0.53`, senza cambiare il resto della risoluzione.",
+   "check": "```\nkubectl -n kube-system get cm coredns -o yaml | grep -A3 azienda.interno\n```",
+   "solution": "```\nkubectl -n kube-system edit configmap coredns\n```\nAggiungi un blocco server dopo quello principale nel Corefile:\n```\nazienda.interno:53 {\n    errors\n    cache 30\n    forward . 10.0.0.53\n}\n```\nIl plugin `reload` presente nella configurazione predefinita ricarica il Corefile da solo; altrimenti `kubectl -n kube-system rollout restart deployment coredns`.",
+   "r": [
+    "https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/"
+   ],
+   "ctx": "Laboratorio: cluster kind della Fase 8 (`kind create cluster --config labs/k8s/kind/cluster.yaml`).",
+   "id": "cka39"
+  }
+ ]
+}

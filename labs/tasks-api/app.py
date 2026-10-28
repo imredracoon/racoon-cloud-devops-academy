@@ -1,0 +1,141 @@
+"""Tasks API: l'applicazione d'esempio del corso.
+
+Una piccola API REST che gestisce un elenco di attività.
+Il database si sceglie con la variabile d'ambiente DATABASE_URL:
+  - non impostata: SQLite nel file tasks.db (Fase 2)
+  - postgresql+psycopg://utente:password@host:5432/db (dalla Fase 3)
+Dalla Fase 7 espone le metriche per Prometheus su /metrics.
+"""
+
+import os
+import socket
+import time
+
+from flask import Flask, g, jsonify, request
+from flask_sqlalchemy import SQLAlchemy
+from prometheus_client import (
+    CONTENT_TYPE_LATEST,
+    REGISTRY,
+    CollectorRegistry,
+    Counter,
+    Histogram,
+    generate_latest,
+    multiprocess,
+)
+
+db = SQLAlchemy()
+
+# Metriche Prometheus (Fase 7). L'etichetta "endpoint" usa il modello del percorso
+# (/tasks/<int:task_id>), non l'URL reale, per non creare una serie per ogni id.
+RICHIESTE = Counter(
+    "http_requests_total", "Richieste HTTP ricevute", ["method", "endpoint", "status"]
+)
+DURATA = Histogram(
+    "http_request_duration_seconds", "Durata delle richieste HTTP", ["method", "endpoint"]
+)
+
+
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    done = db.Column(db.Boolean, nullable=False, default=False)
+
+    def to_dict(self):
+        return {"id": self.id, "title": self.title, "done": self.done}
+
+
+def create_app(database_url=None):
+    app = Flask(__name__)
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        database_url or os.environ.get("DATABASE_URL") or "sqlite:///tasks.db"
+    )
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()
+        # Con "gunicorn --preload" l'app viene creata una sola volta, prima dei worker: chiudiamo
+        # le connessioni perché i worker non le condividano. (Non con SQLite in memoria, usato
+        # dai test: chiudere la connessione cancellerebbe il database.)
+        if db.engine.url.database != ":memory:":
+            db.engine.dispose()
+
+    @app.before_request
+    def avvia_cronometro():
+        g.inizio = time.perf_counter()
+
+    @app.after_request
+    def registra_metriche(response):
+        endpoint = request.url_rule.rule if request.url_rule else "sconosciuto"
+        if endpoint != "/metrics":
+            RICHIESTE.labels(request.method, endpoint, str(response.status_code)).inc()
+            DURATA.labels(request.method, endpoint).observe(time.perf_counter() - g.inizio)
+        return response
+
+    @app.get("/metrics")
+    def metrics():
+        registry = REGISTRY
+        if "PROMETHEUS_MULTIPROC_DIR" in os.environ:
+            # Con Gunicorn e più worker: somma i valori scritti da tutti i processi.
+            registry = CollectorRegistry()
+            multiprocess.MultiProcessCollector(registry)
+        return generate_latest(registry), 200, {"Content-Type": CONTENT_TYPE_LATEST}
+
+    @app.get("/health")
+    def health():
+        try:
+            db.session.execute(db.text("SELECT 1"))
+            return jsonify(status="ok", host=socket.gethostname())
+        except Exception:  # il database non risponde
+            return jsonify(status="error"), 503
+
+    @app.get("/tasks")
+    def list_tasks():
+        return jsonify([t.to_dict() for t in Task.query.order_by(Task.id)])
+
+    @app.post("/tasks")
+    def create_task():
+        data = request.get_json(silent=True) or {}
+        title = str(data.get("title", "")).strip()
+        if not title:
+            return jsonify(error="il campo 'title' è obbligatorio"), 400
+        task = Task(title=title[:200])
+        db.session.add(task)
+        db.session.commit()
+        return jsonify(task.to_dict()), 201
+
+    @app.get("/tasks/<int:task_id>")
+    def get_task(task_id):
+        task = db.session.get(Task, task_id)
+        if task is None:
+            return jsonify(error="attività non trovata"), 404
+        return jsonify(task.to_dict())
+
+    @app.patch("/tasks/<int:task_id>")
+    def update_task(task_id):
+        task = db.session.get(Task, task_id)
+        if task is None:
+            return jsonify(error="attività non trovata"), 404
+        data = request.get_json(silent=True) or {}
+        if "title" in data:
+            title = str(data["title"]).strip()
+            if not title:
+                return jsonify(error="il titolo non può essere vuoto"), 400
+            task.title = title[:200]
+        if "done" in data:
+            task.done = bool(data["done"])
+        db.session.commit()
+        return jsonify(task.to_dict())
+
+    @app.delete("/tasks/<int:task_id>")
+    def delete_task(task_id):
+        task = db.session.get(Task, task_id)
+        if task is None:
+            return jsonify(error="attività non trovata"), 404
+        db.session.delete(task)
+        db.session.commit()
+        return "", 204
+
+    return app
+
+
+if __name__ == "__main__":
+    create_app().run(host="127.0.0.1", port=8000, debug=True)

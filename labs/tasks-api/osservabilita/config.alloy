@@ -1,0 +1,37 @@
+// Configurazione di Grafana Alloy (Fase 7): raccoglie i log di tutti i container e li invia a Loki.
+
+// 1. Trova i container in esecuzione tramite il socket di Docker.
+discovery.docker "contenitori" {
+  host = "unix:///var/run/docker.sock"
+}
+
+// 2. Trasforma i metadati di Docker in etichette leggibili.
+discovery.relabel "contenitori" {
+  targets = []
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "service"
+  }
+}
+
+// 3. Legge i log dei container trovati.
+loki.source.docker "contenitori" {
+  host          = "unix:///var/run/docker.sock"
+  targets       = discovery.docker.contenitori.targets
+  relabel_rules = discovery.relabel.contenitori.rules
+  forward_to    = [loki.write.locale.receiver]
+}
+
+// 4. Li invia a Loki.
+loki.write "locale" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

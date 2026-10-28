@@ -1,0 +1,48 @@
+# Stack completo della Tasks API: proxy Nginx, API, PostgreSQL (Fase 3)
+# Avvio: cp .env.example .env && docker compose up -d --build
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: tasks
+      POSTGRES_USER: tasks
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?imposta POSTGRES_PASSWORD nel file .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tasks -d tasks"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [backend]
+    restart: unless-stopped
+
+  api:
+    build: .
+    image: tasks-api:dev
+    environment:
+      DATABASE_URL: postgresql+psycopg://tasks:${POSTGRES_PASSWORD}@db:5432/tasks
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [backend, frontend]
+    restart: unless-stopped
+
+  proxy:
+    image: nginx:1.30-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      api:
+        condition: service_healthy
+    networks: [frontend]
+    restart: unless-stopped
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  pgdata:

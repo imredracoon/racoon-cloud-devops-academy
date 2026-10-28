@@ -1,0 +1,4 @@
+# Copia in terraform.tfvars e modifica i valori.
+regione       = "eu-south-1"
+ambiente      = "dev"
+numero_server = 2

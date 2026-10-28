@@ -1,0 +1,12 @@
+# All'avvio copia la chiave pubblica del laboratorio tra le chiavi autorizzate dell'utente ansible.
+[Unit]
+Description=Chiave SSH del laboratorio Ansible
+Before=sshd.service ssh.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/install -d -m 0700 -o ansible -g ansible /home/ansible/.ssh
+ExecStart=/usr/bin/install -m 0600 -o ansible -g ansible /chiavi/id_ed25519.pub /home/ansible/.ssh/authorized_keys
+
+[Install]
+WantedBy=multi-user.target

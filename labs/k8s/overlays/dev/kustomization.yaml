@@ -1,0 +1,26 @@
+# Ambiente di sviluppo: una replica, password generata da un file locale non versionato.
+#   echo -n "una-password-lunga" > overlays/dev/db-password.txt
+#   kubectl apply -k overlays/dev
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+secretGenerator:
+  - name: tasks-db
+    namespace: tasks
+    files:
+      - password=db-password.txt
+configMapGenerator:
+  - name: tasks-api
+    namespace: tasks
+    behavior: merge
+    literals:
+      - AMBIENTE=dev
+patches:
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: tasks-api
+    patch: |-
+      - op: replace
+        path: /spec/minReplicas
+        value: 1

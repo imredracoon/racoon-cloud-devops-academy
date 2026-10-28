@@ -1,0 +1,39 @@
+# Valori predefiniti: si sovrascrivono con -f mio-file.yaml o --set chiave=valore
+
+replicaCount: 2
+
+image:
+  repository: tasks-api
+  tag: "" # vuoto: si usa appVersion del Chart.yaml
+  pullPolicy: IfNotPresent
+
+service:
+  port: 80
+
+# URL del database letto da un Secret già esistente (il chart non gestisce password)
+database:
+  existingSecret: tasks-db
+  passwordKey: password
+  host: postgres
+  name: tasks
+  user: tasks
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+
+httpRoute:
+  enabled: false
+  gateway:
+    name: academy
+    namespace: envoy-gateway-system
+  hostname: tasks.localhost

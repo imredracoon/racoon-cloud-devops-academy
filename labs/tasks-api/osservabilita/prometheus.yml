@@ -1,0 +1,25 @@
+# Configurazione di Prometheus (Fase 7)
+global:
+  scrape_interval: 15s       # ogni quanto leggere le metriche
+  evaluation_interval: 15s   # ogni quanto valutare le regole
+
+rule_files:
+  - /etc/prometheus/regole.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: tasks-api
+    static_configs:
+      - targets: ["api:8000"]   # il nome del servizio Compose, sulla rete backend
+
+  - job_name: node
+    static_configs:
+      - targets: ["node-exporter:9100"]

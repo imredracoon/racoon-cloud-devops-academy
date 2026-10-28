@@ -1,0 +1,648 @@
+{
+ "type": "practical",
+ "id": "rhcsa",
+ "title": "Red Hat Certified System Administrator (EX200) · Simulazione pratica",
+ "lang": "it",
+ "format": {
+  "tasks": 20,
+  "tasksLabel": "circa 20",
+  "minutes": 180,
+  "passPct": 70,
+  "note": "L'esame reale è pratico, su RHEL 10, senza Internet e con la sola documentazione installata nel sistema (man, /usr/share/doc). Ogni configurazione deve sopravvivere al riavvio: alla fine riavvia e ricontrolla tutto. I task sono originali e seguono gli obiettivi pubblicati da Red Hat. Red Hat non pubblica i pesi per area: quelli usati qui sono indicativi."
+ },
+ "domains": [
+  {
+   "id": "strumenti",
+   "name": "Understand and use essential tools",
+   "weight": 10
+  },
+  {
+   "id": "software",
+   "name": "Manage software",
+   "weight": 8
+  },
+  {
+   "id": "script",
+   "name": "Create simple shell scripts",
+   "weight": 8
+  },
+  {
+   "id": "sistema",
+   "name": "Operate running systems",
+   "weight": 14
+  },
+  {
+   "id": "storage",
+   "name": "Configure local storage",
+   "weight": 12
+  },
+  {
+   "id": "filesystem",
+   "name": "Create and configure file systems",
+   "weight": 12
+  },
+  {
+   "id": "manutenzione",
+   "name": "Deploy, configure, and maintain systems",
+   "weight": 12
+  },
+  {
+   "id": "rete",
+   "name": "Manage basic networking",
+   "weight": 8
+  },
+  {
+   "id": "utenti",
+   "name": "Manage users and groups",
+   "weight": 6
+  },
+  {
+   "id": "sicurezza",
+   "name": "Manage security",
+   "weight": 10
+  }
+ ],
+ "tasks": [
+  {
+   "d": "strumenti",
+   "pts": 4,
+   "title": "Ricerca con espressioni regolari",
+   "task": "Copia in `/root/righe.txt` tutte le righe di `/usr/share/dict/words` (o di `/etc/services` se il dizionario non è installato) che iniziano con `ssh`, mantenendo l'ordine originale.",
+   "check": "```\nhead /root/righe.txt; grep -vc '^ssh' /root/righe.txt   # 0\n```",
+   "solution": "```\ngrep '^ssh' /etc/services > /root/righe.txt\n```\n`^` ancora l'espressione all'inizio della riga. Con `-E` si usano le espressioni estese (`|`, `+`, `?`).",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa01"
+  },
+  {
+   "d": "strumenti",
+   "pts": 4,
+   "title": "Archivi compressi",
+   "task": "Crea `/root/etc-backup.tar.bz2` con tutto il contenuto di `/etc`, compresso con bzip2. Poi estrai solo `etc/hosts` in `/tmp/prova`.",
+   "check": "```\ntar -tjf /root/etc-backup.tar.bz2 | head -3\nls /tmp/prova/etc/hosts\n```",
+   "solution": "```\ntar -cjf /root/etc-backup.tar.bz2 /etc\nmkdir -p /tmp/prova\ntar -xjf /root/etc-backup.tar.bz2 -C /tmp/prova etc/hosts\n```\n`-z` gzip, `-j` bzip2, `-J` xz. tar rimuove la `/` iniziale dai percorsi salvati.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa02"
+  },
+  {
+   "d": "strumenti",
+   "pts": 4,
+   "title": "Collegamenti",
+   "task": "Crea il collegamento simbolico `/root/rete` che punta a `/etc/NetworkManager/system-connections` e il collegamento fisico `/root/hosts-fisico` di `/etc/hosts`.",
+   "check": "```\nls -l /root/rete\nstat -c '%i %h' /etc/hosts /root/hosts-fisico   # stesso inode, 2 collegamenti\n```",
+   "solution": "```\nln -s /etc/NetworkManager/system-connections /root/rete\nln /etc/hosts /root/hosts-fisico\n```\nUn collegamento fisico è un altro nome dello stesso inode e funziona solo nello stesso filesystem; quello simbolico è un file che contiene un percorso.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa03"
+  },
+  {
+   "d": "strumenti",
+   "pts": 4,
+   "title": "Permessi standard",
+   "task": "Crea `/srv/rapporti` con proprietario `root`, gruppo `contabili` (crealo), permessi: proprietario tutto, gruppo lettura ed esecuzione, altri nessuno.",
+   "check": "```\nstat -c '%U %G %a' /srv/rapporti    # root contabili 750\n```",
+   "solution": "```\ngroupadd contabili\nmkdir -p /srv/rapporti\nchown root:contabili /srv/rapporti\nchmod 750 /srv/rapporti\n```",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa04"
+  },
+  {
+   "d": "software",
+   "pts": 5,
+   "title": "Repository RPM",
+   "task": "Configura i repository `BaseOS` e `AppStream` disponibili in `http://repo.academy.lan/10/BaseOS` e `http://repo.academy.lan/10/AppStream`, con verifica GPG tramite la chiave in `/etc/pki/rpm-gpg/RPM-GPG-KEY-academy`.",
+   "check": "```\ndnf repolist\ndnf -q list --available | head\n```",
+   "solution": "`/etc/yum.repos.d/academy.repo`:\n```\n[academy-baseos]\nname=Academy BaseOS\nbaseurl=http://repo.academy.lan/10/BaseOS\nenabled=1\ngpgcheck=1\ngpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-academy\n\n[academy-appstream]\nname=Academy AppStream\nbaseurl=http://repo.academy.lan/10/AppStream\nenabled=1\ngpgcheck=1\ngpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-academy\n```\nOgni repository ha un id univoco tra parentesi quadre. All'esame leggi con attenzione se la verifica GPG va attivata o no.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_software_with_the_dnf_tool/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa05"
+  },
+  {
+   "d": "software",
+   "pts": 4,
+   "title": "Installare e rimuovere pacchetti",
+   "task": "Installa `httpd` e il gruppo di pacchetti `Development Tools`, poi rimuovi il pacchetto `nano` se presente. Scrivi in `/root/pacchetto.txt` il pacchetto che fornisce il file `/usr/bin/dig`.",
+   "check": "```\nrpm -q httpd; rpm -q nano\ncat /root/pacchetto.txt\n```",
+   "solution": "```\ndnf install -y httpd\ndnf group install -y \"Development Tools\"\ndnf remove -y nano\ndnf provides /usr/bin/dig > /root/pacchetto.txt\n```\nPer un pacchetto installato: `rpm -qf /usr/bin/dig`.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_software_with_the_dnf_tool/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa06"
+  },
+  {
+   "d": "software",
+   "pts": 5,
+   "title": "Flatpak",
+   "task": "Aggiungi il repository Flatpak Flathub a livello di sistema, installa da lì l'applicazione `org.gnome.Calculator`, poi disinstallala.",
+   "check": "```\nflatpak remotes\nflatpak list --app\n```",
+   "solution": "```\ndnf install -y flatpak\nflatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo\nflatpak install -y flathub org.gnome.Calculator\nflatpak uninstall -y org.gnome.Calculator\n```\nSu RHEL è già configurato il repository `rhel` di Red Hat; il comando è identico per qualunque remote.",
+   "r": [
+    "https://docs.flatpak.org/en/latest/using-flatpak.html"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa07"
+  },
+  {
+   "d": "software",
+   "pts": 4,
+   "title": "Pacchetto dal filesystem locale",
+   "task": "Installa il pacchetto `/root/strumento-1.0-1.noarch.rpm` risolvendo le dipendenze dai repository configurati.",
+   "check": "```\nrpm -q strumento\n```",
+   "solution": "```\ndnf install -y /root/strumento-1.0-1.noarch.rpm\n```\n`dnf` risolve le dipendenze, `rpm -i` no.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_software_with_the_dnf_tool/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa08"
+  },
+  {
+   "d": "script",
+   "pts": 5,
+   "title": "Script con argomenti e condizioni",
+   "task": "Scrivi `/usr/local/bin/conta.sh` che riceve un nome utente come primo argomento. Se l'argomento manca stampa `Uso: conta.sh UTENTE` ed esce con 1. Se l'utente esiste stampa il numero di processi che possiede, altrimenti stampa `Utente sconosciuto` ed esce con 2.",
+   "check": "```\nconta.sh; echo $?          # Uso..., 1\nconta.sh root              # un numero\nconta.sh nessuno; echo $?  # Utente sconosciuto, 2\n```",
+   "solution": "```\n#!/bin/bash\nif [ $# -lt 1 ]; then\n  echo \"Uso: conta.sh UTENTE\"\n  exit 1\nfi\nif id \"$1\" &>/dev/null; then\n  ps -u \"$1\" --no-headers | wc -l\nelse\n  echo \"Utente sconosciuto\"\n  exit 2\nfi\n```\n```\nchmod +x /usr/local/bin/conta.sh\n```",
+   "r": [
+    "https://www.gnu.org/software/bash/manual/bash.html#Conditional-Constructs"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa09"
+  },
+  {
+   "d": "script",
+   "pts": 5,
+   "title": "Ciclo su un file",
+   "task": "Il file `/root/utenti.txt` contiene un nome utente per riga. Scrivi `/root/crea.sh` che crea ciascun utente (se non esiste già) con la password `Corso2026!` e lo obbliga a cambiarla al primo accesso.",
+   "check": "```\nbash /root/crea.sh && for u in $(cat /root/utenti.txt); do chage -l $u | head -1; done\n```",
+   "solution": "```\n#!/bin/bash\nwhile read -r utente; do\n  [ -z \"$utente\" ] && continue\n  if ! id \"$utente\" &>/dev/null; then\n    useradd \"$utente\"\n    echo 'Corso2026!' | passwd --stdin \"$utente\"\n    chage -d 0 \"$utente\"\n  fi\ndone < /root/utenti.txt\n```\n`chage -d 0` imposta l'ultima modifica a \"mai\", quindi la password va cambiata al primo login. `passwd --stdin` esiste su RHEL; altrove si usa `chpasswd`.",
+   "r": [
+    "https://www.gnu.org/software/bash/manual/bash.html#Looping-Constructs"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa10"
+  },
+  {
+   "d": "script",
+   "pts": 4,
+   "title": "Output dei comandi nello script",
+   "task": "Scrivi `/usr/local/bin/stato.sh` che stampa una riga per ogni filesystem XFS montato nel formato `PUNTO_DI_MOUNT USO%`.",
+   "check": "```\nstato.sh\n```",
+   "solution": "```\n#!/bin/bash\nfor mnt in $(findmnt -t xfs -n -o TARGET); do\n  uso=$(df --output=pcent \"$mnt\" | tail -1 | tr -d ' ')\n  echo \"$mnt $uso\"\ndone\n```\n`$( )` cattura l'output di un comando.",
+   "r": [
+    "https://www.gnu.org/software/bash/manual/bash.html#Command-Substitution"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa11"
+  },
+  {
+   "d": "sistema",
+   "pts": 8,
+   "title": "Recuperare la password di root",
+   "task": "Non conosci la password di root. Interrompi l'avvio e impostala a `Nuova2026!`. Il sistema deve ripartire normalmente con SELinux funzionante.",
+   "check": "Accedi come root con la nuova password; poi:\n```\ngetenforce   # Enforcing\n```",
+   "solution": "1. Al menu di GRUB premi `e` sulla voce del kernel.\n2. Alla fine della riga che inizia con `linux` aggiungi `rd.break` e avvia con `Ctrl+x`.\n3. Nella shell dell'initramfs:\n```\nmount -o remount,rw /sysroot\nchroot /sysroot\npasswd root\ntouch /.autorelabel\nexit\nexit\n```\n`/.autorelabel` fa rietichettare i file al riavvio: senza, `/etc/shadow` avrebbe un contesto SELinux sbagliato e nessuno potrebbe entrare. Il relabel richiede qualche minuto.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa12"
+  },
+  {
+   "d": "sistema",
+   "pts": 5,
+   "title": "Target di avvio",
+   "task": "Avvia manualmente il sistema nel target `multi-user` senza cambiare l'impostazione predefinita, poi imposta come predefinito proprio `multi-user.target`.",
+   "check": "```\nsystemctl get-default    # multi-user.target\n```",
+   "solution": "Una tantum, da sistema avviato: `systemctl isolate multi-user.target`. Dal menu di GRUB: aggiungi `systemd.unit=multi-user.target` alla riga `linux`.\nPredefinito:\n```\nsystemctl set-default multi-user.target\n```",
+   "r": [
+    "https://www.freedesktop.org/software/systemd/man/latest/systemd.timer.html",
+    "https://www.freedesktop.org/software/systemd/man/latest/systemctl.html"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa13"
+  },
+  {
+   "d": "sistema",
+   "pts": 4,
+   "title": "Priorità dei processi",
+   "task": "Avvia `sha256sum /dev/zero` in background con nice 10, poi portalo a nice 5. Infine termina il processo che consuma più memoria tra quelli dell'utente `studente`.",
+   "check": "```\nps -o pid,ni,cmd -C sha256sum\n```",
+   "solution": "```\nnice -n 10 sha256sum /dev/zero &\nrenice -n 5 -p $(pgrep -f 'sha256sum /dev/zero')\nps -u studente -o pid,%mem,cmd --sort=-%mem | head -2\nkill <PID>\n```\nSolo root può abbassare il valore nice (aumentare la priorità).",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa14"
+  },
+  {
+   "d": "sistema",
+   "pts": 4,
+   "title": "Profili di tuning",
+   "task": "Imposta il profilo di tuning raccomandato da `tuned` per questo sistema.",
+   "check": "```\ntuned-adm active\ntuned-adm recommend\n```",
+   "solution": "```\ndnf install -y tuned\nsystemctl enable --now tuned\ntuned-adm recommend\ntuned-adm profile $(tuned-adm recommend)\n```\n`tuned-adm list` mostra i profili disponibili (per esempio `virtual-guest`, `throughput-performance`).",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa15"
+  },
+  {
+   "d": "sistema",
+   "pts": 5,
+   "title": "Journal persistente",
+   "task": "Fai in modo che il journal di systemd venga conservato tra i riavvii.",
+   "check": "```\njournalctl --list-boots    # dopo un riavvio, più di una voce\nls /var/log/journal\n```",
+   "solution": "```\nmkdir -p /etc/systemd/journald.conf.d\nprintf '[Journal]\\nStorage=persistent\\n' > /etc/systemd/journald.conf.d/persistente.conf\nsystemctl restart systemd-journald\n```\nCon `Storage=persistent` journald crea `/var/log/journal`. Con il valore `auto` basta creare la directory.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa16"
+  },
+  {
+   "d": "sistema",
+   "pts": 4,
+   "title": "Log di sistema",
+   "task": "Scrivi in `/root/errori.txt` i messaggi di priorità `err` o superiore dell'avvio corrente, e in `/root/sshd.txt` i messaggi del servizio `sshd` dell'ultima ora.",
+   "check": "```\nwc -l /root/errori.txt /root/sshd.txt\n```",
+   "solution": "```\njournalctl -b -p err > /root/errori.txt\njournalctl -u sshd --since \"1 hour ago\" > /root/sshd.txt\n```\nI log testuali di rsyslog sono in `/var/log/messages` e `/var/log/secure`.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa17"
+  },
+  {
+   "d": "sistema",
+   "pts": 4,
+   "title": "Trasferimento sicuro di file",
+   "task": "Copia `/root/etc-backup.tar.bz2` sul server `server2` nella directory `/backup` e sincronizza `/srv/rapporti` con `server2:/backup/rapporti` preservando permessi e date.",
+   "check": "```\nssh server2 ls -l /backup /backup/rapporti\n```",
+   "solution": "```\nscp /root/etc-backup.tar.bz2 server2:/backup/\nrsync -av /srv/rapporti/ server2:/backup/rapporti/\n```\nCon rsync la `/` finale della sorgente copia il contenuto e non la directory stessa.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa18"
+  },
+  {
+   "d": "storage",
+   "pts": 6,
+   "title": "Partizioni GPT",
+   "task": "Sul disco `/dev/vdb` crea una tabella GPT e una partizione da 1 GiB. Formattala XFS con etichetta `ARCHIVIO` e montala in `/archivio` all'avvio usando l'etichetta.",
+   "check": "```\nlsblk -f /dev/vdb\nfindmnt /archivio\n```",
+   "solution": "```\nparted -s /dev/vdb mklabel gpt mkpart archivio xfs 1MiB 1025MiB\nudevadm settle\nmkfs.xfs -L ARCHIVIO /dev/vdb1\nmkdir -p /archivio\necho 'LABEL=ARCHIVIO /archivio xfs defaults 0 0' >> /etc/fstab\nsystemctl daemon-reload && mount -a\n```",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_storage_devices/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa19"
+  },
+  {
+   "d": "storage",
+   "pts": 6,
+   "title": "Volume logico con dimensione di estensione",
+   "task": "Crea il volume group `vgacademy` su `/dev/vdc` con extent da 16 MiB e il volume logico `lvdati` di 50 extent, formattato ext4 e montato in `/dati` tramite UUID.",
+   "check": "```\nvgdisplay vgacademy | grep 'PE Size'\nlvs -o lv_name,seg_size_pe vgacademy\nfindmnt /dati\n```",
+   "solution": "```\npvcreate /dev/vdc\nvgcreate -s 16M vgacademy /dev/vdc\nlvcreate -n lvdati -l 50 vgacademy\nmkfs.ext4 /dev/vgacademy/lvdati\nmkdir -p /dati\necho \"UUID=$(blkid -s UUID -o value /dev/vgacademy/lvdati) /dati ext4 defaults 0 0\" >> /etc/fstab\nsystemctl daemon-reload && mount -a\n```\n`-l` indica il numero di extent, `-L` la dimensione.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_and_managing_logical_volumes/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa20"
+  },
+  {
+   "d": "storage",
+   "pts": 5,
+   "title": "Swap non distruttivo",
+   "task": "Aggiungi una partizione di swap da 512 MiB sul disco `/dev/vdb` senza toccare le partizioni esistenti, attiva all'avvio.",
+   "check": "```\nswapon --show\n```",
+   "solution": "```\nparted -s /dev/vdb mkpart swap linux-swap 1025MiB 1537MiB\nudevadm settle\nmkswap /dev/vdb2\necho \"UUID=$(blkid -s UUID -o value /dev/vdb2) none swap defaults 0 0\" >> /etc/fstab\nswapon -a\n```\nControlla con `parted /dev/vdb unit MiB print free` dove inizia lo spazio libero.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_storage_devices/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa21"
+  },
+  {
+   "d": "storage",
+   "pts": 4,
+   "title": "Rimuovere un volume",
+   "task": "Rimuovi completamente il volume logico `lvvecchio` del VG `vgacademy` e libera il disco `/dev/vdd` dal VG, eliminando anche il physical volume.",
+   "check": "```\nlvs; pvs\n```",
+   "solution": "```\numount /vecchio           # se montato; togli anche la riga da /etc/fstab\nlvremove -y /dev/vgacademy/lvvecchio\nvgreduce vgacademy /dev/vdd\npvremove /dev/vdd\n```\nSe il PV contiene dati in uso, prima `pvmove /dev/vdd`.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_and_managing_logical_volumes/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa22"
+  },
+  {
+   "d": "filesystem",
+   "pts": 5,
+   "title": "Estendere un volume logico",
+   "task": "Estendi `lvdati` a 1 GiB complessivo con il filesystem, senza smontarlo.",
+   "check": "```\nlvs vgacademy/lvdati; df -h /dati\n```",
+   "solution": "```\nlvextend -r -L 1G /dev/vgacademy/lvdati\n```",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_and_managing_logical_volumes/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa23"
+  },
+  {
+   "d": "filesystem",
+   "pts": 5,
+   "title": "Montare NFS",
+   "task": "Monta in modo persistente la condivisione NFS `server2:/esportata` in `/mnt/nfs`.",
+   "check": "```\nfindmnt /mnt/nfs\n```",
+   "solution": "```\ndnf install -y nfs-utils\nmkdir -p /mnt/nfs\necho 'server2:/esportata /mnt/nfs nfs defaults,_netdev 0 0' >> /etc/fstab\nsystemctl daemon-reload && mount -a\n```\n`showmount -e server2` elenca le esportazioni (con NFSv3).",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_file_systems/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa24"
+  },
+  {
+   "d": "filesystem",
+   "pts": 7,
+   "title": "Home remote con autofs",
+   "task": "Gli utenti LDAP hanno la home su `server2:/home/remote/NOME`. Configura autofs perché `/home/remote/NOME` venga montata in lettura e scrittura al primo accesso, per qualunque nome.",
+   "check": "```\nsu - remoto1 -c pwd         # /home/remote/remoto1\nfindmnt /home/remote/remoto1\n```",
+   "solution": "```\ndnf install -y autofs nfs-utils\necho '/home/remote /etc/auto.remote' > /etc/auto.master.d/remote.autofs\necho '* -rw,sync server2:/home/remote/&' > /etc/auto.remote\nsystemctl enable --now autofs\n```\n`*` corrisponde a qualunque chiave e `&` la riporta nel percorso remoto.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_file_systems/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa25"
+  },
+  {
+   "d": "filesystem",
+   "pts": 4,
+   "title": "File system VFAT",
+   "task": "Formatta la partizione `/dev/vdb3` come VFAT e montala in `/scambio` all'avvio, con proprietario dei file l'utente con UID 1000.",
+   "check": "```\nfindmnt /scambio -o SOURCE,FSTYPE,OPTIONS\n```",
+   "solution": "```\nmkfs.vfat /dev/vdb3\nmkdir -p /scambio\necho \"UUID=$(blkid -s UUID -o value /dev/vdb3) /scambio vfat defaults,uid=1000 0 0\" >> /etc/fstab\nsystemctl daemon-reload && mount -a\n```\nVFAT non memorizza proprietari e permessi: si impostano con le opzioni di mount.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_file_systems/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa26"
+  },
+  {
+   "d": "filesystem",
+   "pts": 5,
+   "title": "Problema di permessi",
+   "task": "L'utente `luca`, membro di `contabili`, non riesce a creare file in `/srv/rapporti`. I file creati da qualunque membro devono appartenere al gruppo `contabili`. Correggi senza dare permessi agli altri utenti.",
+   "check": "```\nsu - luca -c 'touch /srv/rapporti/prova' && stat -c '%G' /srv/rapporti/prova   # contabili\n```",
+   "solution": "```\nid luca                       # verifica l'appartenenza al gruppo\nchmod 2770 /srv/rapporti      # rwx al gruppo + setgid\n```\nIl setgid sulla directory fa ereditare il gruppo ai nuovi file. Controlla anche ACL (`getfacl`) e contesto SELinux se il problema persiste.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa27"
+  },
+  {
+   "d": "manutenzione",
+   "pts": 4,
+   "title": "at e cron",
+   "task": "Fra 10 minuti esegui una sola volta `systemctl restart httpd`. Inoltre l'utente `studente` deve eseguire `echo ciao` ogni giorno alle 14:23 con cron.",
+   "check": "```\natq\ncrontab -l -u studente\n```",
+   "solution": "```\necho 'systemctl restart httpd' | at now + 10 minutes\ncrontab -e -u studente\n```\n```\n23 14 * * * echo ciao\n```",
+   "r": [
+    "https://www.freedesktop.org/software/systemd/man/latest/systemd.timer.html",
+    "https://www.freedesktop.org/software/systemd/man/latest/systemctl.html"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa28"
+  },
+  {
+   "d": "manutenzione",
+   "pts": 5,
+   "title": "Timer systemd",
+   "task": "Crea un timer systemd che esegua `/usr/local/bin/stato.sh` ogni 30 minuti a partire da 5 minuti dopo l'avvio.",
+   "check": "```\nsystemctl list-timers stato.timer\n```",
+   "solution": "`/etc/systemd/system/stato.service`:\n```\n[Unit]\nDescription=Stato dei filesystem\n\n[Service]\nType=oneshot\nExecStart=/usr/local/bin/stato.sh\n```\n`/etc/systemd/system/stato.timer`:\n```\n[Unit]\nDescription=Ogni 30 minuti\n\n[Timer]\nOnBootSec=5min\nOnUnitActiveSec=30min\n\n[Install]\nWantedBy=timers.target\n```\n```\nsystemctl daemon-reload && systemctl enable --now stato.timer\n```",
+   "r": [
+    "https://www.freedesktop.org/software/systemd/man/latest/systemd.timer.html",
+    "https://www.freedesktop.org/software/systemd/man/latest/systemctl.html"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa29"
+  },
+  {
+   "d": "manutenzione",
+   "pts": 4,
+   "title": "Servizi all'avvio",
+   "task": "Il servizio `httpd` deve essere attivo ora e a ogni avvio; il servizio `cups`, se installato, deve essere fermo e non avviabile nemmeno manualmente.",
+   "check": "```\nsystemctl is-active httpd; systemctl is-enabled httpd\nsystemctl is-enabled cups   # masked\n```",
+   "solution": "```\nsystemctl enable --now httpd\nsystemctl disable --now cups\nsystemctl mask cups\n```\n`mask` collega la unit a `/dev/null`: nemmeno `systemctl start` la avvia.",
+   "r": [
+    "https://www.freedesktop.org/software/systemd/man/latest/systemd.timer.html",
+    "https://www.freedesktop.org/software/systemd/man/latest/systemctl.html"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa30"
+  },
+  {
+   "d": "manutenzione",
+   "pts": 4,
+   "title": "Client NTP",
+   "task": "Sincronizza l'orologio con il server `ntp.academy.lan`.",
+   "check": "```\nchronyc sources\n```",
+   "solution": "In `/etc/chrony.conf` sostituisci le righe `pool`/`server` con:\n```\nserver ntp.academy.lan iburst\n```\n```\nsystemctl enable --now chronyd\nsystemctl restart chronyd\ntimedatectl set-ntp true\n```",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa31"
+  },
+  {
+   "d": "manutenzione",
+   "pts": 5,
+   "title": "Bootloader",
+   "task": "Aggiungi a tutti i kernel installati il parametro `console=ttyS0,115200` in modo persistente e verifica quale kernel si avvia per impostazione predefinita.",
+   "check": "```\ngrubby --info=ALL | grep args\ngrubby --default-kernel\n```",
+   "solution": "```\ngrubby --update-kernel=ALL --args=\"console=ttyS0,115200\"\ngrubby --default-kernel\n```\n`--remove-args` toglie un parametro. Per i kernel installati in futuro conta anche `GRUB_CMDLINE_LINUX` in `/etc/default/grub` (poi `grub2-mkconfig -o /boot/grub2/grub.cfg`).",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa32"
+  },
+  {
+   "d": "rete",
+   "pts": 6,
+   "title": "IPv4 e IPv6 statici",
+   "task": "Configura la connessione dell'interfaccia `enp1s0` con IPv4 `192.168.60.10/24`, gateway `192.168.60.1`, DNS `192.168.60.1`, IPv6 `fd00:60::10/64`, attiva all'avvio.",
+   "check": "```\nip -br addr show enp1s0\nnmcli -g connection.autoconnect con show enp1s0   # yes\n```",
+   "solution": "```\nnmcli con mod enp1s0 ipv4.method manual ipv4.addresses 192.168.60.10/24 \\\n  ipv4.gateway 192.168.60.1 ipv4.dns 192.168.60.1 \\\n  ipv6.method manual ipv6.addresses fd00:60::10/64 connection.autoconnect yes\nnmcli con up enp1s0\n```\nIl nome della connessione può differire da quello dell'interfaccia: controlla con `nmcli con show`.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_and_managing_networking/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa33"
+  },
+  {
+   "d": "rete",
+   "pts": 4,
+   "title": "Nome host e risoluzione",
+   "task": "Imposta il nome host `server1.academy.lan` e fai risolvere `server2.academy.lan` a `192.168.60.20` senza DNS.",
+   "check": "```\nhostname; getent hosts server2.academy.lan\n```",
+   "solution": "```\nhostnamectl hostname server1.academy.lan\necho '192.168.60.20 server2.academy.lan server2' >> /etc/hosts\n```",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_and_managing_networking/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa34"
+  },
+  {
+   "d": "rete",
+   "pts": 5,
+   "title": "firewalld",
+   "task": "Permetti in modo permanente il traffico HTTP e HTTPS e la porta 8080/tcp nella zona predefinita.",
+   "check": "```\nfirewall-cmd --list-all\n```",
+   "solution": "```\nfirewall-cmd --permanent --add-service=http --add-service=https\nfirewall-cmd --permanent --add-port=8080/tcp\nfirewall-cmd --reload\n```\nSenza `--permanent` la regola sparisce al reload o al riavvio.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa35"
+  },
+  {
+   "d": "utenti",
+   "pts": 5,
+   "title": "Account locali",
+   "task": "Crea il gruppo `ospiti` con GID 3000. Crea l'utente `anna` con UID 2001, gruppo supplementare `ospiti`, shell `/bin/bash`. Crea l'utente `servizio` senza shell interattiva. Elimina l'utente `vecchio` con la sua home.",
+   "check": "```\nid anna; getent group ospiti; getent passwd servizio | cut -d: -f7; id vecchio\n```",
+   "solution": "```\ngroupadd -g 3000 ospiti\nuseradd -u 2001 -G ospiti -s /bin/bash anna\nuseradd -s /sbin/nologin servizio\nuserdel -r vecchio\n```",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa36"
+  },
+  {
+   "d": "utenti",
+   "pts": 4,
+   "title": "Scadenza delle password",
+   "task": "Le password dei nuovi utenti devono scadere dopo 30 giorni con avviso 5 giorni prima. L'utente `anna` deve cambiare password entro 30 giorni da oggi.",
+   "check": "```\ngrep -E '^PASS_(MAX|WARN)' /etc/login.defs\nchage -l anna\n```",
+   "solution": "In `/etc/login.defs`:\n```\nPASS_MAX_DAYS 30\nPASS_WARN_AGE 5\n```\n```\nchage -M 30 -W 5 anna\n```\n`login.defs` vale solo per gli utenti creati dopo la modifica.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa37"
+  },
+  {
+   "d": "utenti",
+   "pts": 4,
+   "title": "Accesso da superutente",
+   "task": "I membri del gruppo `operatori` devono poter eseguire qualunque comando con sudo senza password; l'utente `anna` deve poter usare sudo con password (gruppo amministrativo standard).",
+   "check": "```\nsudo -l -U anna; visudo -c\n```",
+   "solution": "```\ngroupadd -f operatori\necho '%operatori ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/operatori\nchmod 440 /etc/sudoers.d/operatori\nusermod -aG wheel anna\nvisudo -c\n```\nSu RHEL il gruppo `wheel` ha già la regola `ALL=(ALL) ALL` in `/etc/sudoers`.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa38"
+  },
+  {
+   "d": "sicurezza",
+   "pts": 6,
+   "title": "Contesti SELinux dei file",
+   "task": "Apache deve servire il sito dalla directory `/srv/sito` (non standard). Configura il contesto SELinux corretto in modo persistente, senza disattivare SELinux.",
+   "check": "```\nls -Zd /srv/sito\ncurl -s localhost/\n```",
+   "solution": "```\nsemanage fcontext -a -t httpd_sys_content_t \"/srv/sito(/.*)?\"\nrestorecon -Rv /srv/sito\n```\n`chcon` cambia il contesto solo fino al prossimo relabel; `semanage fcontext` registra la regola nella policy. Nella configurazione di httpd imposta `DocumentRoot \"/srv/sito\"` e il relativo blocco `<Directory>`.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/using_selinux/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa39"
+  },
+  {
+   "d": "sicurezza",
+   "pts": 6,
+   "title": "Porta non standard per un servizio",
+   "task": "httpd deve ascoltare anche sulla porta 82/tcp. Configura SELinux e il firewall perché funzioni.",
+   "check": "```\nsemanage port -l | grep '^http_port_t'\ncurl -s localhost:82\n```",
+   "solution": "```\necho 'Listen 82' > /etc/httpd/conf.d/porta82.conf\nsemanage port -a -t http_port_t -p tcp 82\nfirewall-cmd --permanent --add-port=82/tcp && firewall-cmd --reload\nsystemctl restart httpd\n```\nSe la porta è già assegnata a un altro tipo, usa `-m` al posto di `-a`.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/using_selinux/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa40"
+  },
+  {
+   "d": "sicurezza",
+   "pts": 5,
+   "title": "Booleani e violazioni SELinux",
+   "task": "Un'applicazione PHP servita da httpd non riesce a collegarsi a un database remoto. Trova la violazione nei log e risolvila con un booleano persistente.",
+   "check": "```\ngetsebool httpd_can_network_connect_db\n```",
+   "solution": "```\nausearch -m AVC -ts recent\njournalctl -t setroubleshoot      # se setroubleshoot-server è installato, con suggerimenti\ngetsebool -a | grep httpd_can_network\nsetsebool -P httpd_can_network_connect_db on\n```\n`-P` rende permanente il valore. Mai risolvere disattivando SELinux.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/using_selinux/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa41"
+  },
+  {
+   "d": "sicurezza",
+   "pts": 4,
+   "title": "Modalità SELinux",
+   "task": "Il sistema deve avviarsi in modalità enforcing. Ora passa temporaneamente a permissive, verifica, poi torna a enforcing.",
+   "check": "```\ngetenforce; grep ^SELINUX= /etc/selinux/config\n```",
+   "solution": "```\ngrep ^SELINUX= /etc/selinux/config     # SELINUX=enforcing\nsetenforce 0; getenforce               # Permissive\nsetenforce 1; getenforce               # Enforcing\n```\n`setenforce` non sopravvive al riavvio; il file di configurazione sì.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/using_selinux/index"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa42"
+  },
+  {
+   "d": "sicurezza",
+   "pts": 4,
+   "title": "Chiavi SSH e umask",
+   "task": "L'utente `anna` deve accedere a `server2` con una chiave Ed25519 senza password. Inoltre i file creati da `anna` devono avere per impostazione predefinita permessi 640 (directory 750).",
+   "check": "```\nsu - anna -c 'ssh -o BatchMode=yes server2 hostname'\nsu - anna -c 'umask'   # 0027\n```",
+   "solution": "```\nsu - anna\nssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519\nssh-copy-id server2\necho 'umask 027' >> ~/.bashrc\n```\numask 027 toglie scrittura al gruppo e tutto agli altri: 666-027 = 640 per i file, 777-027 = 750 per le directory.",
+   "r": [
+    "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10",
+    "https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam"
+   ],
+   "ctx": "Laboratorio: VM Rocky Linux 10 o AlmaLinux 10 (percorso RHEL della Fase 1). Ogni configurazione deve sopravvivere al riavvio.",
+   "id": "rhcsa43"
+  }
+ ]
+}
