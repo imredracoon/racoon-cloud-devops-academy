@@ -62,7 +62,7 @@ e i comandi.
 | [AWS Certified Cloud Practitioner (CLF-C02)](appendici/aws-clf/index.md) | AWS | dopo la Fase 4 | 65 domande, 90 minuti | 100 USD |
 | [Google Cloud Digital Leader](appendici/gcp-cdl/index.md) | Google Cloud | dopo la Fase 4 (alternativa o in aggiunta) | 50-60 domande, 90 minuti | 99 USD |
 | [AWS Certified Solutions Architect – Associate (SAA-C03)](appendici/aws-saa/index.md) | AWS | dopo la Fase 5 | 65 domande, 130 minuti | 150 USD |
-| [HashiCorp Terraform Associate (004)](appendici/terraform/index.md) | HashiCorp | dopo la Fase 6 | domande a scelta, 60 minuti | vedi pagina ufficiale |
+| [HashiCorp Terraform Associate (004)](appendici/terraform/index.md) | HashiCorp | dopo la Fase 6 | domande a scelta, 60 minuti | 70,50 USD |
 | [Certified Kubernetes Administrator (CKA)](appendici/cka/index.md) | Linux Foundation / CNCF | dopo la Fase 8 | pratico, 2 ore | 445 USD |
 | [Google Associate Cloud Engineer](appendici/gcp-ace/index.md) | Google Cloud | dopo la Fase 8 | 50-60 domande, 2 ore | 125 USD |
 | [Linux Foundation Certified System Administrator (LFCS)](appendici/lfcs/index.md) | Linux Foundation | dopo la Fase 1 (facoltativa) | pratico, 2 ore | 445 USD |

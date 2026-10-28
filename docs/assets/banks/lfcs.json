@@ -8,7 +8,7 @@
   "tasksLabel": "15-20",
   "minutes": 120,
   "passPct": 67,
-  "note": "L'esame reale è online con sorvegliante, interamente da riga di comando su Ubuntu. I task sono originali e seguono i domini pubblicati dalla Linux Foundation. Dove serve, la soluzione indica anche l'equivalente RHEL."
+  "note": "L'esame reale è online con sorvegliante, interamente da riga di comando; la Linux Foundation lo dichiara indipendente dalla distribuzione. I task sono originali e seguono i domini pubblicati: usano Ubuntu e, dove serve, indicano l'equivalente RHEL."
  },
  "domains": [
   {
@@ -49,7 +49,7 @@
     "https://manpages.ubuntu.com/manpages/noble/en/man8/sysctl.8.html",
     "https://manpages.ubuntu.com/manpages/noble/en/man5/sysctl.d.5.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs01"
   },
   {
@@ -63,7 +63,7 @@
     "https://manpages.ubuntu.com/manpages/noble/en/man1/ps.1.html",
     "https://manpages.ubuntu.com/manpages/noble/en/man1/renice.1.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs02"
   },
   {
@@ -76,7 +76,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man1/journalctl.1.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs03"
   },
   {
@@ -89,7 +89,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man5/systemd.timer.5.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs04"
   },
   {
@@ -102,7 +102,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man5/crontab.5.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs05"
   },
   {
@@ -115,7 +115,7 @@
    "r": [
     "https://documentation.ubuntu.com/server/how-to/software/package-management/"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs06"
   },
   {
@@ -128,20 +128,20 @@
    "r": [
     "https://docs.docker.com/engine/containers/start-containers-automatically/"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs07"
   },
   {
    "d": "operazioni",
-   "pts": 5,
-   "title": "AppArmor",
-   "task": "Verifica quali profili AppArmor sono in modalità enforce e metti in modalità complain il profilo di `/usr/sbin/tcpdump`.",
-   "check": "```\nsudo aa-status | grep -A2 complain\n```",
-   "solution": "```\nsudo aa-status\nsudo apt install -y apparmor-utils\nsudo aa-complain /usr/sbin/tcpdump\n```\nIn complain le violazioni vengono registrate ma non bloccate. `aa-enforce` torna alla modalità enforce. Su RHEL il controllo d'accesso obbligatorio è SELinux (`getenforce`, `setenforce`, `semanage`).",
+   "pts": 6,
+   "title": "Controllo d'accesso obbligatorio con SELinux",
+   "task": "Su una macchina RHEL-compatibile con SELinux in enforcing, il server web deve servire file da `/srv/sito`. Imposta il contesto corretto in modo persistente e verifica che SELinux resti in enforcing.",
+   "check": "```\ngetenforce                 # Enforcing\nls -Zd /srv/sito           # httpd_sys_content_t\n```",
+   "solution": "```\nsudo semanage fcontext -a -t httpd_sys_content_t \"/srv/sito(/.*)?\"\nsudo restorecon -Rv /srv/sito\nsudo ausearch -m AVC -ts recent      # eventuali negazioni residue\n```\n`chcon` cambierebbe il contesto solo fino al prossimo relabel. Su Ubuntu il controllo d'accesso obbligatorio predefinito è AppArmor (`aa-status`, `aa-complain`, `aa-enforce`), ma il programma LFCS cita esplicitamente SELinux.",
    "r": [
-    "https://documentation.ubuntu.com/server/how-to/security/apparmor/"
+    "https://manpages.ubuntu.com/manpages/noble/en/man8/semanage-fcontext.8.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Rocky Linux o AlmaLinux (percorso RHEL della Fase 1).",
    "id": "lfcs08"
   },
   {
@@ -154,7 +154,7 @@
    "r": [
     "https://documentation.ubuntu.com/server/how-to/virtualisation/libvirt/"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs09"
   },
   {
@@ -168,7 +168,7 @@
     "https://www.gnu.org/software/bash/manual/bash.html",
     "https://manpages.ubuntu.com/manpages/noble/en/man1/df.1.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs10"
   },
   {
@@ -181,7 +181,7 @@
    "r": [
     "https://netplan.readthedocs.io/en/stable/"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs11"
   },
   {
@@ -194,7 +194,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man1/hostnamectl.1.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs12"
   },
   {
@@ -207,7 +207,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man1/timedatectl.1.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs13"
   },
   {
@@ -220,7 +220,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man8/ss.8.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs14"
   },
   {
@@ -233,7 +233,7 @@
    "r": [
     "https://documentation.ubuntu.com/server/how-to/security/openssh-server/"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs15"
   },
   {
@@ -246,7 +246,7 @@
    "r": [
     "https://documentation.ubuntu.com/server/how-to/security/firewalls/"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs16"
   },
   {
@@ -259,7 +259,7 @@
    "r": [
     "https://wiki.nftables.org/wiki-nftables/index.php/Performing_Network_Address_Translation_(NAT)"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs17"
   },
   {
@@ -272,7 +272,7 @@
    "r": [
     "https://nginx.org/en/docs/http/load_balancing.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs18"
   },
   {
@@ -285,7 +285,7 @@
    "r": [
     "https://netplan.readthedocs.io/en/stable/netplan-yaml/#properties-for-device-type-bridges"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs19"
   },
   {
@@ -298,7 +298,7 @@
    "r": [
     "https://netplan.readthedocs.io/en/stable/"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs20"
   },
   {
@@ -311,7 +311,7 @@
    "r": [
     "https://documentation.ubuntu.com/server/explanation/storage/about-lvm/"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs21"
   },
   {
@@ -324,7 +324,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man8/lvextend.8.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs22"
   },
   {
@@ -337,7 +337,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man8/mkswap.8.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs23"
   },
   {
@@ -350,7 +350,7 @@
    "r": [
     "https://documentation.ubuntu.com/server/how-to/networking/install-nfs/"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs24"
   },
   {
@@ -363,7 +363,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man5/auto.master.5.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs25"
   },
   {
@@ -376,7 +376,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man8/e2fsck.8.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs26"
   },
   {
@@ -389,7 +389,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man1/iostat.1.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs27"
   },
   {
@@ -402,7 +402,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man5/fstab.5.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs28"
   },
   {
@@ -415,7 +415,7 @@
    "r": [
     "https://git-scm.com/docs/git-switch"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs29"
   },
   {
@@ -428,7 +428,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man1/systemctl.1.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs30"
   },
   {
@@ -441,7 +441,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man5/systemd.service.5.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs31"
   },
   {
@@ -455,7 +455,7 @@
     "https://manpages.ubuntu.com/manpages/noble/en/man1/du.1.html",
     "https://manpages.ubuntu.com/manpages/noble/en/man1/journalctl.1.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs32"
   },
   {
@@ -468,7 +468,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man1/df.1.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs33"
   },
   {
@@ -481,7 +481,7 @@
    "r": [
     "https://docs.openssl.org/3.0/man1/openssl-req/"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs34"
   },
   {
@@ -494,7 +494,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man5/systemd.resource-control.5.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs35"
   },
   {
@@ -508,7 +508,7 @@
     "https://manpages.ubuntu.com/manpages/noble/en/man1/find.1.html",
     "https://manpages.ubuntu.com/manpages/noble/en/man1/tar.1.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs36"
   },
   {
@@ -522,7 +522,7 @@
     "https://manpages.ubuntu.com/manpages/noble/en/man8/useradd.8.html",
     "https://manpages.ubuntu.com/manpages/noble/en/man1/chage.1.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs37"
   },
   {
@@ -535,7 +535,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man1/bash.1.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs38"
   },
   {
@@ -548,7 +548,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man5/limits.conf.5.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs39"
   },
   {
@@ -561,7 +561,7 @@
    "r": [
     "https://manpages.ubuntu.com/manpages/noble/en/man1/setfacl.1.html"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs40"
   },
   {
@@ -574,7 +574,7 @@
    "r": [
     "https://documentation.ubuntu.com/server/how-to/sssd/with-ldap/"
    ],
-   "ctx": "Laboratorio: VM Ubuntu Server 24.04 (o container della Fase 1 dove indicato). Lavora come utente con sudo.",
+   "ctx": "Laboratorio: VM Ubuntu Server 24.04. Lavora come utente con sudo.",
    "id": "lfcs41"
   }
  ]

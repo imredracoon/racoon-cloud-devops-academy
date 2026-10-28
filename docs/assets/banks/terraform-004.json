@@ -6,7 +6,7 @@
   "questions": 57,
   "minutes": 60,
   "passPct": 70,
-  "note": "The real exam is online proctored, 1 hour, with multiple choice, multiple select, and other question types. It tests Terraform 1.12.",
+  "note": "The real exam is online proctored, 1 hour, with multiple choice questions (some with more than one correct answer). It tests Terraform 1.12. HashiCorp does not publish the number of questions.",
   "scoring": "HashiCorp does not publish the passing score. 70% here is an indicative target."
  },
  "domains": [
