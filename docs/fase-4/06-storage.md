@@ -11,7 +11,7 @@
 
 | Tipo | Come si usa | Esempio nella vita reale | AWS | Google Cloud |
 |---|---|---|---|---|
-| **A blocchi** | un disco collegato a **una** VM, con un filesystem (lezione 1.6) | il disco del portatile | **EBS** | **Persistent Disk**, **Hyperdisk** |
+| **A blocchi** | un disco collegato a **una** VM, con un filesystem ([lezione 1.6](../fase-1/06-storage.md)) | il disco del portatile | **EBS** | **Persistent Disk**, **Hyperdisk** |
 | **A file** | una cartella condivisa via rete tra **più** macchine (NFS, SMB) | il server di file dell'ufficio | **EFS**, **FSx** | **Filestore** |
 | **A oggetti** | file (oggetti) in contenitori (bucket), letti e scritti via **API HTTP** | Google Drive, Dropbox | **S3** | **Cloud Storage** |
 
@@ -97,7 +97,7 @@ più per la lettura, e hanno una durata minima di conservazione.
     Rendi pubblico qualcosa solo consapevolmente, come nel progetto di questa fase, e mai un bucket con dati.
 
 - **Crittografia a riposo**: entrambi i cloud **cifrano sempre** i dati salvati, con chiavi gestite dal fornitore.
-  Per maggiore controllo si usano chiavi gestite dal cliente in **AWS KMS** o **Cloud KMS** (Fase 5).
+  Per maggiore controllo si usano chiavi gestite dal cliente in **AWS KMS** o **Cloud KMS** ([Fase 5](../fase-5/index.md)).
 - **Crittografia in transito**: le API sono HTTPS; si può imporre di rifiutare le richieste non cifrate.
 - **Permessi**: IAM e, su S3, le **bucket policy**.
 - **URL prefirmati** (*presigned URL* su S3, *signed URL* su Cloud Storage): danno accesso temporaneo a un oggetto
@@ -191,7 +191,7 @@ più per la lettura, e hanno una durata minima di conservazione.
     5. 80 TB di archivio video da trasferire da un data center con una connessione lenta.
 
 ??? success "Soluzione"
-    1. **A blocchi**: EBS gp3 o io2; Persistent Disk SSD o Hyperdisk. (Meglio ancora: un database gestito, lezione 4.8.)
+    1. **A blocchi**: EBS gp3 o io2; Persistent Disk SSD o Hyperdisk. (Meglio ancora: un database gestito, [lezione 4.8](08-database-ai.md).)
     2. **A oggetti**, classe d'archivio (S3 Glacier Deep Archive, Cloud Storage Archive) con **Object Lock / Bucket
        Lock** per la non modificabilità.
     3. **A file**: EFS o Filestore. (In alternativa, cambiare l'applicazione perché salvi i file su S3/Cloud Storage.)

@@ -23,7 +23,7 @@
 3. **Configurazione** solo tramite `.env` (escluso da Git) con un `.env.example` documentato.
 4. **Backup**: uno script `scripts/backup-db.sh` che esegue `pg_dump` nel container del database e salva un file
    `tasks-AAAAMMGG-HHMMSS.sql.gz` in una cartella indicata, conservando gli ultimi 7 (riusa ciò che hai scritto nella
-   Fase 2). E uno script `scripts/restore-db.sh FILE` che ripristina.
+   [Fase 2](../fase-2/index.md)). E uno script `scripts/restore-db.sh FILE` che ripristina.
 5. **Immagine pubblicata** su `ghcr.io/TUO-UTENTE/tasks-api` con i tag `1.1.0` e `sha-HASH`.
 6. **Scansione**: nel README, l'esito della scansione Trivy (HIGH e CRITICAL) dell'immagine pubblicata, con una breve
    valutazione.
@@ -38,7 +38,7 @@ Sulla VM `web` (percorso Debian/Ubuntu, con Docker) oppure su `rhel-lab` (percor
 - lo stack gira usando l'immagine **scaricata dal registry**, non costruita sul server: crea un
   `compose.prod.yaml` che usa `image: ghcr.io/TUO-UTENTE/tasks-api:1.1.0` al posto di `build`;
 - lo stack riparte da solo dopo un riavvio della VM;
-- il backup gira ogni notte con un timer di systemd (lezione 2.5).
+- il backup gira ogni notte con un timer di systemd ([lezione 2.5](../fase-2/05-pianificazione.md)).
 
 ## Suggerimenti
 

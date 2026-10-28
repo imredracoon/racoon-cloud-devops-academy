@@ -32,7 +32,7 @@ Dati verificati il 28 ottobre 2026.
 
 - **Using Linux Terminal** e **Using Ubuntu Server**: dopo la [Fase 1](../../fase-1/index.md) sul percorso
   Debian/Ubuntu.
-- **Using Ubuntu Desktop**: dopo la Fase 1, con un po' di pratica su Ubuntu Desktop (driver, aggiornamenti di
+- **Using Ubuntu Desktop**: dopo la [Fase 1](../../fase-1/index.md), con un po' di pratica su Ubuntu Desktop (driver, aggiornamenti di
   versione, snap).
 - **Using DevOps Principles**: dopo la [Fase 3](../../fase-3/index.md) e la lezione [6.10](../../fase-6/10-ansible.md).
 

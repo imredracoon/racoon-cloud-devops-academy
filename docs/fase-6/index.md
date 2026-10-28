@@ -20,7 +20,7 @@
 
 ## Dalla console al codice
 
-Nella Fase 5 hai costruito architetture complete cliccando nella console. Funziona, ma prova a immaginare di doverlo
+Nella [Fase 5](../fase-5/index.md) hai costruito architetture complete cliccando nella console. Funziona, ma prova a immaginare di doverlo
 rifare identico per un secondo ambiente, o di dover spiegare a un collega cosa hai cambiato martedì, o di ricostruire
 tutto dopo un errore: sono ore di lavoro, con il rischio di dimenticare un dettaglio.
 

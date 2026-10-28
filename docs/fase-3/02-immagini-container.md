@@ -37,7 +37,7 @@ Nel **Dev Container** Docker è già pronto: prova `docker version`. Per install
     ```
 
     Per usare `docker` senza `sudo` aggiungi il tuo utente al gruppo `docker` (`sudo usermod -aG docker $USER`,
-    poi esci e rientra), ricordando che equivale a dargli i privilegi di root (lezione 3.1).
+    poi esci e rientra), ricordando che equivale a dargli i privilegi di root ([lezione 3.1](01-concetti.md)).
 
 === "RHEL (Rocky/AlmaLinux)"
 
@@ -50,7 +50,7 @@ Nel **Dev Container** Docker è già pronto: prova `docker version`. Per install
 
     Non serve `sudo`: Podman funziona **rootless** con il tuo utente. I container di un utente sono visibili solo a
     quell'utente (e quelli avviati con `sudo podman` solo a root). Se preferisci digitare `docker`, il pacchetto
-    `podman-docker` crea un alias. Per Compose vedi la lezione 3.5.
+    `podman-docker` crea un alias. Per Compose vedi la [lezione 3.5](05-compose.md).
 
 !!! warning "Limiti di download da Docker Hub"
     Docker Hub limita il numero di immagini che si possono scaricare in un certo intervallo, con limiti più bassi per
@@ -113,7 +113,7 @@ docker port web                # le porte pubblicate
 ```
 
 `docker logs` funziona perché le applicazioni nei container scrivono i log su **standard output**, non su file:
-è la convenzione (la stessa della Twelve-Factor App), e la riprenderai con Kubernetes e con Loki nella Fase 7.
+è la convenzione (la stessa della Twelve-Factor App), e la riprenderai con Kubernetes e con Loki nella [Fase 7](../fase-7/index.md).
 
 `docker exec` è lo strumento principale di diagnosi: entri nel container e guardi file, processi, rete. Le immagini
 minimali spesso non hanno `bash`, ma solo `sh`, e mancano strumenti come `curl` o `ps`.
@@ -138,7 +138,7 @@ docker restart web
 docker rm web            # solo se fermo; docker rm -f lo ferma ed elimina
 ```
 
-`docker stop` invia prima **SIGTERM** per permettere all'applicazione di chiudersi in modo ordinato (lezione 1.4),
+`docker stop` invia prima **SIGTERM** per permettere all'applicazione di chiudersi in modo ordinato ([lezione 1.4](../fase-1/04-processi-systemd.md)),
 poi, se non basta, **SIGKILL**.
 
 ### Riavvio automatico
@@ -224,7 +224,7 @@ docker system prune              # tutto ciò che non è usato (chiede conferma)
     ```
     **Spiegazione.** La modifica era nello **strato scrivibile** del container, che è sparito con `docker rm`. Il nuovo
     container parte dall'immagine originale. Modificare un container in esecuzione va bene per fare prove, mai come
-    metodo di lavoro: le modifiche si fanno nell'immagine (lezione 3.3) o si montano con i volumi (lezione 3.4).
+    metodo di lavoro: le modifiche si fanno nell'immagine ([lezione 3.3](03-dockerfile.md)) o si montano con i volumi ([lezione 3.4](04-volumi-reti.md)).
 
 !!! esercizio "Esercizio 2 · Diagnosi"
     Avvia `docker run -d --name rotto postgres:17` e osserva cosa succede con `docker ps`. Trova la causa nei log e

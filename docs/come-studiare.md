@@ -105,7 +105,7 @@ Abituati a consultarli: leggere la documentazione ufficiale è una delle compete
 
 ## Prendere appunti
 
-Dalla Fase 0 creerai un repository GitHub personale per i tuoi appunti, scritti in Markdown. Gli appunti scritti
+Dalla [Fase 0](fase-0/index.md) creerai un repository GitHub personale per i tuoi appunti, scritti in Markdown. Gli appunti scritti
 con parole tue fissano i concetti molto meglio della sola lettura, e il repository diventa una prova della tua
 costanza.
 

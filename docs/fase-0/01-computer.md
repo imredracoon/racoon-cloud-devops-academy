@@ -30,7 +30,7 @@ secondo. Le CPU moderne hanno più **core**: ogni core è in grado di eseguire u
 indipendente, quindi più core permettono di fare più cose contemporaneamente.
 
 Quando nel cloud scegli una macchina "da 2 vCPU", stai scegliendo quanta capacità di calcolo avere. La *v* sta per
-*virtuale*: ne parleremo nella lezione 0.6.
+*virtuale*: ne parleremo nella [lezione 0.6](06-cloud-devops.md).
 
 ### La memoria di lavoro (RAM)
 
@@ -113,14 +113,14 @@ distanza, attraverso la rete. Per questo nel corso imparerai a lavorare soprattu
     1. **Disco**: è la memoria permanente.
     2. **RAM**: ogni scheda occupa memoria di lavoro; quando la RAM si esaurisce, il sistema sposta dati sul disco,
        molto più lento, e tutto rallenta.
-    3. **Disco** (o un servizio di archiviazione nel cloud, come vedrai nella Fase 4).
+    3. **Disco** (o un servizio di archiviazione nel cloud, come vedrai nella [Fase 4](../fase-4/index.md)).
 
 !!! esercizio "Esercizio 3 · Esplora il tuo computer"
     Trova quanta RAM, quanti core e quanto disco ha il tuo computer.
 
     - **Windows**: Impostazioni → Sistema → Informazioni; per il disco: Esplora file → Questo PC.
     - **macOS**: menu Apple → Informazioni su questo Mac; per il disco: Impostazioni di sistema → Generali → Spazio.
-    - **Linux**: lo scoprirai dal terminale nella lezione 0.4.
+    - **Linux**: lo scoprirai dal terminale nella [lezione 0.4](04-terminale.md).
 
     Annota i valori: ti servono per capire quali ambienti di laboratorio puoi usare.
 

@@ -14,7 +14,7 @@
 
 ## Il compito
 
-Porta in produzione la Tasks API della Fase 3 con un'architettura a tre livelli:
+Porta in produzione la Tasks API della [Fase 3](../fase-3/index.md) con un'architettura a tre livelli:
 
 1. **presentazione**: load balancer pubblico (con CDN facoltativa);
 2. **applicazione**: la Tasks API in container, su almeno **due zone**, in subnet **private**;
@@ -38,19 +38,19 @@ di autoscaling), la variante B a come si lavora oggi (container gestiti). Se hai
       APP1 -.-> CW[CloudWatch]
     ```
 
-    - **Rete** (lezione 5.1): VPC con subnet pubbliche, private e dati su **2 AZ**; un NAT gateway (uno solo, per
+    - **Rete** ([lezione 5.1](01-vpc.md)): VPC con subnet pubbliche, private e dati su **2 AZ**; un NAT gateway (uno solo, per
       contenere i costi: documenta il compromesso) o, per la variante B, endpoint VPC al posto del NAT.
-    - **Variante A** (lezione 5.2): launch template con Amazon Linux, user data che installa Docker, legge il segreto
+    - **Variante A** ([lezione 5.2](02-ha-scaling.md)): launch template con Amazon Linux, user data che installa Docker, legge il segreto
       e avvia il container; **Auto Scaling group** min 2, max 4, su entrambe le subnet private, con *target tracking*
       sulla CPU al 50%; **ALB** con health check su `/health`.
-    - **Variante B** (lezione 5.9): servizio **ECS su Fargate** con 2 task nelle subnet private, dietro l'ALB.
-    - **Dati** (lezione 5.4): **RDS for PostgreSQL** `db.t4g.micro`, **Multi-AZ** (attivalo per la prova di failover
+    - **Variante B** ([lezione 5.9](09-container-serverless.md)): servizio **ECS su Fargate** con 2 task nelle subnet private, dietro l'ALB.
+    - **Dati** ([lezione 5.4](04-database.md)): **RDS for PostgreSQL** `db.t4g.micro`, **Multi-AZ** (attivalo per la prova di failover
       e spegnilo subito dopo se vuoi risparmiare), cifratura attiva, backup automatici 7 giorni, non accessibile
       pubblicamente.
-    - **Sicurezza** (lezione 5.6): `DATABASE_URL` in **Secrets Manager**; ruolo IAM delle istanze (o ruolo di
+    - **Sicurezza** ([lezione 5.6](06-sicurezza.md)): `DATABASE_URL` in **Secrets Manager**; ruolo IAM delle istanze (o ruolo di
       esecuzione dei task) che può leggere **solo** quel segreto; security group concatenati: ALB ← Internet,
       app ← solo dal SG dell'ALB, database ← solo dal SG dell'app; accesso alle istanze solo con Session Manager.
-    - **Monitoraggio** (lezione 5.8): allarme su `UnHealthyHostCount` e su `HTTPCode_Target_5XX_Count`, notifica SNS
+    - **Monitoraggio** ([lezione 5.8](08-monitoraggio.md)): allarme su `UnHealthyHostCount` e su `HTTPCode_Target_5XX_Count`, notifica SNS
       via email; log del container su CloudWatch Logs (driver `awslogs` o log di ECS).
 
 === "Google Cloud"
@@ -66,20 +66,20 @@ di autoscaling), la variante B a come si lavora oggi (container gestiti). Se hai
       MIG -.-> MON[Cloud Monitoring<br>e Logging]
     ```
 
-    - **Rete** (lezione 5.1): VPC in modalità personalizzata con una subnet nella tua regione, **Cloud NAT** per le
+    - **Rete** ([lezione 5.1](01-vpc.md)): VPC in modalità personalizzata con una subnet nella tua regione, **Cloud NAT** per le
       uscite, regole firewall che ammettono il traffico verso le VM solo dagli intervalli dei controlli di integrità e
       del load balancer (`35.191.0.0/16`, `130.211.0.0/22`) e da IAP per SSH (`35.235.240.0/20`).
-    - **Variante A** (lezione 5.2): template di istanza senza IP esterno, script di avvio che installa Docker, legge il
+    - **Variante A** ([lezione 5.2](02-ha-scaling.md)): template di istanza senza IP esterno, script di avvio che installa Docker, legge il
       segreto e avvia il container; **MIG regionale** su almeno 2 zone, autoscaling min 2 max 4 sulla CPU al 50%,
       riparazione automatica con controllo di integrità su `/health`; **load balancer** HTTP esterno globale.
-    - **Variante B** (lezione 5.9): servizio **Cloud Run** con accesso alla VPC (*Direct VPC egress*), segreto montato
+    - **Variante B** ([lezione 5.9](09-container-serverless.md)): servizio **Cloud Run** con accesso alla VPC (*Direct VPC egress*), segreto montato
       come variabile d'ambiente, istanze minime 0 o 1.
-    - **Dati** (lezione 5.4): **Cloud SQL per PostgreSQL** con **IP privato** (accesso privato ai servizi),
+    - **Dati** ([lezione 5.4](04-database.md)): **Cloud SQL per PostgreSQL** con **IP privato** (accesso privato ai servizi),
       **alta disponibilità regionale** (per la prova di failover), backup automatici e recupero point-in-time.
-    - **Sicurezza** (lezione 5.6): `DATABASE_URL` in **Secret Manager**; un **service account dedicato** per le VM o
+    - **Sicurezza** ([lezione 5.6](06-sicurezza.md)): `DATABASE_URL` in **Secret Manager**; un **service account dedicato** per le VM o
       per Cloud Run con `roles/secretmanager.secretAccessor` **solo** su quel segreto, più i ruoli per scrivere log e
       metriche.
-    - **Monitoraggio** (lezione 5.8): controllo di uptime su `/health`, criterio di avviso con canale email, Ops Agent
+    - **Monitoraggio** ([lezione 5.8](08-monitoraggio.md)): controllo di uptime su `/health`, criterio di avviso con canale email, Ops Agent
       sulle VM (variante A).
 
 ### Requisiti comuni
@@ -87,7 +87,7 @@ di autoscaling), la variante B a come si lavora oggi (container gestiti). Se hai
 - Ogni risorsa ha le etichette `progetto=tasks-api`, `ambiente=dev`, `responsabile=TUO-NOME`.
 - Un **budget** con avvisi al 50%, 80% e 100%.
 - Nessuna credenziale nel repository: nemmeno la password del database (sta solo nel gestore dei segreti).
-- L'immagine del container è quella pubblicata su GHCR nella Fase 3, con un **tag di versione**, mai `latest`.
+- L'immagine del container è quella pubblicata su GHCR nella [Fase 3](../fase-3/index.md), con un **tag di versione**, mai `latest`.
 
 ### La documentazione (è metà del voto)
 
@@ -97,8 +97,8 @@ Nel repository `tasks-api-cloud`:
   **costo stimato** al mese con il link al calcolatore salvato, istruzioni di distruzione;
 - `docs/decisioni.md`: le scelte e i compromessi (un solo NAT gateway, Multi-AZ sì o no, variante A o B), nel formato
   *contesto → decisione → conseguenze*;
-- `docs/revisione.md`: la revisione con i pilastri **Reliability**, **Security** e **Cost Optimization** (lezione
-  5.10), i rischi accettati e quelli da risolvere;
+- `docs/revisione.md`: la revisione con i pilastri **Reliability**, **Security** e **Cost Optimization** ([lezione
+  5.10](10-well-architected.md)), i rischi accettati e quelli da risolvere;
 - `docs/dr.md`: **RTO e RPO** dichiarati, la strategia di DR scelta e il risultato della prova di failover;
 - `scripts/startup.sh` (variante A) e `scripts/destroy.sh`;
 - screenshot essenziali (load balancer con destinazioni sane, allarme, grafico del failover) in `docs/img/`.

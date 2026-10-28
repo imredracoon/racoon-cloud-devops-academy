@@ -34,7 +34,7 @@
     | **CSEK** (*customer-supplied encryption keys*) | il cliente fornisce la chiave a ogni richiesta |
     | **Cifratura lato client** | il cliente cifra prima di caricare |
 
-La gestione delle chiavi con KMS è trattata nella lezione 5.6.
+La gestione delle chiavi con KMS è trattata nella [lezione 5.6](06-sicurezza.md).
 
 ## Replica e protezione
 
@@ -57,7 +57,7 @@ La gestione delle chiavi con KMS è trattata nella lezione 5.6.
 - **S3 Transfer Acceleration**: caricamenti da lontano più veloci, sfruttando i punti di presenza di CloudFront.
 - **Prefissi**: S3 scala automaticamente a migliaia di richieste al secondo per prefisso; distribuire gli oggetti su
   più prefissi aumenta il totale.
-- **Notifiche di eventi**: un oggetto creato o cancellato può attivare una funzione, una coda o EventBridge (lezione 5.5);
+- **Notifiche di eventi**: un oggetto creato o cancellato può attivare una funzione, una coda o EventBridge ([lezione 5.5](05-messaggistica.md));
   su Cloud Storage tramite **Pub/Sub** o **Eventarc**.
 - **S3 Select** e query in loco con **Athena** o le tabelle esterne di **BigQuery** evitano di scaricare interi file.
 
@@ -133,7 +133,7 @@ ripristino periodiche.
               --impersonate-service-account=lab-lettore@ID-PROGETTO.iam.gserviceaccount.com
             ```
 
-            Il service account deve poter leggere l'oggetto (`roles/storage.objectViewer`, lezione 4.4).
+            Il service account deve poter leggere l'oggetto (`roles/storage.objectViewer`, [lezione 4.4](../fase-4/04-iam.md)).
         3. Apri l'URL da una finestra anonima; dopo 5 minuti non funziona più.
 
         **Pulizia.** Elimina bucket e oggetti; rimuovi il ruolo concesso al tuo utente.

@@ -57,7 +57,7 @@ leggi i fatti di un altro host, a patto che siano stati raccolti nello stesso ru
 L'estensione Ansible di VS Code segnala errori, completa i nomi dei moduli e integra ansible-lint. Con un
 **dev container Ansible** lo strumento gira in un container con ansible-navigator già pronto: apri la cartella,
 scegli *Reopen in Container* e usa il terminale integrato. È lo stesso principio del Dev Container del corso
-(lezione 0.7). Fonte: [Ansible VS Code extension](https://docs.ansible.com/projects/vscode-ansible/).
+([lezione 0.7](../../fase-0/07-laboratorio.md)). Fonte: [Ansible VS Code extension](https://docs.ansible.com/projects/vscode-ansible/).
 
 ## Dove sbagliano più spesso i candidati
 

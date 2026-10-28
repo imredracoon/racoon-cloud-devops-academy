@@ -41,7 +41,7 @@ che i fornitori citano (e che ritroverai nell'esame Cloud Practitioner) sono:
 !!! warning "Il cloud non è sempre più economico"
     Un carico stabile e prevedibile, gestito da un team esperto, può costare meno nel proprio data center. Il cloud
     conviene soprattutto per la **flessibilità** e la **velocità**. Una risorsa dimenticata accesa, invece, costa
-    ogni ora: il controllo dei costi (lezione 4.9) è parte del mestiere.
+    ogni ora: il controllo dei costi ([lezione 4.9](09-costi.md)) è parte del mestiere.
 
 ## I modelli di servizio
 
@@ -152,7 +152,7 @@ aiutare il cliente a configurare in modo sicuro, con impostazioni predefinite si
     1. **Cliente**: il sistema operativo di una VM è suo.
     2. **Cliente**: configurazione e dati.
     3. **Fornitore**: infrastruttura fisica. Ma progettare l'applicazione per sopravvivere alla perdita di una zona è
-       compito del cliente (lezione 4.2).
+       compito del cliente ([lezione 4.2](02-infrastruttura-globale.md)).
     4. **Fornitore**, che applica gli aggiornamenti del servizio gestito (nelle finestre di manutenzione).
     5. **Cliente**: identità e accessi.
 

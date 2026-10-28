@@ -172,7 +172,7 @@ echo "/swapfile none swap sw 0 0" | sudo tee -a /etc/fstab
 
 **NFS** (*Network File System*) permette di montare una directory di un altro server attraverso la rete, come se
 fosse un disco locale. È negli obiettivi di RHCSA e LFCS ed è alla base di servizi cloud come Amazon EFS e
-Google Filestore (Fase 5).
+Google Filestore ([Fase 5](../fase-5/index.md)).
 
 ### Il server
 

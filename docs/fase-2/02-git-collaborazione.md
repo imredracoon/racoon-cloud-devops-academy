@@ -137,7 +137,7 @@ flowchart LR
 
 Una **pull request** (PR) è una richiesta di unire il tuo branch in `main`. Sulla pagina della PR i colleghi
 vedono le modifiche, commentano riga per riga, approvano o chiedono correzioni; i controlli automatici (test,
-lint, che costruirai nella Fase 7) girano a ogni push.
+lint, che costruirai nella [Fase 7](../fase-7/index.md)) girano a ogni push.
 
 ```bash
 git switch -c feature/readme-uso

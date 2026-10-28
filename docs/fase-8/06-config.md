@@ -8,7 +8,7 @@
 
 ## Perché separare la configurazione
 
-Un principio delle applicazioni *twelve-factor*, già incontrato nella Fase 3: **la stessa immagine** deve girare in
+Un principio delle applicazioni *twelve-factor*, già incontrato nella [Fase 3](../fase-3/index.md): **la stessa immagine** deve girare in
 sviluppo, collaudo e produzione; cambia solo la configurazione. In Kubernetes la configurazione vive in due oggetti:
 
 | Oggetto | Per cosa |
@@ -90,7 +90,7 @@ data:
     `echo UzNncjN0MC1sdW5nbw== | base64 -d` restituisce la password in chiaro. Chiunque possa leggere il Secret con
     `kubectl get` la conosce. Un Secret è più protetto di una ConfigMap solo perché:
 
-    - si può dare il permesso di leggere le ConfigMap ma **non** i Secret (RBAC, lezione 8.11);
+    - si può dare il permesso di leggere le ConfigMap ma **non** i Secret (RBAC, [lezione 8.11](11-rbac.md));
     - si può configurare la **cifratura a riposo** in etcd (`EncryptionConfiguration`, meglio con un provider KMS);
       su EKS e GKE si attiva con una chiave KMS del cloud;
     - il kubelet li tiene in memoria (`tmpfs`) sui nodi, non su disco.
@@ -130,7 +130,7 @@ sempre. Le soluzioni diffuse:
 
 Nel laboratorio, per semplicità, l'overlay `dev` genera il Secret da un file locale escluso da Git, e l'overlay
 `gitops` si aspetta un Secret creato a mano. Nel cloud la scelta naturale è External Secrets con il gestore del
-provider, autorizzato con **EKS Pod Identity** o **Workload Identity Federation for GKE** (lezione 8.15): nessuna
+provider, autorizzato con **EKS Pod Identity** o **Workload Identity Federation for GKE** ([lezione 8.15](15-gitops-cloud.md)): nessuna
 chiave da custodire.
 
 ## Esercizi

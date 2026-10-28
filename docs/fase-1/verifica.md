@@ -1,6 +1,6 @@
 # Verifica di fine fase 1
 
-Passa alla Fase 2 quando ottieni **almeno l'80%** (20 risposte corrette su 25). Le spiegazioni indicano la lezione
+Passa alla [Fase 2](../fase-2/index.md) quando ottieni **almeno l'80%** (20 risposte corrette su 25). Le spiegazioni indicano la lezione
 da ripassare. Se vuoi prepararti alla LFCS, prosegui con l'[appendice dedicata](../appendici/lfcs/index.md).
 
 <script type="application/json" class="quiz-data">

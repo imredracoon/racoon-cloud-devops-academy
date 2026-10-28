@@ -121,7 +121,7 @@ contenuto dei pacchetti.
 | Esporre un servizio a un'altra rete senza unire le reti | **PrivateLink** (endpoint service) | **Private Service Connect** |
 
 Gli intervalli di indirizzi delle reti collegate **non devono sovrapporsi**: un motivo in più per pianificarli bene
-(lezione 4.7).
+([lezione 4.7](../fase-4/07-rete.md)).
 
 ## Laboratorio
 
@@ -177,7 +177,7 @@ Gli intervalli di indirizzi delle reti collegate **non devono sovrapporsi**: un 
 ??? success "Soluzione"
     1. **Applicazione e database in subnet pubbliche**: vanno in subnet private, dietro un load balancer.
     2. **Database sulla stessa VM** dell'applicazione: due database separati e non sincronizzati, nessun backup gestito.
-       Usa un database gestito con alta disponibilità (lezione 5.4).
+       Usa un database gestito con alta disponibilità ([lezione 5.4](04-database.md)).
     3. **SSH aperto a tutti**: usa Session Manager / IAP, senza porte aperte.
     4. **S3 via Internet**: aggiungi il gateway endpoint S3 (gratuito), con una endpoint policy.
     5. Mancano i security group a catena e i flow log per la diagnosi.

@@ -17,7 +17,7 @@
 
 ## Perché i container
 
-Nella Fase 2 hai installato la Tasks API su un server: ambiente virtuale, dipendenze, servizio systemd, utente
+Nella [Fase 2](../fase-2/index.md) hai installato la Tasks API su un server: ambiente virtuale, dipendenze, servizio systemd, utente
 dedicato. Funziona, ma è fragile: su un altro server con un'altra versione di Python o di una libreria potrebbe non
 funzionare più. Il classico "sul mio computer funziona".
 
@@ -31,12 +31,12 @@ lo dà per acquisito.
 === "Debian/Ubuntu"
 
     Nel percorso Debian/Ubuntu usiamo **Docker Engine**, lo strumento più diffuso. Nel Dev Container è già
-    disponibile; per installarlo sulla VM `lab` segui la lezione 3.2.
+    disponibile; per installarlo sulla VM `lab` segui la [lezione 3.2](02-immagini-container.md).
 
 === "RHEL (Rocky/AlmaLinux)"
 
     Red Hat include nella distribuzione **Podman**, compatibile con i comandi di Docker ma senza un demone centrale e
-    pensato per girare senza privilegi di root. Nella lezione 3.2 lo installi su `rhel-lab`. Quasi tutti i comandi
+    pensato per girare senza privilegi di root. Nella [lezione 3.2](02-immagini-container.md) lo installi su `rhel-lab`. Quasi tutti i comandi
     di questa fase funzionano sostituendo `docker` con `podman`; le differenze sono segnalate.
 
 ## Le lezioni

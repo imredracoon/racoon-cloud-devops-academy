@@ -1,6 +1,6 @@
 # Verifica di fine fase 5
 
-Passa alla Fase 6 quando ottieni **almeno l'80%** (20 risposte corrette su 25). Le spiegazioni indicano la lezione
+Passa alla [Fase 6](../fase-6/index.md) quando ottieni **almeno l'80%** (20 risposte corrette su 25). Le spiegazioni indicano la lezione
 da ripassare. Le domande sono nello stile degli esami associate: leggi con attenzione i vincoli ("il più economico",
 "il minimo sforzo operativo"). Per prepararti all'esame vero, usa le appendici
 [AWS Solutions Architect – Associate](../appendici/aws-saa/index.md) e

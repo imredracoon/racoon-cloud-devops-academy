@@ -8,7 +8,7 @@
 
 ## GitOps
 
-Nella Fase 7 la pipeline faceva il deploy **spingendo** le modifiche (*push*): GitHub Actions eseguiva comandi verso
+Nella [Fase 7](../fase-7/index.md) la pipeline faceva il deploy **spingendo** le modifiche (*push*): GitHub Actions eseguiva comandi verso
 il cloud, con credenziali per farlo. **GitOps** rovescia il modello: un agente **dentro** il cluster osserva un
 repository Git e **tira** (*pull*) le modifiche, mantenendo il cluster uguale a Git.
 
@@ -89,7 +89,7 @@ ogni cluster).
 
 ### Collegare la CI
 
-La pipeline della Fase 7 costruisce e pubblica l'immagine. Nel flusso GitOps, invece di fare il deploy, **aggiorna
+La pipeline della [Fase 7](../fase-7/index.md) costruisce e pubblica l'immagine. Nel flusso GitOps, invece di fare il deploy, **aggiorna
 il tag nel repository** e lascia ad Argo CD l'applicazione:
 
 ```yaml title="Passo da aggiungere al job di build (dopo il push dell'immagine)"
@@ -150,7 +150,7 @@ compito suo. A te restano i nodi (meno, nelle modalità automatiche), le applica
 !!! danger "Costi"
     Un cluster gestito costa anche quando è fermo: control plane, nodi, load balancer, dischi, NAT. Crea i cluster
     di prova, fai il laboratorio e **cancellali** nella stessa sessione. Imposta i budget e gli avvisi della
-    Fase 4. In produzione i cluster si creano con **Terraform** (Fase 6): esistono moduli ufficiali e della comunità
+    [Fase 4](../fase-4/index.md). In produzione i cluster si creano con **Terraform** ([Fase 6](../fase-6/index.md)): esistono moduli ufficiali e della comunità
     sia per EKS sia per GKE.
 
 ## Laboratorio
@@ -190,7 +190,7 @@ compito suo. A te restano i nodi (meno, nelle modalità automatiche), le applica
     3. **Riconciliazione continua**: le differenze tra Git e cluster vengono rilevate e corrette, mentre il push
        applica una volta e poi non controlla più.
 
-    Il modello push non è sbagliato in assoluto (è più semplice per un servizio singolo, come nella Fase 7), ma con
+    Il modello push non è sbagliato in assoluto (è più semplice per un servizio singolo, come nella [Fase 7](../fase-7/index.md)), ma con
     molti servizi e cluster GitOps scala meglio.
 
 ## Verifica rapida

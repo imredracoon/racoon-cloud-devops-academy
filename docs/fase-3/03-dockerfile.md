@@ -217,7 +217,7 @@ Alcuni dettagli:
   due worker non provano a creare le stesse tabelle nello stesso istante. Per questo, nella versione di riferimento,
   `create_app()` chiude le connessioni al database subito dopo `create_all()`: i worker ne apriranno di proprie.
 
-Aggiungi anche il driver PostgreSQL a `requirements.txt`, ti servirà nella lezione 3.4:
+Aggiungi anche il driver PostgreSQL a `requirements.txt`, ti servirà nella [lezione 3.4](04-volumi-reti.md):
 
 ```text title="requirements.txt"
 Flask==3.1.2

@@ -159,9 +159,9 @@ spec:
           drop: ["ALL"]
 ```
 
-Sono le stesse protezioni della Fase 3 (utente senza privilegi, capacità ridotte), applicate dal cluster. Il
+Sono le stesse protezioni della [Fase 3](../fase-3/index.md) (utente senza privilegi, capacità ridotte), applicate dal cluster. Il
 namespace `tasks` del laboratorio impone il profilo **restricted** delle *Pod Security Standards*: un Pod senza queste
-impostazioni viene **rifiutato** (lezione 8.11).
+impostazioni viene **rifiutato** ([lezione 8.11](11-rbac.md)).
 
 ## Namespace
 

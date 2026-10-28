@@ -8,7 +8,7 @@
 
 ## Container e macchine virtuali
 
-Una **macchina virtuale** (lezione 0.2) simula un intero computer: un **hypervisor** divide l'hardware tra più VM,
+Una **macchina virtuale** ([lezione 0.2](../fase-0/02-sistemi-operativi.md)) simula un intero computer: un **hypervisor** divide l'hardware tra più VM,
 e ognuna avvia il **proprio sistema operativo completo**, con il proprio kernel.
 
 Un **container** invece è un **gruppo di processi** che gira sul kernel del sistema ospite, ma **isolato**: vede
@@ -79,9 +79,9 @@ exit
 ### Cgroup: quanto può usare il processo
 
 I **control group** (cgroup) limitano e misurano le risorse di un gruppo di processi: CPU, memoria, I/O su disco,
-numero di processi. Sono gli stessi che systemd usa per i servizi (lezione 1.4): `systemd-cgtop` li mostra.
+numero di processi. Sono gli stessi che systemd usa per i servizi ([lezione 1.4](../fase-1/04-processi-systemd.md)): `systemd-cgtop` li mostra.
 Quando avvii un container con `--memory 256m`, il runtime crea un cgroup con quel limite; se il processo lo supera,
-il kernel lo termina (OOM, lezione 1.13).
+il kernel lo termina (OOM, [lezione 1.13](../fase-1/13-troubleshooting.md)).
 
 ### Filesystem a strati
 
@@ -103,13 +103,13 @@ Conseguenze importanti:
 - più container della stessa immagine **condividono** gli strati in sola lettura: occupano spazio una volta sola;
 - quando un'immagine cambia, si scaricano solo gli strati nuovi;
 - tutto ciò che il container scrive nel suo strato **si perde** quando il container viene eliminato. I dati da
-  conservare vanno nei **volumi** (lezione 3.4).
+  conservare vanno nei **volumi** ([lezione 3.4](04-volumi-reti.md)).
 
 ### Altre protezioni
 
 I runtime aggiungono altre difese: le **capability** (i privilegi di root divisi in parti, di cui il container
 riceve solo un sottoinsieme), **seccomp** (un filtro sulle chiamate di sistema), **SELinux** o **AppArmor**
-(lezione 1.14).
+([lezione 1.14](../fase-1/14-selinux-apparmor.md)).
 
 ## Il vocabolario
 
@@ -117,7 +117,7 @@ riceve solo un sottoinsieme), **seccomp** (un filtro sulle chiamate di sistema),
 |---|---|
 | **Immagine** | il pacchetto in sola lettura: strati del filesystem più metadati (comando da eseguire, porte, variabili). È il "modello". |
 | **Container** | un'istanza in esecuzione (o ferma) di un'immagine. Da un'immagine si avviano quanti container vuoi. |
-| **Dockerfile** / **Containerfile** | la ricetta testuale per costruire un'immagine (lezione 3.3). |
+| **Dockerfile** / **Containerfile** | la ricetta testuale per costruire un'immagine ([lezione 3.3](03-dockerfile.md)). |
 | **Registry** | il servizio che conserva e distribuisce le immagini: Docker Hub, GitHub Container Registry, Quay.io, Amazon ECR, Google Artifact Registry. |
 | **Repository** | in un registry, l'insieme delle versioni di un'immagine, per esempio `library/nginx`. |
 | **Tag** | il nome di una versione: `nginx:1.30-alpine`. Se lo ometti, vale `latest`. |

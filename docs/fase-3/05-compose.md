@@ -22,7 +22,7 @@ il trattino, è la versione 1, non più mantenuta.
 
 === "Debian/Ubuntu"
 
-    Il plugin si installa con il pacchetto `docker-compose-plugin` (lezione 3.2) ed è già presente nel Dev Container:
+    Il plugin si installa con il pacchetto `docker-compose-plugin` ([lezione 3.2](02-immagini-container.md)) ed è già presente nel Dev Container:
 
     ```bash
     docker compose version
@@ -40,7 +40,7 @@ il trattino, è la versione 1, non più mantenuta.
     ```
 
     I file `compose.yaml` sono gli stessi. Per i servizi da tenere attivi in produzione, su RHEL è preferibile
-    usare i **Quadlet** (lezione 3.2), che integrano i container in systemd.
+    usare i **Quadlet** ([lezione 3.2](02-immagini-container.md)), che integrano i container in systemd.
 
 ## Lo stack della Tasks API
 
@@ -128,7 +128,7 @@ Ogni voce sotto `services` diventa uno o più container. Il nome del servizio (`
 - `ports`: le porte pubblicate, `"HOST:CONTAINER"` (sempre tra virgolette: YAML può interpretare alcuni valori con i
   due punti come numeri in base 60).
 - `volumes`: volumi con nome (`pgdata:...`) o bind mount (`./nginx.conf:...`, con percorso relativo al file).
-- `restart`: la politica di riavvio (lezione 3.2).
+- `restart`: la politica di riavvio ([lezione 3.2](02-immagini-container.md)).
 
 ### depends_on e healthcheck
 
@@ -138,7 +138,7 @@ Compose aspetta che l'**healthcheck** del servizio risulti sano:
 
 - per `db` l'healthcheck è definito nel file, con `pg_isready`, lo strumento di PostgreSQL che verifica se il server
   accetta connessioni;
-- per `api` è quello definito con `HEALTHCHECK` nel Dockerfile (lezione 3.3).
+- per `api` è quello definito con `HEALTHCHECK` nel Dockerfile ([lezione 3.3](03-dockerfile.md)).
 
 La catena è quindi: `db` sano → avvio di `api` → `api` sana → avvio di `proxy`.
 

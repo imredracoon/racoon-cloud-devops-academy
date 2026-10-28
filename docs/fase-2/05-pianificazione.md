@@ -242,7 +242,7 @@ systemctl list-timers                                # compare come run-....time
     crontab.guru sono comodi, ma il riferimento resta `man 5 crontab`.
 
 !!! esercizio "Esercizio 2 · Il backup con cron"
-    Copia sulla VM lo script `backup.sh` della lezione 2.4 in `~/bin/`. Pianificalo con cron ogni 2 minuti
+    Copia sulla VM lo script `backup.sh` della [lezione 2.4](04-bash-avanzato.md) in `~/bin/`. Pianificalo con cron ogni 2 minuti
     (solo per la prova) per salvare `~/progetti` in `~/backup`, con l'output nel journal. Verifica che funzioni,
     poi rimuovi il job.
 

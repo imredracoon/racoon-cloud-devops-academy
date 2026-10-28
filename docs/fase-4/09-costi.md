@@ -108,7 +108,7 @@ principali:
 ## Progettare bene: i framework
 
 Entrambi i fornitori pubblicano un insieme di principi e domande per valutare un'architettura. Li studierai a fondo
-nella Fase 5; per ora ricorda i nomi dei pilastri.
+nella [Fase 5](../fase-5/index.md); per ora ricorda i nomi dei pilastri.
 
 | AWS Well-Architected Framework | Google Cloud Well-Architected Framework |
 |---|---|

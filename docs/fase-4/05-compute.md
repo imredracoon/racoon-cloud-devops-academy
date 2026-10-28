@@ -17,10 +17,10 @@
     - **Tipo di istanza**: CPU e memoria. Il nome ha una struttura precisa: in `t3.micro`, `t` è la **famiglia**
       (uso generale con crediti di CPU), `3` la **generazione**, `micro` la **dimensione**. Una `g` dopo la
       generazione (`t4g`, `m7g`) indica i processori **Graviton** (ARM) di AWS, più economici.
-    - **Volume EBS**: il disco, persistente e indipendente dall'istanza (lezione 4.6).
+    - **Volume EBS**: il disco, persistente e indipendente dall'istanza ([lezione 4.6](06-storage.md)).
     - **Coppia di chiavi** per SSH, oppure **EC2 Instance Connect** / **Session Manager** per collegarsi senza
       gestire chiavi.
-    - **Security group**: il firewall dell'istanza (lezione 4.7).
+    - **Security group**: il firewall dell'istanza ([lezione 4.7](07-rete.md)).
     - **User data**: uno script eseguito al primo avvio.
 
     | Famiglia | Esempi | Uso |
@@ -38,10 +38,10 @@
     - **Immagine**: Debian, Ubuntu, RHEL, Rocky Linux, Container-Optimized OS, Windows...
     - **Tipo di macchina**: in `e2-medium`, `e2` è la **serie**, `medium` la dimensione. Esistono tipi predefiniti
       (`e2-standard-2`: 2 vCPU, 8 GB) e **personalizzati**, in cui scegli CPU e memoria.
-    - **Disco di avvio**: Persistent Disk o Hyperdisk (lezione 4.6).
+    - **Disco di avvio**: Persistent Disk o Hyperdisk ([lezione 4.6](06-storage.md)).
     - **Accesso SSH**: `gcloud compute ssh` gestisce le chiavi in automatico; con **OS Login** l'accesso è legato
       all'identità IAM.
-    - **Regole firewall** della rete VPC, applicate tramite **tag di rete** o service account (lezione 4.7).
+    - **Regole firewall** della rete VPC, applicate tramite **tag di rete** o service account ([lezione 4.7](07-rete.md)).
     - **Script di avvio** (*startup script*), eseguito a **ogni** avvio.
 
     | Famiglia | Serie | Uso |
@@ -59,7 +59,7 @@ Cloud.
 
 Una VM nel cloud non si configura a mano via SSH: è lento, non ripetibile e non scala. Si passa uno **script** che
 viene eseguito all'avvio. Sulla maggior parte delle immagini Linux lo esegue **cloud-init**, lo stesso strumento che
-usi con Multipass (Fase 0).
+usi con Multipass ([Fase 0](../fase-0/index.md)).
 
 ```bash title="avvio.sh"
 #!/bin/bash
@@ -108,7 +108,7 @@ tipica: la base stabile coperta da impegni, i picchi con on demand, i lavori int
 
 Le funzioni serverless (Lambda, Cloud Run functions) eseguono il tuo codice in risposta a un **evento** (una richiesta
 HTTP, un file caricato, un messaggio in coda), scalano da zero a migliaia di esecuzioni e si pagano solo per il tempo
-di esecuzione. Hanno limiti (per esempio, una funzione Lambda dura al massimo 15 minuti): le vedrai nella Fase 5.
+di esecuzione. Hanno limiti (per esempio, una funzione Lambda dura al massimo 15 minuti): le vedrai nella [Fase 5](../fase-5/index.md).
 
 ## Laboratorio
 
@@ -155,7 +155,7 @@ di esecuzione. Hanno limiti (per esempio, una funzione Lambda dura al massimo 15
     - se EC2 Instance Connect non si collega, la regola SSH non ammette gli indirizzi del servizio: usa la prefix list
       indicata al punto 4, non il tuo IP.
 
-    Hai usato lo stesso metodo di diagnosi della Fase 1: servizio, porta in ascolto, firewall. Nel cloud cambia solo
+    Hai usato lo stesso metodo di diagnosi della [Fase 1](../fase-1/index.md): servizio, porta in ascolto, firewall. Nel cloud cambia solo
     dove si trova il firewall.
 
 ## Esercizi

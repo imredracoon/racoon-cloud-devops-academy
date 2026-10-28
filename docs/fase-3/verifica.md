@@ -1,6 +1,6 @@
 # Verifica di fine fase 3
 
-Passa alla Fase 4 quando ottieni **almeno l'80%** (16 risposte corrette su 20). Le spiegazioni indicano la lezione
+Passa alla [Fase 4](../fase-4/index.md) quando ottieni **almeno l'80%** (16 risposte corrette su 20). Le spiegazioni indicano la lezione
 da ripassare.
 
 <script type="application/json" class="quiz-data">

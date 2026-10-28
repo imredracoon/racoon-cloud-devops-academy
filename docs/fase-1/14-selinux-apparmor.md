@@ -8,7 +8,7 @@
 
 ## Perché non bastano i permessi
 
-I permessi della lezione 1.3 sono un controllo **discrezionale** (DAC): il proprietario di un file decide chi può
+I permessi della [lezione 1.3](03-permessi.md) sono un controllo **discrezionale** (DAC): il proprietario di un file decide chi può
 accedervi, e root può tutto. Se un attaccante prende il controllo di un servizio che gira come root, ottiene
 accesso a tutto il sistema.
 
@@ -138,7 +138,7 @@ del kernel trovi un messaggio `apparmor="DENIED"`.
 
 Su Ubuntu molti servizi (per esempio Nginx installato da apt) **non** hanno un profilo AppArmor attivo per default,
 a differenza di SELinux che confina tutti i servizi previsti dalla policy. Lo stesso concetto si ritrova nei
-container: Docker applica un profilo AppArmor predefinito ai container su Ubuntu (Fase 3).
+container: Docker applica un profilo AppArmor predefinito ai container su Ubuntu ([Fase 3](../fase-3/index.md)).
 
 ## Laboratorio
 

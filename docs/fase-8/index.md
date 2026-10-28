@@ -15,13 +15,13 @@
 |---|---|
 | **Durata indicativa** | 3 mesi, circa 120 ore |
 | **Prerequisiti** | Fasi 1, 3 e 7 (Linux, container, CI/CD) |
-| **Ambiente** | Dev Container (kind, kubectl, Helm già installati); per la lezione 8.12 due o tre macchine virtuali |
+| **Ambiente** | Dev Container (kind, kubectl, Helm già installati); per la [lezione 8.12](12-kubeadm.md) due o tre macchine virtuali |
 | **Progetto** | [Cluster con GitOps](progetto.md) |
 | **Certificazioni collegate** | [CKA](../appendici/cka/index.md) · la parte Kubernetes di [Google Associate Cloud Engineer](../appendici/gcp-ace/index.md) |
 
 ## Perché Kubernetes
 
-Nella Fase 3 hai eseguito la Tasks API con Docker Compose su **una** macchina. Funziona, ma cosa succede quando:
+Nella [Fase 3](../fase-3/index.md) hai eseguito la Tasks API con Docker Compose su **una** macchina. Funziona, ma cosa succede quando:
 
 - la macchina si spegne? Nessuno riavvia i container altrove;
 - il traffico triplica? Devi aggiungere macchine e distribuire i container a mano;
@@ -36,7 +36,7 @@ AKS) e lo chiedono gran parte degli annunci DevOps e platform engineering.
 
 !!! warning "Kubernetes non serve sempre"
     Kubernetes è potente ma complesso. Per una sola applicazione piccola, un servizio gestito come **Amazon ECS su
-    Fargate** o **Cloud Run** (Fase 5) costa meno fatica. Kubernetes conviene quando ci sono molti servizi, molte
+    Fargate** o **Cloud Run** ([Fase 5](../fase-5/index.md)) costa meno fatica. Kubernetes conviene quando ci sono molti servizi, molte
     squadre, esigenze di portabilità tra cloud o un ecosistema di strumenti da standardizzare. Saperlo dire in un
     colloquio è segno di maturità.
 

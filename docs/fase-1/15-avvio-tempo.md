@@ -180,7 +180,7 @@ sudo tuned-adm profile virtual-guest
 ## Attività una tantum: at
 
 `at` esegue un comando **una volta**, a un'ora stabilita (per le attività ripetute vedrai cron e i timer nella
-lezione 2.5):
+[lezione 2.5](../fase-2/05-pianificazione.md)):
 
 ```bash
 # pacchetto "at" su entrambe le famiglie; servizio atd

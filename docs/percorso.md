@@ -23,7 +23,7 @@ flowchart LR
 | [4 · Cloud](fase-4/index.md) | 1,5 mesi | 50 | Sito statico nel cloud | AWS Cloud Practitioner · Google Cloud Digital Leader |
 | [5 · Architetture](fase-5/index.md) | 3 mesi | 120 | Applicazione a tre livelli | AWS Solutions Architect Associate |
 | [6 · Terraform](fase-6/index.md) | 1,5 mesi | 60 | Infrastruttura come codice | Terraform Associate |
-| [7 · CI/CD e osservabilità](fase-7/index.md) | 1,5 mesi | 55 | Pipeline e monitoraggio | RHCE in Ansible (facoltativa, dopo la Fase 6) |
+| [7 · CI/CD e osservabilità](fase-7/index.md) | 1,5 mesi | 55 | Pipeline e monitoraggio | RHCE in Ansible (facoltativa, dopo la [Fase 6](fase-6/index.md)) |
 | [8 · Kubernetes](fase-8/index.md) | 3 mesi | 120 | Cluster con GitOps | CKA · Google Associate Cloud Engineer |
 
 Le durate valgono per 8-10 ore di studio a settimana. Se hai più tempo, vai più veloce; se ne hai meno,
@@ -31,15 +31,15 @@ allunga i tempi ma **non saltare** i laboratori: sono la parte che conta di più
 
 ## Un'applicazione che cresce con te
 
-Dalla Fase 2 in poi lavorerai sempre sulla stessa applicazione: una piccola **API web scritta in Python con
+Dalla [Fase 2](fase-2/index.md) in poi lavorerai sempre sulla stessa applicazione: una piccola **API web scritta in Python con
 Flask** che gestisce un elenco di attività. Ogni fase la porta un passo più avanti:
 
-1. **Fase 2**: la scrivi e la provi sul tuo computer.
-2. **Fase 3**: la metti in un container, con un database PostgreSQL e un proxy Nginx.
-3. **Fase 5**: la distribuisci sul cloud con un'architettura ad alta disponibilità.
-4. **Fase 6**: descrivi tutta l'infrastruttura con Terraform.
-5. **Fase 7**: ogni modifica viene testata e rilasciata in automatico, e la monitori con Prometheus e Grafana.
-6. **Fase 8**: la esegui su Kubernetes con un flusso GitOps.
+1. **[Fase 2](fase-2/index.md)**: la scrivi e la provi sul tuo computer.
+2. **[Fase 3](fase-3/index.md)**: la metti in un container, con un database PostgreSQL e un proxy Nginx.
+3. **[Fase 5](fase-5/index.md)**: la distribuisci sul cloud con un'architettura ad alta disponibilità.
+4. **[Fase 6](fase-6/index.md)**: descrivi tutta l'infrastruttura con Terraform.
+5. **[Fase 7](fase-7/index.md)**: ogni modifica viene testata e rilasciata in automatico, e la monitori con Prometheus e Grafana.
+6. **[Fase 8](fase-8/index.md)**: la esegui su Kubernetes con un flusso GitOps.
 
 È esattamente il percorso che una vera applicazione compie in un'azienda, ed è una storia facile da raccontare
 in un colloquio.
@@ -59,16 +59,16 @@ e i comandi.
 
 | Certificazione | Ente | Quando | Formato | Costo |
 |---|---|---|---|---|
-| [AWS Certified Cloud Practitioner (CLF-C02)](appendici/aws-clf/index.md) | AWS | dopo la Fase 4 | 65 domande, 90 minuti | 100 USD |
-| [Google Cloud Digital Leader](appendici/gcp-cdl/index.md) | Google Cloud | dopo la Fase 4 (alternativa o in aggiunta) | 50-60 domande, 90 minuti | 99 USD |
-| [AWS Certified Solutions Architect – Associate (SAA-C03)](appendici/aws-saa/index.md) | AWS | dopo la Fase 5 | 65 domande, 130 minuti | 150 USD |
-| [HashiCorp Terraform Associate (004)](appendici/terraform/index.md) | HashiCorp | dopo la Fase 6 | domande a scelta, 60 minuti | 70,50 USD |
-| [Certified Kubernetes Administrator (CKA)](appendici/cka/index.md) | Linux Foundation / CNCF | dopo la Fase 8 | pratico, 2 ore | 445 USD |
-| [Google Associate Cloud Engineer](appendici/gcp-ace/index.md) | Google Cloud | dopo la Fase 8 | 50-60 domande, 2 ore | 125 USD |
-| [Linux Foundation Certified System Administrator (LFCS)](appendici/lfcs/index.md) | Linux Foundation | dopo la Fase 1 (facoltativa) | pratico, 2 ore | 445 USD |
-| [Red Hat Certified System Administrator (RHCSA, EX200)](appendici/rhcsa/index.md) | Red Hat | dopo la Fase 1 (facoltativa) | pratico su RHEL 10, circa 3 ore | varia per paese: vedi pagina ufficiale |
-| [Red Hat Certified Engineer in Ansible (EX294)](appendici/rhce/index.md) | Red Hat | dopo la Fase 6, richiede la RHCSA | pratico, circa 4 ore | varia per paese: vedi pagina ufficiale |
-| [Canonical Academy · Ubuntu](appendici/canonical/index.md) | Canonical | dopo la Fase 1 (facoltativa) | ibrido (domande e prove pratiche), 75-120 minuti per esame | vedi pagina ufficiale |
+| [AWS Certified Cloud Practitioner (CLF-C02)](appendici/aws-clf/index.md) | AWS | dopo la [Fase 4](fase-4/index.md) | 65 domande, 90 minuti | 100 USD |
+| [Google Cloud Digital Leader](appendici/gcp-cdl/index.md) | Google Cloud | dopo la [Fase 4](fase-4/index.md) (alternativa o in aggiunta) | 50-60 domande, 90 minuti | 99 USD |
+| [AWS Certified Solutions Architect – Associate (SAA-C03)](appendici/aws-saa/index.md) | AWS | dopo la [Fase 5](fase-5/index.md) | 65 domande, 130 minuti | 150 USD |
+| [HashiCorp Terraform Associate (004)](appendici/terraform/index.md) | HashiCorp | dopo la [Fase 6](fase-6/index.md) | domande a scelta, 60 minuti | 70,50 USD |
+| [Certified Kubernetes Administrator (CKA)](appendici/cka/index.md) | Linux Foundation / CNCF | dopo la [Fase 8](fase-8/index.md) | pratico, 2 ore | 445 USD |
+| [Google Associate Cloud Engineer](appendici/gcp-ace/index.md) | Google Cloud | dopo la [Fase 8](fase-8/index.md) | 50-60 domande, 2 ore | 125 USD |
+| [Linux Foundation Certified System Administrator (LFCS)](appendici/lfcs/index.md) | Linux Foundation | dopo la [Fase 1](fase-1/index.md) (facoltativa) | pratico, 2 ore | 445 USD |
+| [Red Hat Certified System Administrator (RHCSA, EX200)](appendici/rhcsa/index.md) | Red Hat | dopo la [Fase 1](fase-1/index.md) (facoltativa) | pratico su RHEL 10, circa 3 ore | varia per paese: vedi pagina ufficiale |
+| [Red Hat Certified Engineer in Ansible (EX294)](appendici/rhce/index.md) | Red Hat | dopo la [Fase 6](fase-6/index.md), richiede la RHCSA | pratico, circa 4 ore | varia per paese: vedi pagina ufficiale |
+| [Canonical Academy · Ubuntu](appendici/canonical/index.md) | Canonical | dopo la [Fase 1](fase-1/index.md) (facoltativa) | ibrido (domande e prove pratiche), 75-120 minuti per esame | vedi pagina ufficiale |
 
 Formati e prezzi sono quelli pubblicati dagli enti certificatori e verificati il **28 ottobre 2026**. Cambiano nel
 tempo: **controlla sempre la pagina ufficiale** prima di prenotare. Ogni appendice riporta i link.

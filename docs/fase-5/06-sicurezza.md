@@ -81,7 +81,7 @@ account).
 - **Certificate Manager** e i **certificati gestiti da Google** per i load balancer, con rinnovo automatico.
 
 La validazione del dominio avviene di solito con un record **DNS**: per questo DNS e certificati vanno spesso insieme
-(lezione 5.7).
+([lezione 5.7](07-dns-cdn.md)).
 
 ## Proteggere il perimetro
 
@@ -126,7 +126,7 @@ altri provider si usano:
 ## Laboratorio
 
 !!! laboratorio "Laboratorio · La password esce dallo script di avvio"
-    Riprendi il laboratorio 5.4.
+    Riprendi il [laboratorio 5.4](04-database.md#laboratorio).
 
     === "AWS"
 

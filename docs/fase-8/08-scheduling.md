@@ -215,7 +215,7 @@ sincronizzazione riporterebbe il numero al valore di Git, in lotta con l'HPA.
        kubectl top nodes
        ```
     2. Controlla lo stato dell'HPA: `kubectl -n tasks get hpa tasks-api -w`.
-    3. Le Network Policy dell'overlay `dev` accettano traffico verso la API solo dal Gateway (lezione 8.10). Per
+    3. Le Network Policy dell'overlay `dev` accettano traffico verso la API solo dal Gateway ([lezione 8.10](10-networkpolicy.md)). Per
        questa prova sospendile, poi genera carico da un Pod:
        ```bash
        kubectl -n tasks delete networkpolicy api-da-gateway nega-tutto-in-ingresso

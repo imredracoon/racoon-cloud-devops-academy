@@ -37,7 +37,7 @@ Per questa lezione ti serve un terminale Linux. Hai tre possibilità:
 1. **Killercoda** (consigliato ora, zero installazioni): apri il
    [playground Ubuntu](https://killercoda.com/playgrounds/scenario/ubuntu) e accedi con un account gratuito.
 2. **macOS**: apri l'app **Terminale**. Quasi tutti i comandi di questa lezione funzionano uguali.
-3. **Windows**: aspetta la lezione 0.7, dove installerai la VM Linux; oppure usa Killercoda.
+3. **Windows**: aspetta la [lezione 0.7](07-laboratorio.md), dove installerai la VM Linux; oppure usa Killercoda.
 
 ## La struttura di un comando
 
@@ -73,7 +73,7 @@ $ ls -a
 ```
 
 `ls` elenca il contenuto della cartella. Con `-l` mostra i dettagli (la `d` iniziale indica una directory, il
-resto lo capirai nella lezione 1.3); con `-a` mostra anche i file **nascosti**, il cui nome inizia con un punto.
+resto lo capirai nella [lezione 1.3](../fase-1/03-permessi.md)); con `-a` mostra anche i file **nascosti**, il cui nome inizia con un punto.
 
 `cd` (*change directory*) cambia cartella:
 

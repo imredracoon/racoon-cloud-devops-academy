@@ -13,7 +13,7 @@
 | Ho un indirizzo e una rotta? | `ip a`, `ip route` |
 | L'host risponde? | `ping` |
 | Che strada fanno i pacchetti? | `traceroute`, `tracepath`, `mtr` |
-| Il nome si risolve? | `dig`, `getent hosts` (lezione 1.8) |
+| Il nome si risolve? | `dig`, `getent hosts` ([lezione 1.8](08-dns-routing.md)) |
 | Chi ascolta su quale porta, sul mio host? | `ss -tulpn` |
 | La porta remota è raggiungibile? | `nc -zv`, `curl` |
 | Cosa passa davvero sul cavo? | `tcpdump` |

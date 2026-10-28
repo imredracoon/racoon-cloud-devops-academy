@@ -269,3 +269,15 @@ nav:
           - Argomenti specifici: appendici/canonical/argomenti.md
           - Simulazione d'esame: appendici/canonical/simulazione.md
       - I miei progressi: progressi.md
+  - "Appendice · Hardware e data center":
+      - appendici/hardware/index.md
+      - "1. Dispositivi di rete": appendici/hardware/01-dispositivi-rete.md
+      - "2. Il rack": appendici/hardware/02-rack.md
+      - "3. L'hardware di un server": appendici/hardware/03-hardware-server.md
+      - "4. Server di infrastruttura": appendici/hardware/04-server-infrastruttura.md
+      - "5. Server per i dati": appendici/hardware/05-server-dati.md
+      - "6. Server per calcolo e applicazioni": appendici/hardware/06-server-applicazioni.md
+      - "7. Installare un server fisico": appendici/hardware/07-installazione.md
+      - "8. Manutenzione": appendici/hardware/08-manutenzione.md
+      - "9. Architettura di un data center": appendici/hardware/09-data-center.md
+      - "Verifica finale": appendici/hardware/verifica.md

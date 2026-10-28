@@ -9,7 +9,7 @@
 
 ## Dove vanno i dati
 
-Lo strato scrivibile di un container sparisce con il container (lezione 3.1). Per i dati da conservare ci sono tre
+Lo strato scrivibile di un container sparisce con il container ([lezione 3.1](01-concetti.md)). Per i dati da conservare ci sono tre
 possibilità:
 
 | Tipo | Cos'è | Quando usarlo |
@@ -120,7 +120,7 @@ Ogni container ha la propria interfaccia di rete (namespace `net`). Docker offre
 
 | Driver | Comportamento |
 |---|---|
-| `bridge` | una rete privata virtuale sull'host; i container comunicano tra loro e escono verso Internet con il NAT (lezione 1.8). È il predefinito. |
+| `bridge` | una rete privata virtuale sull'host; i container comunicano tra loro e escono verso Internet con il NAT ([lezione 1.8](../fase-1/08-dns-routing.md)). È il predefinito. |
 | `host` | il container usa direttamente la rete dell'host, senza isolamento né `-p` |
 | `none` | nessuna rete |
 
@@ -178,7 +178,7 @@ sulle reti create dall'utente. In modalità rootless la connessione verso l'este
 utente (**pasta**), e un utente normale non può pubblicare porte inferiori alla 1024: usa porte come 8080.
 
 Podman ha anche i **pod**: gruppi di container che condividono la stessa rete e si parlano su `localhost`, come i Pod
-di Kubernetes (Fase 8).
+di Kubernetes ([Fase 8](../fase-8/index.md)).
 
 ## Esercizi
 
@@ -188,7 +188,7 @@ di Kubernetes (Fase 8).
     1. crea la rete `tasks-net` e il volume `tasks-pgdata`;
     2. avvia PostgreSQL 17 (nome `db`, database `tasks`, utente `tasks`, password a tua scelta) con il volume, senza
        pubblicare porte;
-    3. avvia l'immagine `tasks-api:dev` della lezione 3.3 sulla stessa rete, con la variabile `DATABASE_URL` corretta,
+    3. avvia l'immagine `tasks-api:dev` della [lezione 3.3](03-dockerfile.md) sulla stessa rete, con la variabile `DATABASE_URL` corretta,
        pubblicando la porta 8000;
     4. crea due attività, elimina **entrambi** i container, ricreali e verifica che le attività ci siano ancora.
 
@@ -248,7 +248,7 @@ di Kubernetes (Fase 8).
     docker rm -f a b && docker network rm frontend backend
     ```
     **Spiegazione.** Un container può stare su più reti, con un'interfaccia per ciascuna. È il meccanismo con cui si
-    separano i livelli di un'applicazione: lo ritroverai nel cloud con le subnet e i security group (Fase 5).
+    separano i livelli di un'applicazione: lo ritroverai nel cloud con le subnet e i security group ([Fase 5](../fase-5/index.md)).
 
 ## Verifica rapida
 

@@ -11,13 +11,13 @@
 | | |
 |---|---|
 | **Durata indicativa** | 1,5 mesi, circa 55 ore |
-| **Prerequisiti** | Fase 1 |
-| **Ambiente** | Dev Container (lezioni 2.1-2.4 e 2.6-2.8); VM `lab` (lezione 2.5) |
+| **Prerequisiti** | [Fase 1](../fase-1/index.md) |
+| **Ambiente** | Dev Container (lezioni [2.1](01-git-base.md)-[2.4](04-bash-avanzato.md) e [2.6](06-python-base.md)-[2.8](08-flask.md)); VM `lab` ([lezione 2.5](05-pianificazione.md)) |
 | **Progetto** | [Toolkit di automazione](progetto.md) |
 
 ## Perché automatizzare
 
-Nella Fase 1 hai configurato un server a mano, comando dopo comando. Funziona per un server; non funziona per
+Nella [Fase 1](../fase-1/index.md) hai configurato un server a mano, comando dopo comando. Funziona per un server; non funziona per
 cento, né per rifare lo stesso lavoro ogni settimana senza errori. Il cuore del lavoro DevOps è **trasformare le
 operazioni manuali in codice**: codice che si può rileggere, versionare, testare e rieseguire.
 
@@ -29,8 +29,8 @@ Questa fase ti dà i tre strumenti di base:
 
 ## L'applicazione del corso
 
-Nella lezione 2.8 scriverai la **Tasks API**, una piccola API REST in Flask. È l'applicazione che porterai nei
-container (Fase 3), nel cloud (Fase 5), in una pipeline automatica (Fase 7) e su Kubernetes (Fase 8). La versione
+Nella [lezione 2.8](08-flask.md) scriverai la **Tasks API**, una piccola API REST in Flask. È l'applicazione che porterai nei
+container ([Fase 3](../fase-3/index.md)), nel cloud ([Fase 5](../fase-5/index.md)), in una pipeline automatica ([Fase 7](../fase-7/index.md)) e su Kubernetes ([Fase 8](../fase-8/index.md)). La versione
 di riferimento si trova nel repository del corso, nella cartella
 [`labs/tasks-api`](https://github.com/imredracoon/racoon-cloud-devops-academy/tree/main/labs/tasks-api):
 consultala **dopo** aver scritto la tua.

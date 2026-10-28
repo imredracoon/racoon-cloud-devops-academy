@@ -15,7 +15,7 @@ I **volumi** risolvono il problema. Si dichiarano nel Pod (`spec.volumes`) e si 
 | Tipo di volume | Durata | Uso |
 |---|---|---|
 | `emptyDir` | quanto il Pod | cartella temporanea condivisa tra container, cache, `/tmp` con filesystem in sola lettura (con `medium: Memory` sta in RAM) |
-| `configMap`, `secret`, `projected` | quanto il Pod | configurazione come file (lezione 8.6) |
+| `configMap`, `secret`, `projected` | quanto il Pod | configurazione come file ([lezione 8.6](06-config.md)) |
 | `hostPath` | quanto il nodo | una cartella del nodo: solo per agenti di sistema; è un rischio di sicurezza e vietato dal profilo restricted |
 | `persistentVolumeClaim` | indipendente dal Pod | **dati che devono sopravvivere**: database, file caricati |
 
@@ -148,7 +148,7 @@ spec:
 
 !!! note "Database in Kubernetes?"
     Si può, e gli **operatori** (CloudNativePG per PostgreSQL) gestiscono repliche, backup e failover. Ma un database
-    gestito come RDS o Cloud SQL (Fase 5) toglie molto lavoro. Molte aziende tengono le applicazioni senza stato in
+    gestito come RDS o Cloud SQL ([Fase 5](../fase-5/index.md)) toglie molto lavoro. Molte aziende tengono le applicazioni senza stato in
     Kubernetes e i database fuori. Nel laboratorio lo teniamo dentro per imparare.
 
 ## Laboratorio

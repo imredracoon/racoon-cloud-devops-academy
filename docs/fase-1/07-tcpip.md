@@ -56,7 +56,7 @@ sequenceDiagram
 
 Se il server non ha nessun processo in ascolto su quella porta, risponde con un **RST** (connessione rifiutata,
 *Connection refused*). Se un firewall scarta il SYN, il client non riceve nulla e va in **timeout**. Distinguere
-"rifiutata" da "timeout" è uno dei primi indizi del troubleshooting (lezione 1.13).
+"rifiutata" da "timeout" è uno dei primi indizi del troubleshooting ([lezione 1.13](13-troubleshooting.md)).
 
 **ICMP** è un protocollo di servizio per i messaggi di controllo ed errore: lo usano `ping` e `traceroute`.
 
@@ -97,7 +97,7 @@ Rete `192.168.10.37/26`:
 
 !!! note "Nel cloud se ne perdono di più"
     AWS riserva **5 indirizzi** in ogni subnet (i primi quattro e l'ultimo), Google Cloud **4**. Una subnet `/24` su
-    AWS offre quindi 251 indirizzi utilizzabili. Lo rivedrai nella Fase 4.
+    AWS offre quindi 251 indirizzi utilizzabili. Lo rivedrai nella [Fase 4](../fase-4/index.md).
 
 ### Suddividere una rete (subnetting)
 
@@ -222,7 +222,7 @@ La configurazione **permanente** cambia tra le due famiglie:
     Ogni `/24` ha 256 indirizzi; AWS ne riserva 5, quindi **251** host utilizzabili.
 
     **Spiegazione.** Non c'è un'unica soluzione: conta che le subnet non si sovrappongano, che restino libere molte
-    `/24` per crescere e che lo schema sia facile da ricordare. È lo schema che userai nella Fase 5.
+    `/24` per crescere e che lo schema sia facile da ricordare. È lo schema che userai nella [Fase 5](../fase-5/index.md).
 
 !!! esercizio "Esercizio 3 · Stessa rete?"
     Gli host `192.168.1.70/26` e `192.168.1.130/26` possono comunicare direttamente, senza router?

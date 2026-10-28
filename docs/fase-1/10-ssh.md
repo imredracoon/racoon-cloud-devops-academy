@@ -58,7 +58,7 @@ controlla i permessi: `~/.ssh` deve essere `700` e `authorized_keys` `600`, altr
 !!! note "Nel cloud"
     Quando crei una VM su AWS o Google Cloud scegli (o carichi) una chiave pubblica: il fornitore la inserisce in
     `authorized_keys` al primo avvio tramite cloud-init. È lo stesso meccanismo, automatizzato. In alternativa
-    esistono accessi senza porta 22 aperta, come AWS Systems Manager Session Manager e IAP su Google Cloud (Fase 5).
+    esistono accessi senza porta 22 aperta, come AWS Systems Manager Session Manager e IAP su Google Cloud ([Fase 5](../fase-5/index.md)).
 
 ## Usare SSH
 
@@ -157,7 +157,7 @@ configurerai nel progetto della fase.
 
     - Pacchetto `openssh-server`, servizio **`sshd`** (`systemctl reload sshd`).
     - Se cambi la porta, **SELinux** deve sapere che la nuova porta è di SSH, altrimenti sshd non riesce ad
-      ascoltare (lezione 1.14):
+      ascoltare ([lezione 1.14](14-selinux-apparmor.md)):
 
         ```bash
         sudo semanage port -a -t ssh_port_t -p tcp 2222

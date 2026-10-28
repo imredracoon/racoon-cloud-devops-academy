@@ -102,14 +102,14 @@ Grafana ha un proprio sistema di alert (*Grafana Alerting*), utile quando vuoi a
   etichette, con raggruppamento e tempi di ripetizione;
 - **silenzi** e **finestre di manutenzione**.
 
-Nel laboratorio usiamo **sia** le regole di Prometheus con Alertmanager (lezione 7.6), lo standard negli ambienti
+Nel laboratorio usiamo **sia** le regole di Prometheus con Alertmanager ([lezione 7.6](06-prometheus.md)), lo standard negli ambienti
 Kubernetes, **sia** Grafana Alerting per vederne le differenze. In un progetto reale scegli un sistema principale per
 non duplicare gli alert.
 
 ## Laboratorio
 
 !!! laboratorio "Laboratorio · La tua dashboard"
-    Con lo stack della lezione 7.6 attivo e un po' di traffico generato:
+    Con lo stack della [lezione 7.6](06-prometheus.md) attivo e un po' di traffico generato:
 
     1. Apri **Dashboards → Academy → Tasks API** ed esplora i pannelli; prova gli intervalli `Last 5 minutes` e
        `Last 1 hour`.

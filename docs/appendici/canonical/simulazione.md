@@ -1,6 +1,6 @@
 # Simulazione d'esame · Canonical Academy
 
-Banca di circa 100 domande originali in inglese sui quattro esami della qualifica Linux SysAdmin. Gli esami reali sono **ibridi**: domande e prove pratiche in un ambiente Ubuntu remoto. Questa simulazione allena la parte di conoscenza; per la parte pratica usa i laboratori della Fase 1 e la [simulazione pratica LFCS](../lfcs/simulazione.md), che copre gran parte delle stesse attività su Ubuntu.
+Banca di circa 100 domande originali in inglese sui quattro esami della qualifica Linux SysAdmin. Gli esami reali sono **ibridi**: domande e prove pratiche in un ambiente Ubuntu remoto. Questa simulazione allena la parte di conoscenza; per la parte pratica usa i laboratori della [Fase 1](../../fase-1/index.md) e la [simulazione pratica LFCS](../lfcs/simulazione.md), che copre gran parte delle stesse attività su Ubuntu.
 
 <div class="exam-sim" data-bank="canonical"></div>
 

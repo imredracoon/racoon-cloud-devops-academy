@@ -41,7 +41,7 @@ flowchart TB
 | Componente | Compito |
 |---|---|
 | **kube-apiserver** | L'unica porta d'ingresso del cluster. Espone l'API REST, autentica e autorizza ogni richiesta, la valida e la salva in etcd. Tutti gli altri componenti parlano **solo** con lui. |
-| **etcd** | Database chiave-valore distribuito e consistente che conserva **tutto** lo stato del cluster. Se perdi etcd senza backup, perdi il cluster (lezione 8.12). |
+| **etcd** | Database chiave-valore distribuito e consistente che conserva **tutto** lo stato del cluster. Se perdi etcd senza backup, perdi il cluster ([lezione 8.12](12-kubeadm.md)). |
 | **kube-scheduler** | Guarda i Pod appena creati che non hanno ancora un nodo e sceglie quello più adatto (risorse libere, vincoli, affinità). Non avvia nulla: scrive solo la decisione. |
 | **kube-controller-manager** | Esegue i **controller**: cicli che confrontano lo stato desiderato con quello reale e agiscono. Per esempio il controller dei ReplicaSet crea Pod quando ne mancano, quello dei nodi segnala i nodi che non rispondono. |
 | **cloud-controller-manager** | Solo nei cluster su un cloud: crea i load balancer per i Service di tipo `LoadBalancer`, legge le informazioni dei nodi dal provider. |
@@ -54,7 +54,7 @@ maggioranza dei membri (*quorum*) per funzionare, quindi con tre membri ne tolle
 | Componente | Compito |
 |---|---|
 | **kubelet** | L'agente su ogni nodo. Riceve dall'API server i Pod assegnati al nodo, li fa avviare al runtime, esegue le sonde di salute e riporta lo stato. |
-| **container runtime** | Il programma che scarica le immagini e avvia i container: oggi quasi sempre **containerd** o **CRI-O**. Docker Engine non è più supportato direttamente dalla versione 1.24, ma le immagini costruite con Docker funzionano identiche (sono immagini OCI, Fase 3). |
+| **container runtime** | Il programma che scarica le immagini e avvia i container: oggi quasi sempre **containerd** o **CRI-O**. Docker Engine non è più supportato direttamente dalla versione 1.24, ma le immagini costruite con Docker funzionano identiche (sono immagini OCI, [Fase 3](../fase-3/index.md)). |
 | **kube-proxy** | Programma le regole di rete (iptables, IPVS o nftables) che fanno funzionare i Service. Alcuni plugin di rete, come Cilium, lo sostituiscono. |
 
 ## Il modello dichiarativo
@@ -92,7 +92,7 @@ flowchart LR
 Segui cosa succede quando applichi un Deployment con tre repliche:
 
 1. `kubectl` legge il file YAML, lo invia via HTTPS all'**API server**.
-2. L'API server **autentica** l'utente (certificato, token), **autorizza** l'azione (RBAC, lezione 8.11), passa
+2. L'API server **autentica** l'utente (certificato, token), **autorizza** l'azione (RBAC, [lezione 8.11](11-rbac.md)), passa
    l'oggetto agli **admission controller** (che possono modificarlo o rifiutarlo, per esempio Pod Security), lo
    **valida** e lo salva in **etcd**.
 3. Il controller dei **Deployment** si accorge del nuovo oggetto e crea un **ReplicaSet**.
@@ -125,7 +125,7 @@ Pod del cluster **senza NAT**. Come ottenerlo è compito del plugin CNI.
 L'API di Kubernetes si può ampliare con nuovi tipi di oggetto, le **CustomResourceDefinition** (CRD). Le hai già
 nominate: `HTTPRoute` della Gateway API e `Application` di Argo CD sono CRD. Un **operatore** è un controller
 scritto per un tipo personalizzato: per esempio un operatore PostgreSQL che, dato un oggetto `Cluster`, crea
-database replicati, backup e failover (lezione 8.13).
+database replicati, backup e failover ([lezione 8.13](13-helm-kustomize.md)).
 
 ## Esercizi
 

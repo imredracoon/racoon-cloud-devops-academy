@@ -31,9 +31,9 @@ prenotare: almeno l'80% negli allenamenti di ogni sezione e tre [esami completi]
 
 | Settimana | Attività |
 |---|---|
-| 1 | Sezioni 1 e 6: ripasso 0.6, 4.1, 4.2, 4.3, 4.9. Gerarchia delle risorse, fatturazione, affidabilità |
-| 2 | Sezioni 2 e 3: ripasso 4.8. BigQuery, Looker, Pub/Sub, Dataflow, Vertex AI, Gemini |
-| 3 | Sezioni 4 e 5: ripasso 4.5, 4.4, 5.6, 5.9. Compute, container, serverless, IAM, sicurezza |
+| 1 | Sezioni 1 e 6: ripasso [0.6](../../fase-0/06-cloud-devops.md), [4.1](../../fase-4/01-cloud-computing.md), [4.2](../../fase-4/02-infrastruttura-globale.md), [4.3](../../fase-4/03-account.md), [4.9](../../fase-4/09-costi.md). Gerarchia delle risorse, fatturazione, affidabilità |
+| 2 | Sezioni 2 e 3: ripasso [4.8](../../fase-4/08-database-ai.md). BigQuery, Looker, Pub/Sub, Dataflow, Vertex AI, Gemini |
+| 3 | Sezioni 4 e 5: ripasso [4.5](../../fase-4/05-compute.md), [4.4](../../fase-4/04-iam.md), [5.6](../../fase-5/06-sicurezza.md), [5.9](../../fase-5/09-container-serverless.md). Compute, container, serverless, IAM, sicurezza |
 | 4 | Esami completi e ripasso degli errori |
 
 ## Risorse ufficiali gratuite

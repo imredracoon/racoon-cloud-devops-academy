@@ -1,6 +1,6 @@
 # Verifica di fine fase 7
 
-Passa alla Fase 8 quando ottieni **almeno l'80%** (16 risposte corrette su 20). Le spiegazioni indicano la lezione
+Passa alla [Fase 8](../fase-8/index.md) quando ottieni **almeno l'80%** (16 risposte corrette su 20). Le spiegazioni indicano la lezione
 da ripassare.
 
 <script type="application/json" class="quiz-data">

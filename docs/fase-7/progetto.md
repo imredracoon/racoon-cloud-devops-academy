@@ -17,23 +17,23 @@
 
 Nel repository `tasks-api`:
 
-1. **CI** come nella lezione 7.3: lint, formattazione, test, build, scansione Trivy, pubblicazione su GHCR con tag
+1. **CI** come nella [lezione 7.3](03-pipeline.md): lint, formattazione, test, build, scansione Trivy, pubblicazione su GHCR con tag
    `sha-...` e versioni semantiche.
 2. Una **matrice** di test con Python 3.12 e 3.13 e il **report di copertura** come artefatto; la pipeline fallisce
    se la copertura scende sotto l'80% (`pytest --cov=app --cov-fail-under=80`).
 3. **Protezione del ramo** `main` con controlli obbligatori.
-4. **Deploy** con OIDC (lezione 7.4) sul servizio di container gestito della Fase 5 (ECS Fargate o Cloud Run),
+4. **Deploy** con OIDC ([lezione 7.4](04-deploy-oidc.md)) sul servizio di container gestito della [Fase 5](../fase-5/index.md) (ECS Fargate o Cloud Run),
    tramite l'ambiente `produzione` con approvazione manuale. Nessuna chiave di accesso nei segreti del repository.
 5. **Dependabot** attivo per le azioni GitHub e le dipendenze Python (`.github/dependabot.yml`).
 
-Nel repository `tasks-api-iac` (Fase 6):
+Nel repository `tasks-api-iac` ([Fase 6](../fase-6/index.md)):
 
 6. Un workflow che, su ogni PR, esegue `fmt`, `validate`, `terraform test` dei moduli e un **piano** commentato nella
    PR, con un ruolo di sola lettura via OIDC; dopo il merge, l'**apply** con approvazione.
 
 ### Parte B · Osservabilità
 
-7. Lo stack della lezione 7.6 (Prometheus, Alertmanager, node-exporter, Loki, Alloy, Grafana) avviato con la Tasks
+7. Lo stack della [lezione 7.6](06-prometheus.md) (Prometheus, Alertmanager, node-exporter, Loki, Alloy, Grafana) avviato con la Tasks
    API in locale.
 8. Una dashboard **"Tasks API · SLO"** versionata nel repository, con:
     - SLI di disponibilità: percentuale di richieste non 5xx, su 5 minuti e su 30 giorni;

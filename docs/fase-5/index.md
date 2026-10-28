@@ -14,14 +14,14 @@
 | | |
 |---|---|
 | **Durata indicativa** | 3 mesi, circa 120 ore |
-| **Prerequisiti** | Fase 4 |
+| **Prerequisiti** | [Fase 4](../fase-4/index.md) |
 | **Ambiente** | account AWS e/o Google Cloud, Dev Container |
 | **Progetto** | [Applicazione a tre livelli](progetto.md) |
-| **Certificazioni collegate** | [AWS Solutions Architect – Associate](../appendici/aws-saa/index.md), [Google Associate Cloud Engineer](../appendici/gcp-ace/index.md) (da completare dopo la Fase 8) |
+| **Certificazioni collegate** | [AWS Solutions Architect – Associate](../appendici/aws-saa/index.md), [Google Associate Cloud Engineer](../appendici/gcp-ace/index.md) (da completare dopo la [Fase 8](../fase-8/index.md)) |
 
 ## Dal servizio all'architettura
 
-Nella Fase 4 hai conosciuto i servizi uno per uno. Un'**architettura** è il modo in cui li combini per soddisfare
+Nella [Fase 4](../fase-4/index.md) hai conosciuto i servizi uno per uno. Un'**architettura** è il modo in cui li combini per soddisfare
 requisiti precisi: quanti utenti, quale disponibilità, quale budget, quali vincoli di sicurezza. È il lavoro del
 *Solutions Architect* e, sempre di più, di ogni ingegnere cloud e DevOps.
 

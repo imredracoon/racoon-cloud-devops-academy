@@ -20,7 +20,7 @@ Banca di oltre 130 domande originali in inglese sugli otto obiettivi dell'esame 
     quella che rispetta **tutti** i vincoli dello scenario. Le domande con più risposte indicano quante sceglierne.
 
 !!! note "Consiglio specifico"
-    Un'ora passa in fretta: non fermarti sulle domande di sintassi che non ricordi, segnale e vai avanti. Le domande sui comandi si risolvono meglio se li hai usati davvero nella Fase 6.
+    Un'ora passa in fretta: non fermarti sulle domande di sintassi che non ricordi, segnale e vai avanti. Le domande sui comandi si risolvono meglio se li hai usati davvero nella [Fase 6](../../fase-6/index.md).
 
 Torna alla [scheda dell'esame](index.md) per iscrizione e regole, o agli [argomenti specifici](argomenti.md) per
 ripassare.

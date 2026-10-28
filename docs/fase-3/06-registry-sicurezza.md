@@ -17,8 +17,8 @@ Un **registry** conserva e distribuisce le immagini. Quelli che incontrerai:
 | GitHub Container Registry | `ghcr.io` | integrato con GitHub e GitHub Actions |
 | Quay.io | `quay.io` | di Red Hat, usato da molti progetti open source |
 | Red Hat Registry | `registry.access.redhat.com` | le immagini UBI |
-| Amazon ECR | `ACCOUNT.dkr.ecr.REGIONE.amazonaws.com` | il registry privato di AWS (Fase 5) |
-| Google Artifact Registry | `REGIONE-docker.pkg.dev` | il registry di Google Cloud (Fase 5) |
+| Amazon ECR | `ACCOUNT.dkr.ecr.REGIONE.amazonaws.com` | il registry privato di AWS ([Fase 5](../fase-5/index.md)) |
+| Google Artifact Registry | `REGIONE-docker.pkg.dev` | il registry di Google Cloud ([Fase 5](../fase-5/index.md)) |
 
 In azienda le immagini delle proprie applicazioni stanno quasi sempre in un registry **privato**, vicino a dove
 girano: ECR su AWS, Artifact Registry su Google Cloud.
@@ -71,7 +71,7 @@ digest identifica il contenuto e non può cambiare.
 4. Per impostazione predefinita il pacchetto è **privato**. Per renderlo pubblico: sul tuo profilo GitHub →
    Packages → `tasks-api` → Package settings → Change visibility.
 
-Nella Fase 7 sarà la pipeline di GitHub Actions a costruire e pubblicare l'immagine a ogni rilascio, senza token
+Nella [Fase 7](../fase-7/index.md) sarà la pipeline di GitHub Actions a costruire e pubblicare l'immagine a ogni rilascio, senza token
 personali.
 
 ## Analisi delle vulnerabilità con Trivy
@@ -106,7 +106,7 @@ Come leggere il risultato:
     differenza è il motivo per cui si scelgono immagini minimali.
 
 Trivy analizza anche file di configurazione (Dockerfile, Kubernetes, Terraform) e cerca segreti dimenticati:
-`trivy config .` e `trivy fs --scanners secret .`. Lo userai di nuovo nella pipeline della Fase 7.
+`trivy config .` e `trivy fs --scanners secret .`. Lo userai di nuovo nella pipeline della [Fase 7](../fase-7/index.md).
 
 ## Eseguire con il minimo dei privilegi
 

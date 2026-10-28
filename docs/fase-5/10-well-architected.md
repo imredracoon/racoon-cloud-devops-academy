@@ -89,7 +89,7 @@ Google Cloud usa una classificazione analoga: **cold** (si ripristina da backup)
 
 !!! tip "Un piano di DR non testato non è un piano"
     Prova il ripristino davvero, a intervalli regolari: misuri l'RTO reale, scopri i passi dimenticati e verifichi che
-    i backup si possano leggere. Con l'infrastruttura come codice (Fase 6) ricreare un ambiente diventa un comando.
+    i backup si possano leggere. Con l'infrastruttura come codice ([Fase 6](../fase-6/index.md)) ricreare un ambiente diventa un comando.
 
 ## Ottimizzare i costi
 
@@ -103,7 +103,7 @@ Le leve principali, in ordine di impatto tipico:
    riservate su AWS, **sconti per impegno di utilizzo** su Google Cloud), capacità interrompibile per il carico
    tollerante (**Spot**, **VM spot**). Su Google Cloud alcune VM ricevono anche **sconti per utilizzo sostenuto**
    automatici.
-4. **Classi di storage e cicli di vita**: oggetti poco letti in classi più economiche (lezione 5.3).
+4. **Classi di storage e cicli di vita**: oggetti poco letti in classi più economiche ([lezione 5.3](03-storage.md)).
 5. **Architettura**: servizi gestiti e serverless che scalano a zero, CDN per ridurre il traffico verso l'origine,
    **endpoint VPC** o accesso privato per evitare il costo dei NAT gateway sul traffico verso i servizi del fornitore.
 6. **Trasferimento dati**: il traffico **in uscita** verso Internet e tra regioni (e su AWS anche tra zone) si paga.
@@ -116,7 +116,7 @@ ed **esportazione in BigQuery** su Google Cloud. La disciplina che unisce tecnic
 ## Laboratorio
 
 !!! laboratorio "Laboratorio · Revisione della tua architettura"
-    Prendi l'architettura costruita nelle lezioni 5.2 e 5.4 (load balancer, istanze della Tasks API, database gestito).
+    Prendi l'architettura costruita nelle lezioni [5.2](02-ha-scaling.md) e [5.4](04-database.md) (load balancer, istanze della Tasks API, database gestito).
 
     === "AWS"
 
@@ -144,7 +144,7 @@ ed **esportazione in BigQuery** su Google Cloud. La disciplina che unisce tecnic
       nessun allarme sullo stato delle istanze, nessuna strategia di DR in un'altra regione;
     - **costi**: nessuna etichetta per attribuire i costi, istanze più grandi del necessario, risorse lasciate accese
       fuori dalle ore di studio;
-    - **operatività**: configurazione fatta a mano dalla console (lo risolverà la Fase 6).
+    - **operatività**: configurazione fatta a mano dalla console (lo risolverà la [Fase 6](../fase-6/index.md)).
 
     Non devi correggerli tutti: in un progetto reale si accettano consapevolmente alcuni rischi, documentando il motivo.
     Questo è il cuore di una revisione.

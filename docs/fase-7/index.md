@@ -19,8 +19,8 @@
 
 ## Dal codice alla produzione, e ritorno
 
-Le fasi precedenti ti hanno dato tutti i pezzi: il codice e i test (Fase 2), l'immagine (Fase 3), l'architettura
-(Fase 5), l'infrastruttura come codice (Fase 6). Ma ogni passaggio richiede ancora un comando lanciato a mano.
+Le fasi precedenti ti hanno dato tutti i pezzi: il codice e i test ([Fase 2](../fase-2/index.md)), l'immagine ([Fase 3](../fase-3/index.md)), l'architettura
+([Fase 5](../fase-5/index.md)), l'infrastruttura come codice ([Fase 6](../fase-6/index.md)). Ma ogni passaggio richiede ancora un comando lanciato a mano.
 
 Questa fase chiude il cerchio:
 
@@ -51,7 +51,7 @@ Insieme sono il cuore del lavoro DevOps: rilasciare spesso, in sicurezza, sapend
 | Loki | 3.7 |
 | Grafana Alloy | 1.21 |
 
-La Tasks API, dalla versione di questa fase, espone le **metriche** su `/metrics`: la lezione 7.6 spiega come.
+La Tasks API, dalla versione di questa fase, espone le **metriche** su `/metrics`: la [lezione 7.6](06-prometheus.md) spiega come.
 
 ## Le lezioni
 

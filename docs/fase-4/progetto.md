@@ -117,8 +117,8 @@ Nel repository:
     ```
 
     **Spiegazione.** `sync --delete` rimuove dal bucket i file cancellati in locale. L'invalidazione forza CloudFront a
-    rileggere i file dall'origine: le prime 1.000 invalidazioni al mese sono gratuite. Nella Fase 7 questo script
-    girerà in una pipeline di GitHub Actions a ogni push, e nella Fase 6 l'infrastruttura sarà creata da Terraform.
+    rileggere i file dall'origine: le prime 1.000 invalidazioni al mese sono gratuite. Nella [Fase 7](../fase-7/index.md) questo script
+    girerà in una pipeline di GitHub Actions a ogni push, e nella [Fase 6](../fase-6/index.md) l'infrastruttura sarà creata da Terraform.
 
 ## Fonti
 

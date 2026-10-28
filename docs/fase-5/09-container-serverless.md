@@ -9,7 +9,7 @@
 
 ## I container gestiti
 
-Nella Fase 3 hai containerizzato la Tasks API; nelle lezioni precedenti l'hai eseguita su VM con Docker installato
+Nella [Fase 3](../fase-3/index.md) hai containerizzato la Tasks API; nelle lezioni precedenti l'hai eseguita su VM con Docker installato
 da uno script. I servizi di **container gestiti** eliminano le VM: dai l'immagine, la configurazione e le risorse, e il
 fornitore la esegue, la scala e la sostituisce se si guasta.
 
@@ -28,7 +28,7 @@ fornitore la esegue, la scala e la sostituisce se si guasta.
     Le immagini private stanno in **Amazon ECR**, con scansione delle vulnerabilità, regole di ciclo di vita e tag
     immutabili.
 
-    Per Kubernetes gestito c'è **EKS** (Fase 8); per un'esperienza più semplice, **App Runner**.
+    Per Kubernetes gestito c'è **EKS** ([Fase 8](../fase-8/index.md)); per un'esperienza più semplice, **App Runner**.
 
 === "Google Cloud"
 
@@ -45,7 +45,7 @@ fornitore la esegue, la scala e la sostituisce se si guasta.
 
     Le immagini private stanno in **Artifact Registry**, con scansione delle vulnerabilità.
 
-    Per Kubernetes gestito c'è **GKE**, anche nella modalità **Autopilot** in cui Google gestisce i nodi (Fase 8).
+    Per Kubernetes gestito c'è **GKE**, anche nella modalità **Autopilot** in cui Google gestisce i nodi ([Fase 8](../fase-8/index.md)).
 
 ## Le funzioni
 
@@ -90,7 +90,7 @@ cliente, cache, trasformazioni, versioni e ambienti.
 !!! laboratorio "Laboratorio · La Tasks API senza server"
     === "Google Cloud"
 
-        Cloud Run è il modo più rapido. Usa il database Cloud SQL e il segreto delle lezioni 5.4 e 5.6.
+        Cloud Run è il modo più rapido. Usa il database Cloud SQL e il segreto delle lezioni [5.4](04-database.md) e [5.6](06-sicurezza.md).
 
         ```bash
         gcloud services enable run.googleapis.com artifactregistry.googleapis.com
@@ -120,7 +120,7 @@ cliente, cache, trasformazioni, versioni e ambienti.
 
     === "AWS"
 
-        Con **ECS e Fargate**, nella rete della lezione 5.1:
+        Con **ECS e Fargate**, nella rete della [lezione 5.1](01-vpc.md):
 
         1. **ECR** → crea il repository `tasks-api`. Nella pagina, **View push commands**: esegui login, tag e push
            dell'immagine `ghcr.io/TUO-UTENTE/tasks-api:1.1.0`.
@@ -128,7 +128,7 @@ cliente, cache, trasformazioni, versioni e ambienti.
         3. **Task definitions** → **Create**: Fargate, 0,25 vCPU, 0,5 GB; container `api` con l'immagine ECR, porta 8000;
            variabile d'ambiente `DATABASE_URL` di tipo **ValueFrom** con l'ARN del segreto `tasks/database-url`
            seguito da `:DATABASE_URL::` (estrae la chiave JSON); log su CloudWatch. Il **ruolo di esecuzione** deve poter
-           leggere il segreto (aggiungi la policy della lezione 5.6 a `ecsTaskExecutionRole`).
+           leggere il segreto (aggiungi la policy della [lezione 5.6](06-sicurezza.md) a `ecsTaskExecutionRole`).
         4. **Create service**: 2 task, subnet `app-a` e `app-b`, security group `app-sg`, senza IP pubblico, con un
            **nuovo Application Load Balancer** (o il target group esistente, di tipo **IP**), health check `/health`.
         5. Apri `http://DNS-DEL-ALB/health`.
@@ -137,7 +137,7 @@ cliente, cache, trasformazioni, versioni e ambienti.
         il repository ECR (con le immagini).
 
 ??? success "Spiegazione"
-    Lo stesso container della Fase 3 gira ora senza alcuna VM da gestire: niente patch del sistema operativo, niente
+    Lo stesso container della [Fase 3](../fase-3/index.md) gira ora senza alcuna VM da gestire: niente patch del sistema operativo, niente
     Docker da installare, scalabilità e sostituzione automatiche. Su Cloud Run, senza traffico, le istanze scendono a
     zero. La configurazione (variabili, segreti, rete, identità) è separata dall'immagine: lo stesso artefatto va in
     test e in produzione con configurazioni diverse.

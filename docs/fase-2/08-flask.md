@@ -12,7 +12,7 @@ In questa lezione costruisci la **Tasks API**, l'applicazione che accompagnerà 
 ## Le API REST
 
 Un'**API** (*Application Programming Interface*) è un'interfaccia che un programma offre ad altri programmi.
-Un'**API web** si usa via HTTP (lezione 1.12). Lo stile più diffuso è **REST**, basato su alcune idee semplici:
+Un'**API web** si usa via HTTP ([lezione 1.12](../fase-1/12-http-nginx.md)). Lo stile più diffuso è **REST**, basato su alcune idee semplici:
 
 - i dati sono **risorse** identificate da un URL: `/tasks` è la collezione, `/tasks/3` la singola attività;
 - il **metodo HTTP** dice cosa fare sulla risorsa;
@@ -140,7 +140,7 @@ database modificando solo l'**URL di connessione**:
 |---|---|
 | SQLite (un file locale, nessun server) | `sqlite:///tasks.db` |
 | SQLite in memoria (per i test) | `sqlite:///:memory:` |
-| PostgreSQL (dalla Fase 3) | `postgresql+psycopg://utente:password@host:5432/nomedb` |
+| PostgreSQL (dalla [Fase 3](../fase-3/index.md)) | `postgresql+psycopg://utente:password@host:5432/nomedb` |
 
 ```bash
 pip install Flask-SQLAlchemy
@@ -283,7 +283,7 @@ if __name__ == "__main__":
 ```
 
 L'endpoint `/health` merita attenzione: non risponde semplicemente "ok", ma **verifica il database**. Se il
-database non risponde, restituisce `503`. Load balancer (Fase 5) e Kubernetes (Fase 8) useranno questo endpoint
+database non risponde, restituisce `503`. Load balancer ([Fase 5](../fase-5/index.md)) e Kubernetes ([Fase 8](../fase-8/index.md)) useranno questo endpoint
 per decidere se mandare traffico all'applicazione. Il nome host nella risposta ti servirà per vedere quale copia
 dell'applicazione ha risposto.
 
@@ -387,7 +387,7 @@ gunicorn --bind 127.0.0.1:8000 --workers 2 "app:create_app()"
 - `"app:create_app()"` dice a Gunicorn: nel modulo `app`, chiama `create_app()` per ottenere l'applicazione.
 - `--workers` è il numero di processi che servono le richieste in parallelo. La documentazione di Gunicorn suggerisce
   come punto di partenza `(2 × numero di CPU) + 1`.
-- Davanti a Gunicorn si mette di solito un **reverse proxy** come Nginx (lezione 1.12), che gestisce HTTPS e i
+- Davanti a Gunicorn si mette di solito un **reverse proxy** come Nginx ([lezione 1.12](../fase-1/12-http-nginx.md)), che gestisce HTTPS e i
   client lenti.
 
 ```mermaid
@@ -398,7 +398,7 @@ flowchart LR
   A --> D[(Database)]
 ```
 
-È esattamente l'architettura del progetto della Fase 1, con la tua API al posto di `python3 -m http.server`.
+È esattamente l'architettura del progetto della [Fase 1](../fase-1/index.md), con la tua API al posto di `python3 -m http.server`.
 
 ## Esercizi
 
@@ -492,14 +492,14 @@ flowchart LR
     sudo systemctl daemon-reload && sudo systemctl enable --now tasks-api
     curl -s localhost:8000/health
     ```
-    Nella configurazione Nginx della lezione 1.12 basta che `proxy_pass` punti a `http://127.0.0.1:8000`. Dal client:
+    Nella configurazione Nginx della [lezione 1.12](../fase-1/12-http-nginx.md) basta che `proxy_pass` punti a `http://127.0.0.1:8000`. Dal client:
     ```bash
     curl -sk -X POST https://web.lab/tasks -H 'Content-Type: application/json' -d '{"title":"Dal client"}'
     ```
     **Spiegazione.** Gli URL SQLite assoluti hanno **quattro** barre: `sqlite:///` più il percorso che inizia con `/`.
     `ProtectSystem=strict` rende tutto il filesystem in sola lettura per il servizio, quindi la cartella del database
     va concessa con `ReadWritePaths`. Sul percorso RHEL ricorda il booleano SELinux `httpd_can_network_connect`
-    (lezione 1.12), altrimenti Nginx non può collegarsi a Gunicorn e risponde `502 Bad Gateway`.
+    ([lezione 1.12](../fase-1/12-http-nginx.md)), altrimenti Nginx non può collegarsi a Gunicorn e risponde `502 Bad Gateway`.
 
 ## Verifica rapida
 

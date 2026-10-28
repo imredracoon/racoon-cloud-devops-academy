@@ -72,7 +72,7 @@ Cloud), mai le credenziali di una persona.
 
     Un'istanza EC2 che deve leggere da S3 **non** riceve chiavi di accesso: le si associa un **ruolo** (tramite un
     *instance profile*), e il software dell'istanza ottiene in automatico credenziali temporanee che si rinnovano da
-    sole. Lo stesso vale per Lambda, per i container e, dalla Fase 7, per GitHub Actions.
+    sole. Lo stesso vale per Lambda, per i container e, dalla [Fase 7](../fase-7/index.md), per GitHub Actions.
 
 === "Google Cloud"
 
@@ -111,7 +111,7 @@ Cloud), mai le credenziali di una persona.
 
     Una VM di Compute Engine o un servizio Cloud Run eseguono con un **service account**: il codice ottiene in
     automatico credenziali temporanee. Le **chiavi** dei service account (file JSON) esistono ma sono un rischio,
-    come le access key di AWS: si evitano, e dalla Fase 7 userai la federazione delle identità (*Workload Identity
+    come le access key di AWS: si evitano, e dalla [Fase 7](../fase-7/index.md) userai la federazione delle identità (*Workload Identity
     Federation*).
 
 ## AWS e Google Cloud a confronto

@@ -78,7 +78,7 @@ I vincoli di versione:
 | `>= 6.0, < 6.20` | combinazione |
 
 `terraform init` scarica i provider nella cartella `.terraform/` e registra le versioni scelte nel file
-`.terraform.lock.hcl` (lezione 6.3).
+`.terraform.lock.hcl` ([lezione 6.3](03-workflow.md)).
 
 ## Laboratorio 1: senza cloud
 
@@ -129,18 +129,18 @@ Il primo progetto usa due provider che non creano nulla nel cloud: `random` (gen
 
 ??? success "Spiegazione"
     - Al punto 2 la risorsa `local_file` usa `random_pet.nome.id`: Terraform capisce da solo che deve creare prima il
-      nome e poi il file (**dipendenza implicita**, lezione 6.4). Il valore è `(known after apply)` perché si conosce
+      nome e poi il file (**dipendenza implicita**, [lezione 6.4](04-risorse.md)). Il valore è `(known after apply)` perché si conosce
       solo dopo la creazione.
     - Al punto 6 Terraform rileva che il file reale non corrisponde più alla configurazione (**drift**) e propone di
       ricrearlo: la configurazione è la fonte di verità.
     - Al punto 7 `random_pet` non può cambiare lunghezza sul posto: va **sostituito** (`-/+`), e di conseguenza
       cambia anche il contenuto del file. Nel cloud lo stesso accade, per esempio, cambiando l'immagine di una VM.
-    - Dopo `apply` compare il file `terraform.tfstate`: è lo **state**, che studierai nella lezione 6.6. Non va mai
+    - Dopo `apply` compare il file `terraform.tfstate`: è lo **state**, che studierai nella [lezione 6.6](06-state.md). Non va mai
       modificato a mano né messo in Git.
 
 ## Autenticarsi nel cloud
 
-I provider leggono le credenziali dagli stessi posti delle CLI che hai configurato nella lezione 4.10. **Non**
+I provider leggono le credenziali dagli stessi posti delle CLI che hai configurato nella [lezione 4.10](../fase-4/10-cli.md). **Non**
 scrivere mai credenziali nei file `.tf`.
 
 === "AWS"

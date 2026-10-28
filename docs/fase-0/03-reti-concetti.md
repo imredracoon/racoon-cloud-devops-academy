@@ -5,7 +5,7 @@
     - Conoscere indirizzi IP, porte, protocolli e il modello client-server.
     - Descrivere, passo per passo, cosa succede quando apri un sito web.
 
-Questa lezione dà i **concetti**. Nella Fase 1 li riprenderai con precisione tecnica e tanti esercizi pratici.
+Questa lezione dà i **concetti**. Nella [Fase 1](../fase-1/index.md) li riprenderai con precisione tecnica e tanti esercizi pratici.
 
 ## Cos'è una rete
 
@@ -96,7 +96,7 @@ Durante il percorso i dati attraversano molti **router**, ognuno dei quali li in
 !!! tip "Perché è importante"
     Quando "il sito non funziona", un professionista controlla questi passaggi uno per uno: il nome si risolve?
     La porta è raggiungibile? Il certificato è valido? Che codice risponde il server? Imparerai a farlo nella
-    lezione 1.13.
+    [lezione 1.13](../fase-1/13-troubleshooting.md).
 
 ## Esercizi
 

@@ -1,6 +1,6 @@
 # Verifica di fine fase 4
 
-Passa alla Fase 5 quando ottieni **almeno l'80%** (20 risposte corrette su 25). Le spiegazioni indicano la lezione
+Passa alla [Fase 5](../fase-5/index.md) quando ottieni **almeno l'80%** (20 risposte corrette su 25). Le spiegazioni indicano la lezione
 da ripassare. Se vuoi sostenere l'esame AWS Cloud Practitioner o Google Cloud Digital Leader, prosegui con le
 appendici: [AWS CLF-C02](../appendici/aws-clf/index.md) e [Google Cloud Digital Leader](../appendici/gcp-cdl/index.md).
 

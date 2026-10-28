@@ -6,13 +6,13 @@
     - Usare i firewall del cloud: security group e network ACL su AWS, regole firewall VPC su Google Cloud.
     - Conoscere DNS, CDN e i collegamenti tra sede e cloud.
 
-In questa lezione applichi al cloud ciò che hai imparato nelle lezioni 1.7-1.11: indirizzi, subnet, routing, NAT,
-firewall. Nella Fase 5 costruirai una rete completa per un'applicazione a tre livelli.
+In questa lezione applichi al cloud ciò che hai imparato nelle lezioni [1.7](../fase-1/07-tcpip.md)-[1.11](../fase-1/11-firewall.md): indirizzi, subnet, routing, NAT,
+firewall. Nella [Fase 5](../fase-5/index.md) costruirai una rete completa per un'applicazione a tre livelli.
 
 ## La rete virtuale privata
 
 Una **VPC** (*Virtual Private Cloud*) è una rete privata, isolata logicamente, dentro il cloud del fornitore. Tu
-scegli gli indirizzi (blocchi privati RFC 1918, lezione 1.7), la dividi in subnet, decidi il routing e il firewall.
+scegli gli indirizzi (blocchi privati RFC 1918, [lezione 1.7](../fase-1/07-tcpip.md)), la dividi in subnet, decidi il routing e il firewall.
 
 === "AWS"
 
@@ -53,7 +53,7 @@ flowchart TB
 
 ## Subnet pubbliche e private
 
-La differenza la fa il **routing** (lezione 1.8):
+La differenza la fa il **routing** ([lezione 1.8](../fase-1/08-dns-routing.md)):
 
 - una subnet **pubblica** ha una rotta predefinita (`0.0.0.0/0`) verso l'**Internet gateway**: le sue risorse con un
   IP pubblico sono raggiungibili da Internet;
@@ -102,7 +102,7 @@ La differenza la fa il **routing** (lezione 1.8):
     in ingresso o in uscita. Esistono regole implicite: **nega tutto in ingresso**, **permetti tutto in uscita**.
     Le **policy firewall di rete** e **gerarchiche** permettono di gestire regole a livello di organizzazione.
 
-Il concetto è lo stesso di nftables (lezione 1.11), con un vantaggio: il firewall è **fuori** dalla VM, quindi un
+Il concetto è lo stesso di nftables ([lezione 1.11](../fase-1/11-firewall.md)), con un vantaggio: il firewall è **fuori** dalla VM, quindi un
 attaccante che la compromette non può disattivarlo.
 
 ## Collegare reti
@@ -119,9 +119,9 @@ attaccante che la compromette non può disattivarlo.
 
 - **DNS gestito**: **Route 53** (AWS) e **Cloud DNS** (Google Cloud). Route 53 offre anche politiche di
   instradamento (per latenza, geografiche, con failover) e la registrazione di domini.
-- **CDN**: **CloudFront** e **Cloud CDN** servono i contenuti dai punti di presenza (lezione 4.2).
+- **CDN**: **CloudFront** e **Cloud CDN** servono i contenuti dai punti di presenza ([lezione 4.2](02-infrastruttura-globale.md)).
 - **Load balancer**: **Elastic Load Balancing** (Application, Network, Gateway Load Balancer) e **Cloud Load
-  Balancing** (anche globale, con un unico IP anycast). Li userai nella Fase 5.
+  Balancing** (anche globale, con un unico IP anycast). Li userai nella [Fase 5](../fase-5/index.md).
 - **Protezione**: **AWS Shield** (DDoS, Standard gratuito) e **AWS WAF**; **Cloud Armor** su Google Cloud.
 
 ## Laboratorio
@@ -135,7 +135,7 @@ attaccante che la compromette non può disattivarlo.
         4. **Route tables** → crea `lab-rt-pub`, aggiungi la rotta `0.0.0.0/0` → `lab-igw`, associala a `lab-pub-a`.
         5. Avvia due istanze `t3.micro` senza key pair: una in `lab-pub-a` con IP pubblico, una in `lab-priv-a`
            senza. Security group: per la prima SSH dalla prefix list `com.amazonaws.REGIONE.ec2-instance-connect` (come
-           nella lezione 4.5); per la seconda SSH **solo dal security group della prima**.
+           nella [lezione 4.5](05-compute.md)); per la seconda SSH **solo dal security group della prima**.
         6. Collegati alla prima con EC2 Instance Connect; prova `ping -c 2 IP-PRIVATO-SECONDA` (ICMP non è permesso:
            aggiungi una regola ICMP dal security group della prima e riprova).
 

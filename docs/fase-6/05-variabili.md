@@ -26,7 +26,7 @@ variable "ambiente" {
 
 - Si usano con `var.ambiente`.
 - Senza `default` la variabile è **obbligatoria**: Terraform la chiede in modo interattivo o fallisce in automazione.
-- `sensitive = true` nasconde il valore nell'output della CLI (lezione 6.8).
+- `sensitive = true` nasconde il valore nell'output della CLI ([lezione 6.8](08-segreti.md)).
 
 ### Tipi
 
@@ -86,7 +86,7 @@ output "indirizzi_web" {
 ```
 
 Gli output si leggono con `terraform output` (`-raw nome` per usarli negli script, `-json` per tutti) e servono anche
-a passare valori da un modulo a chi lo usa (lezione 6.7).
+a passare valori da un modulo a chi lo usa ([lezione 6.7](07-moduli.md)).
 
 ## Valori locali
 

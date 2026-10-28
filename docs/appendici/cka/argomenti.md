@@ -1,7 +1,7 @@
 # Argomenti specifici · CKA
 
 I cinque domini del programma ufficiale ([curriculum CNCF](https://github.com/cncf/curriculum)) con le competenze
-richieste e le lezioni della Fase 8.
+richieste e le lezioni della [Fase 8](../../fase-8/index.md).
 
 ## Storage (10%)
 

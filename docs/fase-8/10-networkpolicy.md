@@ -170,7 +170,7 @@ o per percorso HTTP) esistono le **AdminNetworkPolicy** del SIG Network e le pol
        wget -qO- -T 3 http://tasks-api.tasks/tasks     # dentro il Pod
        nc -zv -w 3 postgres.tasks 5432
        ```
-    2. Ripeti la richiesta passando dal Gateway (tunnel della lezione 8.9). Funziona? Perché?
+    2. Ripeti la richiesta passando dal Gateway (tunnel della [lezione 8.9](09-ingress.md)). Funziona? Perché?
     3. Applica la policy `api-uscite` qui sopra e verifica che la API funzioni ancora. Poi togli temporaneamente
        la regola del DNS: cosa succede alle richieste `/tasks`?
 
@@ -184,7 +184,7 @@ o per percorso HTTP) esistono le **AdminNetworkPolicy** del SIG Network e le pol
        permesso per primo.
 
 !!! esercizio "Esercizio · Prometheus deve leggere le metriche"
-    Il Prometheus della Fase 7 gira ora nel namespace `osservabilita` con la label `app.kubernetes.io/name: prometheus`
+    Il Prometheus della [Fase 7](../fase-7/index.md) gira ora nel namespace `osservabilita` con la label `app.kubernetes.io/name: prometheus`
     e deve leggere `/metrics` della Tasks API sulla porta 8000. Scrivi la policy minima, senza aprire la API a tutti
     i Pod di quel namespace.
 

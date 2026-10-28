@@ -273,7 +273,7 @@ Le variabili `AWS_RUOLO_DEPLOY`, `GCP_PROGETTO` e `GCP_PROVIDER_WIF` sono **vari
 
 ## Terraform dalla pipeline
 
-Lo stesso meccanismo serve per l'infrastruttura della Fase 6: un **piano** su ogni pull request, commentato nella PR,
+Lo stesso meccanismo serve per l'infrastruttura della [Fase 6](../fase-6/index.md): un **piano** su ogni pull request, commentato nella PR,
 e l'**apply** dopo il merge, con l'approvazione dell'ambiente. Si usano due ruoli: uno di **sola lettura** per il
 piano (le PR non devono poter modificare nulla) e uno con i permessi di modifica per l'apply.
 
@@ -362,14 +362,14 @@ Due dettagli importanti:
 - la condizione di fiducia del ruolo di **apply** deve ammettere solo `environment:dev`; quella del ruolo di
   **piano** solo `pull_request`.
 
-Su Google Cloud cambia solo lo step di autenticazione (`google-github-actions/auth@v3`); con HCP Terraform (lezione
-6.9) il flusso VCS fa tutto questo senza workflow, e le **credenziali dinamiche** usano lo stesso principio OIDC.
+Su Google Cloud cambia solo lo step di autenticazione (`google-github-actions/auth@v3`); con HCP Terraform ([lezione
+6.9](../fase-6/09-hcp.md)) il flusso VCS fa tutto questo senza workflow, e le **credenziali dinamiche** usano lo stesso principio OIDC.
 
 ## Laboratorio
 
 !!! laboratorio "Laboratorio · Deploy senza chiavi"
-    Prerequisiti: il repository `tasks-api` con la CI della lezione 7.3 funzionante, il pacchetto GHCR pubblico, e il
-    servizio della lezione 5.9 (ECS Fargate o Cloud Run) creato con l'immagine `1.1.0`.
+    Prerequisiti: il repository `tasks-api` con la CI della [lezione 7.3](03-pipeline.md) funzionante, il pacchetto GHCR pubblico, e il
+    servizio della [lezione 5.9](../fase-5/09-container-serverless.md) (ECS Fargate o Cloud Run) creato con l'immagine `1.1.0`.
 
     1. Configura la fiducia OIDC per il tuo repository, come sopra, con la condizione sull'ambiente `produzione`.
     2. Su GitHub crea l'ambiente `produzione` con te stesso come revisore obbligatorio e il solo ramo `main` ammesso;
@@ -378,7 +378,7 @@ Su Google Cloud cambia solo lo step di autenticazione (`google-github-actions/au
     4. Quando la CI termina, il deploy attende l'**approvazione**: approva dalla pagina dell'esecuzione.
     5. Verifica che il servizio usi la nuova immagine: `/metrics` risponde, mentre la versione 1.1.0 non l'aveva.
     6. Cambia la condizione nel cloud in modo che ammetta solo l'ambiente `test` e rilancia il deploy: cosa succede?
-    7. Ripristina la condizione. Alla fine, distruggi il servizio come nella lezione 5.9.
+    7. Ripristina la condizione. Alla fine, distruggi il servizio come nella [lezione 5.9](../fase-5/09-container-serverless.md).
 
 ??? success "Spiegazione"
     6. L'autenticazione fallisce: su AWS `Not authorized to perform sts:AssumeRoleWithWebIdentity`, su Google Cloud

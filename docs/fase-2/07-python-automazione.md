@@ -262,7 +262,7 @@ importante: puoi chiamare `main([...])` dai test, passando gli argomenti che vuo
 ## I primi test con pytest
 
 Un **test automatico** è codice che verifica che altro codice funzioni. Si esegue in un secondo, sempre allo stesso
-modo, e ti avvisa quando una modifica rompe qualcosa. Nella Fase 7 i test gireranno da soli a ogni push.
+modo, e ti avvisa quando una modifica rompe qualcosa. Nella [Fase 7](../fase-7/index.md) i test gireranno da soli a ogni push.
 
 **pytest** (`pip install pytest`) trova ed esegue le funzioni che iniziano con `test_` nei file `test_*.py`:
 
@@ -380,7 +380,7 @@ pytest -v
     molto più alto. `requests.RequestException` è la classe base di tutti gli errori di rete di `requests`.
 
 !!! esercizio "Esercizio 3 · Testare il proprio codice"
-    Riprendi la funzione `valida_porta` della lezione 2.6, mettila in `porte.py` e scrivi `test_porte.py` con
+    Riprendi la funzione `valida_porta` della [lezione 2.6](06-python-base.md), mettila in `porte.py` e scrivi `test_porte.py` con
     almeno quattro test: una porta valida, una stringa non numerica, una porta 0 e una porta 70000. Per verificare
     che venga sollevata un'eccezione usa `pytest.raises`.
 

@@ -23,7 +23,7 @@ gcloud --version
 
 === "AWS"
 
-    Con IAM Identity Center (lezione 4.4) la CLI ottiene **credenziali temporanee** senza chiavi permanenti:
+    Con IAM Identity Center ([lezione 4.4](04-iam.md)) la CLI ottiene **credenziali temporanee** senza chiavi permanenti:
 
     ```bash
     aws configure sso
@@ -72,7 +72,7 @@ gcloud --version
     ```
 
     Nota: `gcloud auth login` autentica **la CLI**. Le **librerie** (Python, Terraform) usano le *Application Default
-    Credentials*, che si impostano a parte con `gcloud auth application-default login`. Lo userai nella Fase 6.
+    Credentials*, che si impostano a parte con `gcloud auth application-default login`. Lo userai nella [Fase 6](../fase-6/index.md).
 
     In GitHub Codespaces e nel Dev Container, se il browser non si apre, usa `gcloud auth login --no-launch-browser`
     e segui le istruzioni.
@@ -171,7 +171,7 @@ differenza frequente rispetto ad AWS.
        con un'etichetta `progetto=academy`;
     2. carica tre file di prova;
     3. elenca il contenuto;
-    4. elimina bucket e contenuto, anche se uno dei passi precedenti fallisce (usa `trap`, lezione 2.4).
+    4. elimina bucket e contenuto, anche se uno dei passi precedenti fallisce (usa `trap`, [lezione 2.4](../fase-2/04-bash-avanzato.md)).
 
 ??? success "Soluzione"
     === "AWS"
@@ -221,7 +221,7 @@ differenza frequente rispetto ad AWS.
         rm -rf "$tmp"
         ```
         **Spiegazione.** `gcloud storage rm --recursive gs://NOME` elimina gli oggetti e poi il bucket stesso.
-        Le opzioni di creazione impongono subito le protezioni della lezione 4.6.
+        Le opzioni di creazione impongono subito le protezioni della [lezione 4.6](06-storage.md).
 
 ## Verifica rapida
 

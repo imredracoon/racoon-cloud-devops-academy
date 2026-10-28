@@ -8,7 +8,7 @@
 
 ## DNS gestito
 
-Ripassa la lezione 1.8: il DNS traduce nomi in indirizzi, con record di tipo A, AAAA, CNAME, MX, TXT, e un **TTL** che
+Ripassa la [lezione 1.8](../fase-1/08-dns-routing.md): il DNS traduce nomi in indirizzi, con record di tipo A, AAAA, CNAME, MX, TXT, e un **TTL** che
 dice per quanto tempo i resolver possono conservare la risposta.
 
 === "AWS"
@@ -51,7 +51,7 @@ balancer istantaneo: i client conservano le risposte per il TTL. Per failover ra
 
 ## La CDN
 
-Una **CDN** conserva copie dei contenuti nei punti di presenza (lezione 4.2): l'utente riceve la risposta dal PoP più
+Una **CDN** conserva copie dei contenuti nei punti di presenza ([lezione 4.2](../fase-4/02-infrastruttura-globale.md)): l'utente riceve la risposta dal PoP più
 vicino e l'**origine** (il bucket, il load balancer) riceve molte meno richieste.
 
 === "AWS"
@@ -109,7 +109,7 @@ lo stesso risultato si ottiene con i load balancer globali e il livello di rete 
 
     === "Google Cloud"
 
-        1. Nel servizio di backend del load balancer della lezione 5.2, attiva **Cloud CDN** con modalità di cache
+        1. Nel servizio di backend del load balancer della [lezione 5.2](02-ha-scaling.md), attiva **Cloud CDN** con modalità di cache
            **Usa le impostazioni dell'origine** (*USE_ORIGIN_HEADERS*): la Tasks API non invia intestazioni di cache,
            quindi le risposte non vengono conservate.
         2. Prova `curl -sI http://IP-DEL-LB/health` più volte.

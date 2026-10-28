@@ -212,7 +212,7 @@ Un alert passa per tre stati: **inactive**, **pending** (la condizione è vera m
 ## Laboratorio
 
 !!! laboratorio "Laboratorio · Prometheus e la Tasks API"
-    Nella cartella `labs/tasks-api` (con il file `.env` della Fase 3):
+    Nella cartella `labs/tasks-api` (con il file `.env` della [Fase 3](../fase-3/index.md)):
 
     ```bash
     docker compose -f compose.yaml -f compose.osservabilita.yaml up -d --build

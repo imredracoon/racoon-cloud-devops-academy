@@ -20,18 +20,18 @@ acquistare. Leggi anche le [istruzioni importanti per CKA e CKAD](https://docs.l
 
 ## Quando sostenerla
 
-Dopo la [Fase 8](../../fase-8/index.md), compresa la lezione 8.12 su kubeadm: backup e ripristino di etcd,
+Dopo la [Fase 8](../../fase-8/index.md), compresa la [lezione 8.12](../../fase-8/12-kubeadm.md) su kubeadm: backup e ripristino di etcd,
 aggiornamento del cluster e risoluzione dei guasti dei nodi sono argomenti d'esame che kind da solo non copre.
 
 ## Piano di studio (6 settimane)
 
 | Settimana | Attività |
 |---|---|
-| 1 | Velocità con `kubectl`: alias, completamento, `--dry-run=client -o yaml`, `kubectl explain`. Ripasso 8.2-8.4 |
-| 2 | Service, DNS, Gateway API, Ingress, Network Policy (8.5, 8.9, 8.10) |
-| 3 | Storage, configurazione, scheduling, autoscaling (8.6-8.8) |
-| 4 | RBAC, kubeadm, etcd, aggiornamenti, Helm, Kustomize, CRD (8.11-8.13) |
-| 5 | Troubleshooting su cluster kubeadm: nodi, componenti, applicazioni, rete (8.14) |
+| 1 | Velocità con `kubectl`: alias, completamento, `--dry-run=client -o yaml`, `kubectl explain`. Ripasso [8.2](../../fase-8/02-kubectl.md)-[8.4](../../fase-8/04-deployment.md) |
+| 2 | Service, DNS, Gateway API, Ingress, Network Policy ([8.5](../../fase-8/05-service.md), [8.9](../../fase-8/09-ingress.md), [8.10](../../fase-8/10-networkpolicy.md)) |
+| 3 | Storage, configurazione, scheduling, autoscaling ([8.6](../../fase-8/06-config.md)-[8.8](../../fase-8/08-scheduling.md)) |
+| 4 | RBAC, kubeadm, etcd, aggiornamenti, Helm, Kustomize, CRD ([8.11](../../fase-8/11-rbac.md)-[8.13](../../fase-8/13-helm-kustomize.md)) |
+| 5 | Troubleshooting su cluster kubeadm: nodi, componenti, applicazioni, rete ([8.14](../../fase-8/14-troubleshooting.md)) |
 | 6 | Esami pratici a tempo con questa simulazione, poi le due sessioni Killer.sh incluse nell'acquisto |
 
 !!! tip "Usa le sessioni Killer.sh alla fine"

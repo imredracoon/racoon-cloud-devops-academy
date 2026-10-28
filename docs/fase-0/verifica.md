@@ -1,6 +1,6 @@
 # Verifica di fine fase 0
 
-Rispondi a tutte le domande senza consultare le lezioni. Passa alla Fase 1 quando ottieni **almeno l'80%**
+Rispondi a tutte le domande senza consultare le lezioni. Passa alla [Fase 1](../fase-1/index.md) quando ottieni **almeno l'80%**
 (12 risposte corrette su 15). Se non ci arrivi, ripassa le lezioni indicate nelle spiegazioni e riprova
 dopo un giorno.
 

@@ -77,7 +77,7 @@ migliora.
 ## Laboratorio: tre guasti
 
 !!! laboratorio "Laboratorio · Guasti da risolvere · 2 ore"
-    **Dove:** VM `lab` con la configurazione della lezione 1.12 funzionante (Nginx in HTTPS davanti all'app sulla
+    **Dove:** VM `lab` con la configurazione della [lezione 1.12](12-http-nginx.md) funzionante (Nginx in HTTPS davanti all'app sulla
     porta 8000) e VM `client`. Fai uno **snapshot** prima di iniziare.
 
     Per ogni scenario: esegui su `lab` il comando che introduce il guasto **senza leggerlo con attenzione** (meglio
@@ -115,7 +115,7 @@ migliora.
 ??? success "Soluzione: scenario C"
     **Sintomo:** da `client` qualsiasi richiesta ad `app.lab` va in timeout, mentre `curl -k https://IP-LAB` con
     l'IP funziona. **Indizio decisivo:** `getent hosts app.lab` restituisce `10.255.255.1`, un indirizzo che non è
-    quello di `lab`. `dig app.lab` non aiuta, perché non legge `/etc/hosts` (lezione 1.8).
+    quello di `lab`. `dig app.lab` non aiuta, perché non legge `/etc/hosts` ([lezione 1.8](08-dns-routing.md)).
     **Causa:** risoluzione del nome sbagliata. **Correzione:** ripristina l'IP corretto in `/etc/hosts`.
 
     **Lezione generale:** quando con l'IP funziona e con il nome no, il problema è nella risoluzione dei nomi.

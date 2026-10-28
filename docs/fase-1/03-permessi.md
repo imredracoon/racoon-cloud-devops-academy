@@ -19,7 +19,7 @@ raggruppati in **gruppi** per assegnare permessi a più persone insieme.
 
 | File | Contenuto |
 |---|---|
-| `/etc/passwd` | Elenco degli utenti (lo hai visto nella lezione 1.2). Leggibile da tutti. |
+| `/etc/passwd` | Elenco degli utenti (lo hai visto nella [lezione 1.2](02-file-testo.md)). Leggibile da tutti. |
 | `/etc/shadow` | Le password, conservate come **hash** (impronta crittografica). Leggibile solo da root. |
 | `/etc/group` | Elenco dei gruppi e dei loro membri. |
 
@@ -44,7 +44,7 @@ sudo -u www-data whoami      # esegue un comando come un altro utente
 Chi può usare `sudo` è definito in `/etc/sudoers` e nei file in `/etc/sudoers.d/`. Su Ubuntu basta far parte del
 gruppo `sudo`; su Red Hat del gruppo `wheel`. Il file **va modificato solo con `sudo visudo`**, che controlla la
 sintassi prima di salvare: un errore in quel file può impedire a tutti di diventare amministratori.
-Ogni uso di sudo viene registrato nei log (lezione 1.4), così si sa chi ha fatto cosa.
+Ogni uso di sudo viene registrato nei log ([lezione 1.4](04-processi-systemd.md)), così si sa chi ha fatto cosa.
 
 ## Gestire utenti e gruppi
 

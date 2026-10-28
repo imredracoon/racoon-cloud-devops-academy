@@ -30,7 +30,7 @@ flowchart TB
 ```
 
 Con la virtualizzazione un server fisico viene sfruttato molto meglio e una nuova "macchina" si crea in pochi
-minuti. Le **vCPU** di cui hai letto nella lezione 0.1 sono le CPU virtuali assegnate a una VM. Anche la VM del
+minuti. Le **vCPU** di cui hai letto nella [lezione 0.1](01-computer.md) sono le CPU virtuali assegnate a una VM. Anche la VM del
 corso, creata con Multipass, funziona così.
 
 ### Il cloud
@@ -83,9 +83,9 @@ pieni di attriti.
 software **più spesso e in modo più affidabile**. Le idee principali:
 
 - **Automazione** di tutto ciò che è ripetitivo: test, rilasci, creazione dell'infrastruttura.
-- **Integrazione e rilascio continui** (CI/CD): ogni modifica viene verificata e rilasciata in automatico (Fase 7).
-- **Infrastructure as Code**: l'infrastruttura si descrive con file di testo versionati, come il codice (Fase 6).
-- **Monitoraggio e feedback**: misurare cosa succede in produzione per accorgersi subito dei problemi (Fase 7).
+- **Integrazione e rilascio continui** (CI/CD): ogni modifica viene verificata e rilasciata in automatico ([Fase 7](../fase-7/index.md)).
+- **Infrastructure as Code**: l'infrastruttura si descrive con file di testo versionati, come il codice ([Fase 6](../fase-6/index.md)).
+- **Monitoraggio e feedback**: misurare cosa succede in produzione per accorgersi subito dei problemi ([Fase 7](../fase-7/index.md)).
 - **Responsabilità condivisa**: il team che costruisce un servizio se ne occupa anche in produzione.
 
 Il programma di ricerca **DORA** (oggi parte di Google Cloud) studia da anni le prestazioni dei team software e

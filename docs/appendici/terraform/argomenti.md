@@ -1,6 +1,6 @@
 # Argomenti specifici · Terraform Associate (004)
 
-Gli obiettivi ufficiali (1a-8d) con le lezioni della Fase 6. HashiCorp non pubblica pesi per obiettivo: quelli
+Gli obiettivi ufficiali (1a-8d) con le lezioni della [Fase 6](../../fase-6/index.md). HashiCorp non pubblica pesi per obiettivo: quelli
 indicati sono le stime usate dalla simulazione, in base al numero di sotto-obiettivi.
 
 ## 1 · Infrastructure as Code with Terraform (~8%)

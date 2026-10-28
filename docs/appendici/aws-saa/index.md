@@ -38,10 +38,10 @@ Dopo la [Fase 5](../../fase-5/index.md) e il suo progetto. Prima di prenotare de
 
 | Settimane | Attività |
 |---|---|
-| 1-2 | *Design Secure Architectures*: ripasso 4.4, 5.1, 5.6. IAM e policy, VPC, cifratura, Organizations e SCP |
-| 3-4 | *Design Resilient Architectures*: ripasso 5.2, 5.4, 5.5. Multi-AZ, Auto Scaling, disaccoppiamento, disaster recovery |
-| 5 | *Design High-Performing Architectures*: ripasso 5.3, 5.7, 5.9. Scelta di storage, database, cache, CDN |
-| 6 | *Design Cost-Optimized Architectures*: ripasso 4.9, 5.10. Modelli di prezzo, classi di storage, costi di rete |
+| 1-2 | *Design Secure Architectures*: ripasso [4.4](../../fase-4/04-iam.md), [5.1](../../fase-5/01-vpc.md), [5.6](../../fase-5/06-sicurezza.md). IAM e policy, VPC, cifratura, Organizations e SCP |
+| 3-4 | *Design Resilient Architectures*: ripasso [5.2](../../fase-5/02-ha-scaling.md), [5.4](../../fase-5/04-database.md), [5.5](../../fase-5/05-messaggistica.md). Multi-AZ, Auto Scaling, disaccoppiamento, disaster recovery |
+| 5 | *Design High-Performing Architectures*: ripasso [5.3](../../fase-5/03-storage.md), [5.7](../../fase-5/07-dns-cdn.md), [5.9](../../fase-5/09-container-serverless.md). Scelta di storage, database, cache, CDN |
+| 6 | *Design Cost-Optimized Architectures*: ripasso [4.9](../../fase-4/09-costi.md), [5.10](../../fase-5/10-well-architected.md). Modelli di prezzo, classi di storage, costi di rete |
 | 7-8 | Esami completi, ripasso degli errori, approfondimento dei servizi dove sbagli di più |
 
 ## Risorse ufficiali gratuite

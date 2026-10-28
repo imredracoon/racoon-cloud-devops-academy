@@ -79,7 +79,7 @@ sudo renice -n 5 -p 1234                  # cambia la priorità di un processo e
 ## systemd
 
 **systemd** è il sistema di avvio e di gestione dei servizi di quasi tutte le distribuzioni moderne. Gestisce
-**unità** (*unit*) di vari tipi: `.service` (servizi), `.timer` (pianificazioni, lezione 2.5), `.socket`,
+**unità** (*unit*) di vari tipi: `.service` (servizi), `.timer` (pianificazioni, [lezione 2.5](../fase-2/05-pianificazione.md)), `.socket`,
 `.mount`, `.target` (gruppi di unità, l'equivalente dei vecchi *runlevel*).
 
 ### systemctl

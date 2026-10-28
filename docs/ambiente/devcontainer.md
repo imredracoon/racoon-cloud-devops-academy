@@ -57,7 +57,7 @@ Questa strada non ha limiti di ore, ma richiede di installare due programmi.
 
 ### 1. Installa Docker
 
-Docker è il programma che esegue i container. Lo studierai a fondo nella Fase 3.
+Docker è il programma che esegue i container. Lo studierai a fondo nella [Fase 3](../fase-3/index.md).
 
 === "Windows"
 
@@ -103,7 +103,7 @@ docker run --rm hello-world
 ```
 
 Se compare il messaggio `Hello from Docker!`, l'ambiente è pronto. Il comando scarica una piccola immagine di
-prova e la esegue: capirai ogni parola nella Fase 3.
+prova e la esegue: capirai ogni parola nella [Fase 3](../fase-3/index.md).
 
 ## Problemi frequenti
 

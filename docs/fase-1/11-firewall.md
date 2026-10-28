@@ -108,7 +108,7 @@ Le modifiche al volo **non sono permanenti**: riportale in `/etc/nftables.conf`.
 ## NAT con nftables
 
 Per far uscire su Internet una rete privata attraverso questa macchina (che deve avere `ip_forward` attivo,
-lezione 1.8):
+[lezione 1.8](08-dns-routing.md)):
 
 ```nft
 table ip nat {
@@ -189,7 +189,7 @@ a vicenda. Su un server scegli un solo strumento.
 
 !!! note "Nel cloud"
     I fornitori cloud offrono firewall di rete gestiti: i **security group** di AWS e le **regole firewall VPC** di
-    Google Cloud (Fase 4 e 5). Si usano **insieme** al firewall dell'host, secondo il principio della *difesa in
+    Google Cloud ([Fase 4](../fase-4/index.md) e 5). Si usano **insieme** al firewall dell'host, secondo il principio della *difesa in
     profondità*.
 
 ## Laboratorio
@@ -201,7 +201,7 @@ a vicenda. Su un server scegli un solo strumento.
     2. Da `client` verifica che entrambe le porte rispondano.
     3. Applica il firewall dell'esempio.
     4. Da `client` verifica: SSH e porta 80 funzionano, la porta 9000 no. Che tipo di errore ottieni sulla 9000, e
-       perché è diverso da quello della lezione 1.9?
+       perché è diverso da quello della [lezione 1.9](09-diagnostica.md)?
     5. Trova nel journal di `lab` la riga che registra il pacchetto scartato.
     6. Rendi il firewall permanente e verifica dopo un riavvio.
 
@@ -236,7 +236,7 @@ a vicenda. Su un server scegli un solo strumento.
     sudo nft list ruleset | head
     ```
     **Spiegazione.** La regola finale fa **`drop`**: il pacchetto viene scartato senza risposta, quindi il client
-    aspetta fino al **timeout**. Nella lezione 1.9 ricevevi *Connection refused* perché il pacchetto arrivava al
+    aspetta fino al **timeout**. Nella [lezione 1.9](09-diagnostica.md) ricevevi *Connection refused* perché il pacchetto arrivava al
     kernel e nessuno ascoltava. Se usassi `reject` invece di `drop`, il client riceverebbe subito un rifiuto.
     `drop` rivela meno informazioni all'esterno; `reject` rende più rapida la diagnosi nelle reti interne.
 

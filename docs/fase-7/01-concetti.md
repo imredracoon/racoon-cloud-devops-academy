@@ -56,7 +56,7 @@ Principi:
 
 Nel cloud: gli Auto Scaling group e i gruppi di istanze gestite fanno aggiornamenti **rolling**; ECS supporta
 **blue/green** con CodeDeploy; Cloud Run divide il traffico tra **revisioni** per i rilasci **canary**; Route 53 con i
-record ponderati (lezione 5.7) permette il canary tra due ambienti. In Kubernetes (Fase 8) il rolling update è il
+record ponderati ([lezione 5.7](../fase-5/07-dns-cdn.md)) permette il canary tra due ambienti. In Kubernetes ([Fase 8](../fase-8/index.md)) il rolling update è il
 comportamento predefinito dei Deployment.
 
 ## Misurare: le metriche DORA

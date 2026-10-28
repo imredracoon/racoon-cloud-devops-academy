@@ -12,7 +12,7 @@
 |---|---|
 | **Durata indicativa** | 3 settimane, circa 25 ore |
 | **Prerequisiti** | Nessuno |
-| **Ambiente** | Il tuo computer; dalla lezione 0.7 la VM Linux e il Dev Container |
+| **Ambiente** | Il tuo computer; dalla [lezione 0.7](07-laboratorio.md) la VM Linux e il Dev Container |
 | **Progetto** | [Laboratorio documentato](progetto.md) |
 
 ## Perché iniziare da qui

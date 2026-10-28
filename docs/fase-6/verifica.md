@@ -1,6 +1,6 @@
 # Verifica di fine fase 6
 
-Passa alla Fase 7 quando ottieni **almeno l'80%** (20 risposte corrette su 25). Le spiegazioni indicano la lezione
+Passa alla [Fase 7](../fase-7/index.md) quando ottieni **almeno l'80%** (20 risposte corrette su 25). Le spiegazioni indicano la lezione
 da ripassare. Per l'esame Terraform Associate continua con l'[appendice dedicata](../appendici/terraform/index.md),
 che contiene una simulazione completa; per la RHCE con l'[appendice RHCE](../appendici/rhce/index.md).
 

@@ -26,9 +26,9 @@ uno state remoto con lock e almeno un `import`.
 
 | Settimana | Attività |
 |---|---|
-| 1 | Obiettivi 1-3: ripasso 6.1-6.3. Rifai il primo progetto da zero leggendo ogni output |
-| 2 | Obiettivi 4-6: ripasso 6.4-6.8. Allenati con `terraform console` su funzioni ed espressioni |
-| 3 | Obiettivi 7-8: ripasso 6.6 e 6.9. Esami completi e ripasso degli errori |
+| 1 | Obiettivi 1-3: ripasso [6.1](../../fase-6/01-iac.md)-[6.3](../../fase-6/03-workflow.md). Rifai il primo progetto da zero leggendo ogni output |
+| 2 | Obiettivi 4-6: ripasso [6.4](../../fase-6/04-risorse.md)-[6.8](../../fase-6/08-segreti.md). Allenati con `terraform console` su funzioni ed espressioni |
+| 3 | Obiettivi 7-8: ripasso [6.6](../../fase-6/06-state.md) e [6.9](../../fase-6/09-hcp.md). Esami completi e ripasso degli errori |
 
 ## Novità della versione 004 da non trascurare
 

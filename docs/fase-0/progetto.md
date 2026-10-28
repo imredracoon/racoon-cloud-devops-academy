@@ -19,7 +19,7 @@ Crea un repository pubblico che documenti il tuo ambiente di laboratorio e diven
 1. Repository pubblico `academy-lab` con un file `README.md` che contenga:
     - un'introduzione: chi sei e qual è l'obiettivo del repository;
     - la **descrizione dell'ambiente**: sistema operativo del tuo computer, risorse, VM `lab` (con le informazioni
-      raccolte nella lezione 0.7) e Dev Container;
+      raccolte nella [lezione 0.7](07-laboratorio.md)) e Dev Container;
     - un **diagramma** dell'ambiente scritto in Mermaid (vedi sotto);
     - le **istruzioni per ricreare** la VM da zero: comandi e file usati;
     - una tabella **Diario** con data, ore di studio e argomenti, da aggiornare ogni settimana.
@@ -42,7 +42,7 @@ flowchart LR
 
 ## Come caricare i file senza Git
 
-Git lo imparerai nella Fase 2. Per ora usa l'interfaccia web:
+Git lo imparerai nella [Fase 2](../fase-2/index.md). Per ora usa l'interfaccia web:
 
 1. Su GitHub premi **New repository**, chiamalo `academy-lab`, scegli **Public** e spunta **Add a README file**.
 2. Per modificare il README apri il file e premi l'icona della matita (**Edit**). Per salvare premi

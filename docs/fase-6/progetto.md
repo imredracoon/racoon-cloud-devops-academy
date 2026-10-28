@@ -61,7 +61,7 @@ Sui quattro nodi di `labs/ansible-lab` (copiati nel repository in `ansible/`), s
       validato con `visudo -cf %s`;
     - SSH: `PermitRootLogin no` e `PasswordAuthentication no`, con un handler che ricarica il servizio (si chiama
       `ssh` su Ubuntu e `sshd` su RHEL: usa una variabile per famiglia di sistema);
-2. un ruolo **`tasks_api`** per il gruppo `app` che installa la Tasks API come nella Fase 2: utente di sistema,
+2. un ruolo **`tasks_api`** per il gruppo `app` che installa la Tasks API come nella [Fase 2](../fase-2/index.md): utente di sistema,
    ambiente virtuale Python, dipendenze, unità systemd con gunicorn, servizio attivo e abilitato;
 3. un playbook `sito.yml` che applica i ruoli, idempotente (seconda esecuzione con `changed=0`) e senza errori di
    `ansible-lint`.

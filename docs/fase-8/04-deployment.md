@@ -78,17 +78,17 @@ kubectl scale deployment/web --replicas=5
 !!! tip "Il motivo del cambiamento"
     `kubectl rollout history` mostra la colonna `CHANGE-CAUSE`, presa dall'annotazione `kubernetes.io/change-cause`.
     Impostala dopo un cambiamento con `kubectl annotate deployment/web kubernetes.io/change-cause="nginx 1.30"`.
-    In un flusso GitOps (lezione 8.15) lo storico vero è quello di Git.
+    In un flusso GitOps ([lezione 8.15](15-gitops-cloud.md)) lo storico vero è quello di Git.
 
 ### Blue/green e canary
 
-Le strategie della Fase 7 si realizzano anche con gli oggetti di base:
+Le strategie della [Fase 7](../fase-7/index.md) si realizzano anche con gli oggetti di base:
 
 - **Blue/green**: due Deployment (`web-blue`, `web-green`) con label `versione` diverse; il Service seleziona
   `versione: blue` e per passare a green basta cambiare il suo selettore.
 - **Canary**: due Deployment con la stessa label `app: web` selezionata dal Service, uno con 9 repliche della
   versione stabile e uno con 1 replica della nuova: circa il 10% del traffico va alla nuova. Con la Gateway API
-  (lezione 8.9) si possono assegnare pesi precisi, e strumenti come Argo Rollouts automatizzano tutto.
+  ([lezione 8.9](09-ingress.md)) si possono assegnare pesi precisi, e strumenti come Argo Rollouts automatizzano tutto.
 
 ## Gli altri controller
 

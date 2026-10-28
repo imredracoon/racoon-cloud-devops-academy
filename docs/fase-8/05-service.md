@@ -75,7 +75,7 @@ kubectl create service externalname db-esterno --external-name=db.example.com
 ```
 
 Per esporre applicazioni **HTTP** non si crea un `LoadBalancer` per ciascuna (sarebbe costoso): si usa un unico punto
-d'ingresso con regole per nome e percorso, la **Gateway API** o l'**Ingress** (lezione 8.9).
+d'ingresso con regole per nome e percorso, la **Gateway API** o l'**Ingress** ([lezione 8.9](09-ingress.md)).
 
 ### Il Service headless
 

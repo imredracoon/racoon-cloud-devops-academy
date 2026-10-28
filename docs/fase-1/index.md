@@ -13,7 +13,7 @@
 | | |
 |---|---|
 | **Durata indicativa** | 2,5-3 mesi, circa 90 ore (più circa 20 ore per ripetere i laboratori sulla seconda famiglia) |
-| **Prerequisiti** | Fase 0 |
+| **Prerequisiti** | [Fase 0](../fase-0/index.md) |
 | **Ambiente** | Percorso Debian/Ubuntu: VM `lab` e `client` (Multipass). Percorso RHEL: VM `rhel-lab` e `rhel-client` (Vagrant, AlmaLinux 10) |
 | **Progetto** | [Server web messo in sicurezza](progetto.md) |
 | **Certificazioni collegate** | [LFCS](../appendici/lfcs/index.md), [RHCSA](../appendici/rhcsa/index.md), [Canonical Academy](../appendici/canonical/index.md) (tutte facoltative) |
@@ -75,5 +75,5 @@ Nel percorso RHEL il `Vagrantfile` crea già entrambe le macchine (`rhel-lab` e 
 Poi il [progetto](progetto.md) e la [verifica di fine fase](verifica.md).
 
 !!! tip "Fai uno snapshot"
-    Prima di ogni lezione dalla 1.3 in poi, crea uno snapshot: `multipass stop lab` e `multipass snapshot lab`,
+    Prima di ogni lezione dalla [1.3](03-permessi.md) in poi, crea uno snapshot: `multipass stop lab` e `multipass snapshot lab`,
     oppure `vagrant snapshot save rhel-lab prima-lezione-X`. Se rompi qualcosa, torni indietro in un minuto.

@@ -20,7 +20,7 @@ Banca di oltre 110 domande originali in inglese sulle quattro sezioni della guid
     quella che rispetta **tutti** i vincoli dello scenario. Le domande con più risposte indicano quante sceglierne.
 
 !!! note "Consiglio specifico"
-    Molte domande chiedono il comando o l'impostazione esatta: allenati davvero nella console e con `gcloud` (lezione 4.10), non solo sulle domande.
+    Molte domande chiedono il comando o l'impostazione esatta: allenati davvero nella console e con `gcloud` ([lezione 4.10](../../fase-4/10-cli.md)), non solo sulle domande.
 
 Torna alla [scheda dell'esame](index.md) per iscrizione e regole, o agli [argomenti specifici](argomenti.md) per
 ripassare.

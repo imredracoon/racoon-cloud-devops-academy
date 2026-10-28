@@ -8,15 +8,15 @@
 ## Perché una macchina virtuale
 
 Una **macchina virtuale** (VM) è un computer simulato da un programma: ha un suo processore virtuale, la sua
-memoria, i suoi dischi e il suo sistema operativo completo. Nella Fase 1 impari a gestire un server Linux vero:
+memoria, i suoi dischi e il suo sistema operativo completo. Nella [Fase 1](../fase-1/index.md) impari a gestire un server Linux vero:
 servizi che partono all'avvio, dischi, firewall, utenti. Un container condivide parti del sistema con il computer
 che lo ospita e non permette di esercitarsi su tutto questo; una VM sì.
 
 ## Due famiglie, due laboratori
 
-Nel mondo dei server Linux dominano due famiglie (lezione 0.2): **Debian/Ubuntu** e **Red Hat Enterprise Linux
+Nel mondo dei server Linux dominano due famiglie ([lezione 0.2](../fase-0/02-sistemi-operativi.md)): **Debian/Ubuntu** e **Red Hat Enterprise Linux
 (RHEL)** con le distribuzioni compatibili **Rocky Linux** e **AlmaLinux**. Le aziende usano l'una o l'altra, spesso
-entrambe, e gli annunci di lavoro le chiedono tutte e due. Per questo nella Fase 1 ogni argomento che cambia tra le
+entrambe, e gli annunci di lavoro le chiedono tutte e due. Per questo nella [Fase 1](../fase-1/index.md) ogni argomento che cambia tra le
 due famiglie è presentato in schede affiancate, e i laboratori si possono svolgere su entrambe.
 
 | Percorso | Distribuzione | Strumento | Certificazioni collegate |

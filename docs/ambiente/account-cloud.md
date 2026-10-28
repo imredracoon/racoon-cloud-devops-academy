@@ -1,8 +1,8 @@
 # Account cloud in sicurezza
 
 !!! warning "Non creare ancora gli account"
-    Gli account cloud servono dalla **Fase 4**. Le offerte per i nuovi clienti durano pochi mesi: se li apri adesso,
-    le perderai prima di poterle usare. Leggi questa pagina quando arrivi alla lezione 4.3.
+    Gli account cloud servono dalla **[Fase 4](../fase-4/index.md)**. Le offerte per i nuovi clienti durano pochi mesi: se li apri adesso,
+    le perderai prima di poterle usare. Leggi questa pagina quando arrivi alla [lezione 4.3](../fase-4/03-account.md).
 
 !!! obiettivi "Obiettivi"
     - Sapere cosa offrono AWS e Google Cloud ai nuovi clienti.
@@ -45,10 +45,10 @@ molto basso. Sono le stesse pratiche che un'azienda seria applica ai propri acco
 1. **Autenticazione a più fattori (MFA)** su ogni utente, a partire dall'utente principale. Usa un'app di
    autenticazione sul telefono o una chiave di sicurezza fisica.
 2. **Non usare l'utente principale** (*root user* su AWS) per il lavoro quotidiano: crea un utente amministratore
-   separato. Lo vedrai nella lezione 4.4.
+   separato. Lo vedrai nella [lezione 4.4](../fase-4/04-iam.md).
 3. **Budget e allarmi** prima di qualsiasi altra cosa: un avviso via email a 1, 5 e 10 USD.
 4. **Mai pubblicare chiavi di accesso**. Non vanno mai in un repository Git, nemmeno privato. Nel corso userai
-   credenziali temporanee e, dalla Fase 7, l'accesso senza chiavi tramite OIDC.
+   credenziali temporanee e, dalla [Fase 7](../fase-7/index.md), l'accesso senza chiavi tramite OIDC.
 5. **Distruggi le risorse alla fine di ogni laboratorio**. Ogni laboratorio cloud termina con una sezione
    *Pulizia*: non saltarla mai.
 6. **Una sola regione** per tutto il corso, così trovi sempre le tue risorse. Consigliamo `eu-south-1` (Milano)

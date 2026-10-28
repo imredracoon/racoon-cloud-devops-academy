@@ -90,8 +90,8 @@ Questo schema si chiama **fan-out**: un messaggio, più destinatari indipendenti
 
 Poiché quasi tutti i sistemi garantiscono la consegna **almeno una volta**, un messaggio può arrivare **due volte**.
 I consumatori devono essere **idempotenti**: elaborare due volte lo stesso messaggio non deve produrre effetti doppi
-(per esempio, si registra l'ID dei messaggi già elaborati). È lo stesso concetto di idempotenza degli script (Fase 1)
-e dei metodi HTTP (lezione 2.8).
+(per esempio, si registra l'ID dei messaggi già elaborati). È lo stesso concetto di idempotenza degli script ([Fase 1](../fase-1/index.md))
+e dei metodi HTTP ([lezione 2.8](../fase-2/08-flask.md)).
 
 ## Orchestrare e pianificare
 

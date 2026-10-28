@@ -122,7 +122,7 @@ quando un dato cambia, la copia in cache va aggiornata o cancellata.
 ## Laboratorio
 
 !!! laboratorio "Laboratorio · Un database condiviso per la Tasks API"
-    Riprendi l'architettura del laboratorio 5.2 e risolvi il problema dei dati diversi su ogni istanza.
+    Riprendi l'architettura del laboratorio [5.2](02-ha-scaling.md#laboratorio) e risolvi il problema dei dati diversi su ogni istanza.
 
     === "AWS"
 
@@ -141,10 +141,10 @@ quando un dato cambia, la copia in cache va aggiornata o cancellata.
             ```
 
         5. Imposta la nuova versione come predefinita nell'ASG e avvia un **instance refresh**.
-        6. Ripeti la prova della lezione 5.2: ora `POST` e `GET` danno risultati coerenti, qualunque istanza risponda.
+        6. Ripeti la prova della [lezione 5.2](02-ha-scaling.md): ora `POST` e `GET` danno risultati coerenti, qualunque istanza risponda.
 
         **Pulizia.** Elimina il database (senza snapshot finale, per un laboratorio), il subnet group e le risorse della
-        lezione 5.2.
+        [lezione 5.2](02-ha-scaling.md).
 
     === "Google Cloud"
 
@@ -159,15 +159,15 @@ quando un dato cambia, la copia in cache va aggiornata o cancellata.
         5. Crea un nuovo modello di istanza con lo script di avvio che passa
            `-e DATABASE_URL='postgresql+psycopg://tasks:PASSWORD@IP-PRIVATO:5432/tasks'`, e aggiorna il MIG al nuovo
            modello (**Aggiorna le VM** → sostituzione progressiva).
-        6. Ripeti la prova della lezione 5.2: i dati sono coerenti.
+        6. Ripeti la prova della [lezione 5.2](02-ha-scaling.md): i dati sono coerenti.
 
         **Pulizia.** Elimina l'istanza Cloud SQL (disattiva prima la protezione dall'eliminazione), la connessione
-        privata e l'intervallo allocato, e le risorse della lezione 5.2.
+        privata e l'intervallo allocato, e le risorse della [lezione 5.2](02-ha-scaling.md).
 
 ??? success "Spiegazione e il prossimo problema"
     Ora tutte le istanze condividono lo stesso database: l'applicazione è davvero **senza stato** e può scalare. Ma
     guarda lo script di avvio: la **password del database è scritta in chiaro** nel launch template o nel modello di
-    istanza, visibile a chiunque possa leggerli. Nella lezione 5.6 la sposterai in un gestore di segreti.
+    istanza, visibile a chiunque possa leggerli. Nella [lezione 5.6](06-sicurezza.md) la sposterai in un gestore di segreti.
 
 ## Esercizi
 

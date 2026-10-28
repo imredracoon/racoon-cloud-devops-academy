@@ -144,7 +144,7 @@ GitHub non accetta la password del tuo account per Git. Hai due strade:
     gh auth login          # scegli GitHub.com, HTTPS, accedi con il browser
     ```
 
-- **SSH**: genera una chiave come nella lezione 1.10 e aggiungi la parte pubblica su GitHub in
+- **SSH**: genera una chiave come nella [lezione 1.10](../fase-1/10-ssh.md) e aggiungi la parte pubblica su GitHub in
   Settings → SSH and GPG keys.
 
 In GitHub Codespaces sei già autenticato per il repository del codespace.

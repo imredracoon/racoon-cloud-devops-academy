@@ -19,7 +19,7 @@ gestire centinaia di oggetti scritti da altri. Due strumenti, complementari, ris
 | Dove | comando `helm` | integrato in `kubectl` (`kubectl apply -k`) |
 | Uso tipico | installare componenti di terzi | gestire le proprie applicazioni per ambiente |
 
-Si usano spesso insieme, e Argo CD (lezione 8.15) li supporta entrambi.
+Si usano spesso insieme, e Argo CD ([lezione 8.15](15-gitops-cloud.md)) li supporta entrambi.
 
 ## Helm
 

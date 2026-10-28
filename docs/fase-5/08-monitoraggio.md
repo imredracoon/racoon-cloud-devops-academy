@@ -7,7 +7,7 @@
     - Verificare la conformità delle configurazioni nel tempo.
     - Tracciare le richieste attraverso più servizi.
 
-Nella Fase 7 approfondirai l'osservabilità con strumenti open source (Prometheus, Grafana, Loki). Qui usi i servizi
+Nella [Fase 7](../fase-7/index.md) approfondirai l'osservabilità con strumenti open source (Prometheus, Grafana, Loki). Qui usi i servizi
 nativi dei due cloud, che ogni architettura dovrebbe avere fin dal primo giorno.
 
 ## Metriche, log, allarmi
@@ -94,7 +94,7 @@ chi, quando, da dove, cosa, con quale esito. È indispensabile per la sicurezza,
 ## Laboratorio
 
 !!! laboratorio "Laboratorio · Allarme e indagine"
-    Con l'architettura del laboratorio 5.2 attiva:
+    Con l'architettura del laboratorio [5.2](02-ha-scaling.md#laboratorio) attiva:
 
     === "AWS"
 

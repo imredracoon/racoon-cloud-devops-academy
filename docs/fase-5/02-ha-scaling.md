@@ -100,8 +100,8 @@ integrità** (*health check*): una destinazione che non risponde correttamente s
 ## Laboratorio
 
 !!! laboratorio "Laboratorio · La Tasks API dietro un load balancer"
-    Usa l'immagine pubblicata nella Fase 3 (`ghcr.io/TUO-UTENTE/tasks-api:1.1.0`, pubblica) e la rete del laboratorio
-    5.1. Script di avvio delle istanze:
+    Usa l'immagine pubblicata nella [Fase 3](../fase-3/index.md) (`ghcr.io/TUO-UTENTE/tasks-api:1.1.0`, pubblica) e la rete del laboratorio
+    [5.1](01-vpc.md). Script di avvio delle istanze:
 
     ```bash title="avvio-tasks.sh"
     #!/bin/bash
@@ -145,7 +145,7 @@ integrità** (*health check*): una destinazione che non risponde correttamente s
     Il campo `host` di `/health` mostra quale istanza ha risposto: il load balancer distribuisce le richieste. Ora prova
     a creare un'attività con `POST /tasks` e poi a leggere `GET /tasks` più volte: **a volte c'è, a volte no**. Ogni
     istanza usa il proprio database SQLite locale: l'applicazione, con questa configurazione, **ha uno stato**. È
-    esattamente il problema che risolverai nella lezione 5.4 con un database gestito condiviso.
+    esattamente il problema che risolverai nella [lezione 5.4](04-database.md) con un database gestito condiviso.
 
 ## Esercizi
 

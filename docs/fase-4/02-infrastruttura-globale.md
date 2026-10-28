@@ -54,14 +54,14 @@ Non tutti i servizi "vivono" allo stesso livello:
 | **Regionale**: replicato automaticamente su più zone | bucket S3, tabella DynamoDB, VPC | bucket di Cloud Storage regionale, subnet |
 | **Globale** | IAM, Route 53, CloudFront | IAM, rete VPC, Cloud DNS, load balancer esterno globale |
 
-Una differenza importante, che ritroverai nella lezione 4.7: su AWS una **VPC** è regionale e una subnet sta in **una
+Una differenza importante, che ritroverai nella [lezione 4.7](07-rete.md): su AWS una **VPC** è regionale e una subnet sta in **una
 sola AZ**; su Google Cloud una **rete VPC** è **globale** e le subnet sono **regionali**.
 
 ## Alta disponibilità: perché più zone
 
 Un'applicazione su una sola VM in una sola zona si ferma se si guasta la VM o la zona. Per l'**alta disponibilità**
 si distribuiscono più copie dell'applicazione in **almeno due zone** della stessa regione, con un load balancer
-davanti (Fase 5). La regola d'oro dei fornitori: **progetta pensando che tutto si guasta, sempre** (*design for
+davanti ([Fase 5](../fase-5/index.md)). La regola d'oro dei fornitori: **progetta pensando che tutto si guasta, sempre** (*design for
 failure*).
 
 Più regioni servono invece per:
@@ -134,7 +134,7 @@ città, collegati alla loro rete privata. Servono a:
 
     Miglioramenti: le due VM in **due zone diverse**; un database gestito con replica sincrona in un'altra zona
     (**Multi-AZ** su RDS, **alta disponibilità regionale** su Cloud SQL), che passa automaticamente sulla replica in
-    caso di guasto. Lo costruirai nella Fase 5.
+    caso di guasto. Lo costruirai nella [Fase 5](../fase-5/index.md).
 
 ## Verifica rapida
 

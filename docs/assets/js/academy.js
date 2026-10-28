@@ -27,6 +27,36 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
+  // Richiami alle lezioni ("lezione 1.6", "lezioni 4.1, 4.2", "Fase 3") trasformati in collegamenti,
+  // con gli indirizzi presi dal menu di navigazione.
+  var lessonMap = null;
+  function lessonHref(key) {
+    if (!lessonMap) {
+      lessonMap = {};
+      var links = document.querySelectorAll(".md-nav--primary a.md-nav__link[href]");
+      Array.prototype.forEach.call(links, function (a) {
+        var m = a.textContent.trim().match(/^(\d\.\d{1,2}) /);
+        if (m && !lessonMap[m[1]]) lessonMap[m[1]] = new URL(a.getAttribute("href"), location.href).href;
+      });
+      var base = window.__md_scope || new URL(".", location.href);
+      for (var i = 0; i <= 8; i++) lessonMap["fase-" + i] = new URL("fase-" + i + "/", base).href;
+    }
+    var href = lessonMap[key];
+    if (!href || new URL(href).pathname === location.pathname) return null;
+    return href;
+  }
+  function linkLessons(t) {
+    function a(key, label) {
+      var href = lessonHref(key);
+      return href ? '<a href="' + href + '">' + label + "</a>" : label;
+    }
+    return t
+      .replace(/\b([Ll]ezion[ei]) (\d\.\d{1,2}(?:(?:, | e | o |-)\d\.\d{1,2})*)(?![\d.]\d)/g, function (all, word, list) {
+        if (/^\d\.\d{1,2}$/.test(list)) return a(list, all);
+        return word + " " + list.replace(/\d\.\d{1,2}/g, function (n) { return a(n, n); });
+      })
+      .replace(/\bFase ([0-8])\b/g, function (all, n) { return a("fase-" + n, all); });
+  }
   // Markdown minimo: blocchi ```, `codice`, **grassetto**, a capo.
   function md(s) {
     var parts = String(s).split("```");
@@ -36,6 +66,9 @@
         return "<pre><code>" + esc(body.replace(/\n$/, "")) + "</code></pre>";
       }
       return esc(p)
+        .split("`")
+        .map(function (t, j) { return j % 2 ? "`" + t + "`" : linkLessons(t); })
+        .join("")
         .replace(/`([^`]+)`/g, "<code>$1</code>")
         .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
         .replace(/\n/g, "<br>");

@@ -38,7 +38,7 @@ flowchart TD
   esecuzioni (*runs*), le sue impostazioni (versione di Terraform, cartella di lavoro, repository collegato).
 
 !!! note "Due tipi di workspace"
-    I workspace di HCP Terraform **non** sono i workspace della CLI della lezione 6.6. In HCP Terraform di solito si
+    I workspace di HCP Terraform **non** sono i workspace della CLI della [lezione 6.6](06-state.md). In HCP Terraform di solito si
     crea un workspace per ogni combinazione configurazione/ambiente (per esempio `tasks-api-dev` e `tasks-api-prod`).
 
 ## I flussi di lavoro
@@ -88,7 +88,7 @@ etichette aziendali).
 Per le credenziali dei cloud la soluzione raccomandata sono le **credenziali dinamiche dei provider**: HCP Terraform
 si autentica ad AWS o Google Cloud con **OIDC** (*workload identity federation*) e riceve credenziali temporanee a ogni
 esecuzione. Nessuna chiave di lunga durata salvata da nessuna parte. Vedrai lo stesso meccanismo con GitHub Actions
-nella Fase 7.
+nella [Fase 7](../fase-7/index.md).
 
 ## Collaborazione e governance
 

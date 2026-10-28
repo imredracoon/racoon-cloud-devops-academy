@@ -8,7 +8,7 @@
     - Sapere quali strumenti aiutano a migrare database e applicazioni verso il cloud.
 
 Questa lezione è una panoramica: molte domande degli esami Cloud Practitioner e Digital Leader chiedono di
-**scegliere il servizio giusto** per un caso d'uso. Nella Fase 5 userai davvero un database gestito con la Tasks API.
+**scegliere il servizio giusto** per un caso d'uso. Nella [Fase 5](../fase-5/index.md) userai davvero un database gestito con la Tasks API.
 
 ## Relazionali e non relazionali
 
@@ -24,7 +24,7 @@ Questa lezione è una panoramica: molte domande degli esami Cloud Practitioner e
 
 Installare PostgreSQL su una VM è possibile, ma tocca a te: installazione, aggiornamenti, backup, replica, failover,
 monitoraggio, scalabilità. Un **database gestito** fa tutto questo al posto tuo; tu ti occupi di schema, query,
-utenti, dimensionamento e configurazione di rete e sicurezza. È la responsabilità condivisa della lezione 4.1
+utenti, dimensionamento e configurazione di rete e sicurezza. È la responsabilità condivisa della [lezione 4.1](01-cloud-computing.md)
 applicata ai database.
 
 ## I servizi

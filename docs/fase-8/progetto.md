@@ -38,14 +38,14 @@
 
 ### Parte C · Il flusso di rilascio
 
-9. La pipeline della Fase 7, a ogni merge su `main`, costruisce l'immagine e **apre una pull request** che aggiorna
-   il tag nell'overlay `staging` (lezione 8.15). Il passaggio a `prod` è una seconda pull request, approvata a mano.
-10. Un **ServiceMonitor** per la Tasks API, la dashboard SLO della Fase 7 importata in Grafana come ConfigMap, e
+9. La pipeline della [Fase 7](../fase-7/index.md), a ogni merge su `main`, costruisce l'immagine e **apre una pull request** che aggiorna
+   il tag nell'overlay `staging` ([lezione 8.15](15-gitops-cloud.md)). Il passaggio a `prod` è una seconda pull request, approvata a mano.
+10. Un **ServiceMonitor** per la Tasks API, la dashboard SLO della [Fase 7](../fase-7/index.md) importata in Grafana come ConfigMap, e
     almeno una regola di alert come `PrometheusRule`.
 
 ### Parte D · Il giorno del disastro
 
-11. Uno script `scripts/backup-etcd.sh` che esegue lo snapshot di etcd (lezione 8.12) e un **runbook** di
+11. Uno script `scripts/backup-etcd.sh` che esegue lo snapshot di etcd ([lezione 8.12](12-kubeadm.md)) e un **runbook** di
     ripristino, provato: elimina un namespace, ripristina, documenta i tempi.
 12. Un documento `docs/game-day.md` con tre guasti provocati di proposito (un nodo fermo, un rilascio rotto, il
     database eliminato) e, per ciascuno: sintomi visti in Grafana, diagnosi, riparazione, tempo impiegato,

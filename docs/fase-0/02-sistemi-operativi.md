@@ -39,7 +39,7 @@ flowchart TB
   K --> H[Hardware<br>CPU, RAM, disco, rete]
 ```
 
-Ricorda questa divisione: nella Fase 3 scoprirai che i **container** si basano proprio su funzionalità del kernel
+Ricorda questa divisione: nella [Fase 3](../fase-3/index.md) scoprirai che i **container** si basano proprio su funzionalità del kernel
 Linux.
 
 ## Linux
@@ -84,7 +84,7 @@ vedrai anche le differenze con la famiglia Red Hat.
 - **Ecosistema**: container, Kubernetes e quasi tutti gli strumenti DevOps nascono per Linux.
 
 Sui principali cloud la maggior parte delle macchine virtuali usa Linux, e Kubernetes richiede Linux per i suoi
-nodi di controllo. Per questo la Fase 1 è dedicata interamente a Linux.
+nodi di controllo. Per questo la [Fase 1](../fase-1/index.md) è dedicata interamente a Linux.
 
 ## Esercizi
 

@@ -30,7 +30,7 @@ Su una VM nuova chiamata `web` (`multipass launch 24.04 --name web --cpus 1 --me
 3. **Aggiornamenti**: `unattended-upgrades` attivo.
 4. **Applicazione**: un servizio systemd `webapp.service` che esegue come utente `webapp` un'applicazione in ascolto
    su `127.0.0.1:8000`. Per ora va bene `python3 -m http.server` su una directory dedicata `/srv/webapp/public`
-   con una pagina `index.html`: nella Fase 2 la sostituirai con la tua API. Il servizio deve ripartire in caso di errore.
+   con una pagina `index.html`: nella [Fase 2](../fase-2/index.md) la sostituirai con la tua API. Il servizio deve ripartire in caso di errore.
 5. **Nginx**: reverse proxy verso l'applicazione, HTTPS con certificato autofirmato per `web.lab`, reindirizzamento
    permanente da HTTP a HTTPS, intestazione HSTS. Nessun sito di default attivo.
 6. **Firewall nftables**: politica `drop` in ingresso, aperte solo 22, 80 e 443; nuovi tentativi SSH limitati;
@@ -47,8 +47,8 @@ Il repository deve contenere:
 - `config/` con **tutti** i file di configurazione usati (unità systemd, file Nginx, `nftables.conf`, file sshd,
   `jail.local` di fail2ban), con commenti;
 - `setup.sh`: uno script che applica tutta la configurazione su una VM nuova (versione semplice: una sequenza di
-  comandi; la renderai robusta nella Fase 2);
-- `RUNBOOK.md`: "Il sito non risponde", come nella lezione 1.13;
+  comandi; la renderai robusta nella [Fase 2](../fase-2/index.md));
+- `RUNBOOK.md`: "Il sito non risponde", come nella [lezione 1.13](13-troubleshooting.md);
 - `VERIFICA.md`: l'elenco dei test che hai eseguito, con i comandi e i risultati attesi.
 
 !!! warning "Niente segreti nel repository"

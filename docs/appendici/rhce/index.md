@@ -24,14 +24,14 @@ Dati verificati il 28 ottobre 2026.
 
 ## Quando sostenerla
 
-Dopo la RHCSA e la [Fase 6](../../fase-6/index.md), lezione 6.10 compresa. Serve anche sicurezza con Git (Fase 2).
+Dopo la RHCSA e la [Fase 6](../../fase-6/index.md), [lezione 6.10](../../fase-6/10-ansible.md) compresa. Serve anche sicurezza con Git ([Fase 2](../../fase-2/index.md)).
 
 ## Il laboratorio
 
 - Per gran parte degli obiettivi basta il laboratorio del corso [`labs/ansible-lab`](https://github.com/imredracoon/racoon-cloud-devops-academy/tree/main/labs/ansible-lab):
   quattro nodi in container, due Ubuntu e due AlmaLinux.
 - **firewalld e SELinux** non sono attivi nei container: per quei task crea due o tre VM Rocky Linux 9 o
-  AlmaLinux 9 (come nella lezione 8.12) e aggiungile all'inventario.
+  AlmaLinux 9 (come nella [lezione 8.12](../../fase-8/12-kubeadm.md)) e aggiungile all'inventario.
 - Installa `ansible-navigator` e un execution environment, e prova anche il dev container di VS Code con
   l'estensione Ansible: all'esame userai entrambi.
 
@@ -39,7 +39,7 @@ Dopo la RHCSA e la [Fase 6](../../fase-6/index.md), lezione 6.10 compresa. Serve
 
 | Settimana | Attività |
 |---|---|
-| 1 | `ansible.cfg`, `ansible-navigator.yml`, inventari, comandi ad hoc, chiavi e sudo sui nodi (6.10) |
+| 1 | `ansible.cfg`, `ansible-navigator.yml`, inventari, comandi ad hoc, chiavi e sudo sui nodi ([6.10](../../fase-6/10-ansible.md)) |
 | 2 | Playbook: moduli comuni, variabili, fatti, `register`, cicli, condizioni, handler |
 | 3 | Gestione degli errori, template Jinja2, Ansible Vault |
 | 4 | Ruoli, `requirements.yml`, collection, ruoli di sistema RHEL |

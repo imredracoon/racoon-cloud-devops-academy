@@ -22,7 +22,7 @@ Git, rivisti in pull request e applicati da uno strumento. I vantaggi tipici:
 - **velocità**: un ambiente completo in minuti, e distrutto quando non serve (meno costi);
 - **cronologia e verifica**: `git log` racconta chi ha cambiato cosa e perché;
 - **collaborazione**: le modifiche passano da una revisione, come il codice applicativo;
-- **meno errori umani** e **ripristino** rapido dopo un disastro (lezione 5.10);
+- **meno errori umani** e **ripristino** rapido dopo un disastro ([lezione 5.10](../fase-5/10-well-architected.md));
 - **riuso**: moduli condivisi tra progetti.
 
 ## Dichiarativo e imperativo
@@ -50,7 +50,7 @@ configurazione non produce effetti diversi.
 - **Infrastruttura mutabile**: i server vengono aggiornati sul posto (patch, nuove versioni). Nel tempo ognuno diverge
   un po' dagli altri (*configuration drift*): i famosi "server fiocco di neve".
 - **Infrastruttura immutabile**: un server non si modifica, si **sostituisce** con uno nuovo creato da un'immagine
-  aggiornata. È il modello dei container e dei gruppi di autoscaling della Fase 5, e quello che Terraform favorisce:
+  aggiornata. È il modello dei container e dei gruppi di autoscaling della [Fase 5](../fase-5/index.md), e quello che Terraform favorisce:
   molte modifiche a una risorsa comportano la sua sostituzione.
 
 ## Come funziona Terraform
@@ -68,7 +68,7 @@ flowchart LR
 - Terraform non conosce nessun cloud: tutto passa dai **provider**, plugin che traducono le risorse in chiamate alle
   API. Ce ne sono migliaia nel **Terraform Registry**: cloud pubblici, ma anche GitHub, Cloudflare, Datadog,
   Kubernetes, database.
-- Lo **state** registra quali oggetti reali corrispondono alle risorse della configurazione (lezione 6.6).
+- Lo **state** registra quali oggetti reali corrispondono alle risorse della configurazione ([lezione 6.6](06-state.md)).
 
 Grazie ai provider, **lo stesso flusso di lavoro** gestisce infrastrutture **multi-cloud** (AWS e Google Cloud
 insieme), **ibride** (cloud e data center, per esempio con il provider di VMware vSphere) e servizi che non sono

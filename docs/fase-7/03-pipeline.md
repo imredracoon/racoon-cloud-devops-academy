@@ -10,7 +10,7 @@
 ## La pipeline della Tasks API
 
 La versione di riferimento è in `labs/tasks-api/.github/workflows/ci.yml`. Funziona quando la cartella `tasks-api` è
-la radice del repository, come quello che hai creato nella Fase 2.
+la radice del repository, come quello che hai creato nella [Fase 2](../fase-2/index.md).
 
 ```mermaid
 flowchart LR
@@ -173,7 +173,7 @@ Da quel momento ogni modifica passa dalla pipeline: è la CI nel senso pieno.
 
 ## Anche l'infrastruttura in pipeline
 
-Il codice Terraform della Fase 6 merita gli stessi controlli, che non richiedono credenziali:
+Il codice Terraform della [Fase 6](../fase-6/index.md) merita gli stessi controlli, che non richiedono credenziali:
 
 ```yaml
   terraform:
@@ -195,14 +195,14 @@ Il codice Terraform della Fase 6 merita gli stessi controlli, che non richiedono
           done
 ```
 
-`::group::` raggruppa le righe nel log. Il `plan` e l'`apply`, che richiedono l'accesso al cloud, sono nella lezione
-7.4.
+`::group::` raggruppa le righe nel log. Il `plan` e l'`apply`, che richiedono l'accesso al cloud, sono nella [lezione
+7.4](04-deploy-oidc.md).
 
 ## Laboratorio
 
 !!! laboratorio "Laboratorio · La pipeline della Tasks API"
     1. Aggiorna il tuo repository `tasks-api` con i file della versione di riferimento: `app.py` (con le metriche, che
-       studierai nella lezione 7.6), `gunicorn.conf.py`, `requirements*.txt`, `pyproject.toml`, `Dockerfile`,
+       studierai nella [lezione 7.6](06-prometheus.md)), `gunicorn.conf.py`, `requirements*.txt`, `pyproject.toml`, `Dockerfile`,
        `tests/` e `.github/workflows/ci.yml`.
     2. In locale: `pip install -r requirements-dev.txt`, `ruff check .`, `ruff format --check .`, `pytest`.
     3. Fai push su `main` e osserva i due job. Al termine trovi il pacchetto nella pagina del repository, sezione

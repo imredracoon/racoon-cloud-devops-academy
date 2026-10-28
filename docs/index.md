@@ -30,14 +30,24 @@ mostrato e commentato, ogni esercizio ha una soluzione spiegata.
 
     [:octicons-arrow-right-24: Prepara l'ambiente](ambiente/index.md)
 
--   :material-certificate:{ .lg .middle } **Sette certificazioni**
+-   :material-certificate:{ .lg .middle } **Dieci certificazioni**
 
     ---
 
     AWS Cloud Practitioner e Solutions Architect Associate, Google Cloud Digital Leader e Associate
-    Cloud Engineer, Terraform Associate, CKA e LFCS. Per ognuna un'appendice e una simulazione d'esame.
+    Cloud Engineer, Terraform Associate, CKA, LFCS, RHCSA, RHCE e Canonical Academy. Per ognuna
+    un'appendice e una simulazione d'esame.
 
     [:octicons-arrow-right-24: Le appendici](appendici/index.md)
+
+-   :material-server-network:{ .lg .middle } **Hardware e data center**
+
+    ---
+
+    Cosa c'è sotto il cloud: dispositivi di rete, rack, server reali, tipologie di server con Ubuntu e
+    RHEL, manutenzione e architettura di un data center.
+
+    [:octicons-arrow-right-24: L'appendice](appendici/hardware/index.md)
 
 -   :material-briefcase:{ .lg .middle } **Un portfolio vero**
 

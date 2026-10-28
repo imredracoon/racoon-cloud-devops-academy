@@ -14,7 +14,7 @@
 | file `.tfvars` | spesso contengono password | escluderli da Git, o usare variabili d'ambiente `TF_VAR_` o un gestore di segreti |
 | output della CLI e log della pipeline | i valori compaiono a schermo | `sensitive = true` |
 | **state** e **piani salvati** | contengono gli attributi delle risorse **in chiaro** | backend cifrato con accesso limitato; valori effimeri e argomenti write-only |
-| credenziali dei provider | chiavi di lunga durata rubabili | credenziali temporanee: SSO in locale, OIDC nelle pipeline (Fase 7), ruoli |
+| credenziali dei provider | chiavi di lunga durata rubabili | credenziali temporanee: SSO in locale, OIDC nelle pipeline ([Fase 7](../fase-7/index.md)), ruoli |
 
 ## Valori sensitive
 

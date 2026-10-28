@@ -20,7 +20,7 @@ Dati verificati il 28 ottobre 2026.
 
 ## Quando sostenerla
 
-Dopo la [Fase 1](../../fase-1/index.md) seguita sul percorso **RHEL (Rocky/AlmaLinux)**, più le lezioni 2.3-2.5 su
+Dopo la [Fase 1](../../fase-1/index.md) seguita sul percorso **RHEL (Rocky/AlmaLinux)**, più le lezioni [2.3](../../fase-2/03-bash-base.md)-[2.5](../../fase-2/05-pianificazione.md) su
 script e pianificazione. Allenati su **Rocky Linux 10 o AlmaLinux 10**: sono compatibili con RHEL 10 e gratuite.
 In alternativa Red Hat offre l'abbonamento gratuito *Red Hat Developer* per usare RHEL in laboratorio.
 
@@ -28,13 +28,13 @@ In alternativa Red Hat offre l'abbonamento gratuito *Red Hat Developer* per usar
 
 | Settimana | Attività |
 |---|---|
-| 1 | Strumenti essenziali, documentazione, permessi (1.1-1.3) |
-| 2 | Software: repository, `dnf`, Flatpak (1.5); utenti, gruppi, sudo (1.3) |
-| 3 | Processi, servizi, log, journal persistente, tuned (1.4, 1.15) |
-| 4 | Avvio: target, GRUB, recupero della password di root (1.15) |
-| 5 | Storage: partizioni GPT, LVM, swap, VFAT/ext4/XFS, NFS, autofs (1.6) |
-| 6 | Rete con `nmcli`, risoluzione dei nomi, firewalld, ora (1.7, 1.8, 1.11, 1.15) |
-| 7 | SELinux, chiavi SSH, script Bash, at, cron e timer (1.10, 1.14, 2.3-2.5) |
+| 1 | Strumenti essenziali, documentazione, permessi ([1.1](../../fase-1/01-filesystem.md)-[1.3](../../fase-1/03-permessi.md)) |
+| 2 | Software: repository, `dnf`, Flatpak ([1.5](../../fase-1/05-pacchetti.md)); utenti, gruppi, sudo ([1.3](../../fase-1/03-permessi.md)) |
+| 3 | Processi, servizi, log, journal persistente, tuned ([1.4](../../fase-1/04-processi-systemd.md), [1.15](../../fase-1/15-avvio-tempo.md)) |
+| 4 | Avvio: target, GRUB, recupero della password di root ([1.15](../../fase-1/15-avvio-tempo.md)) |
+| 5 | Storage: partizioni GPT, LVM, swap, VFAT/ext4/XFS, NFS, autofs ([1.6](../../fase-1/06-storage.md)) |
+| 6 | Rete con `nmcli`, risoluzione dei nomi, firewalld, ora ([1.7](../../fase-1/07-tcpip.md), [1.8](../../fase-1/08-dns-routing.md), [1.11](../../fase-1/11-firewall.md), [1.15](../../fase-1/15-avvio-tempo.md)) |
+| 7 | SELinux, chiavi SSH, script Bash, at, cron e timer ([1.10](../../fase-1/10-ssh.md), [1.14](../../fase-1/14-selinux-apparmor.md), [2.3](../../fase-2/03-bash-base.md)-[2.5](../../fase-2/05-pianificazione.md)) |
 | 8 | Esami pratici a tempo con riavvio finale, ripasso dei punti deboli |
 
 !!! tip "Impara a cercare nella documentazione locale"

@@ -86,7 +86,7 @@ openssl s_client -connect example.com:443 -servername example.com </dev/null | o
 ```
 
 Questo comando mostra a chi è intestato il certificato di un sito, chi l'ha firmato e quando scade. I certificati
-scaduti sono una delle cause più frequenti di disservizio: si monitorano (Fase 7).
+scaduti sono una delle cause più frequenti di disservizio: si monitorano ([Fase 7](../fase-7/index.md)).
 
 ## Nginx
 
@@ -118,7 +118,7 @@ curl -I http://localhost
     - Non esistono `sites-available` e `sites-enabled`: ogni sito è un file **`/etc/nginx/conf.d/NOME.conf`**.
     - Dopo l'installazione il servizio va avviato e abilitato: `sudo systemctl enable --now nginx`.
     - Il firewall va aperto con firewalld: `sudo firewall-cmd --permanent --add-service={http,https} && sudo firewall-cmd --reload`.
-    - **SELinux** (lezione 1.14) controlla cosa può fare Nginx. Due casi da ricordare:
+    - **SELinux** ([lezione 1.14](14-selinux-apparmor.md)) controlla cosa può fare Nginx. Due casi da ricordare:
         - come reverse proxy, Nginx deve potersi collegare a un'altra porta: `sudo setsebool -P httpd_can_network_connect on`.
           Senza, ottieni un `502` e nel log `connect() ... failed (13: Permission denied)`;
         - i file del sito fuori da `/usr/share/nginx/html` o `/var/www` devono avere il contesto SELinux corretto
@@ -233,7 +233,7 @@ curl -k --resolve app.lab:443:127.0.0.1 https://app.lab/   # -k accetta il certi
 ## Laboratorio
 
 !!! laboratorio "Laboratorio · Reverse proxy con HTTPS · 1,5 ore"
-    **Dove:** VM `lab` (con il firewall della lezione 1.11) e VM `client`.
+    **Dove:** VM `lab` (con il firewall della [lezione 1.11](11-firewall.md)) e VM `client`.
 
     1. Su `lab` avvia un'applicazione di prova che ascolta solo su `127.0.0.1:8000`:
        `python3 -m http.server 8000 --bind 127.0.0.1 --directory /etc` (mostra il contenuto di `/etc`: va bene per
@@ -269,7 +269,7 @@ curl -k --resolve app.lab:443:127.0.0.1 https://app.lab/   # -k accetta il certi
     sudo tail -n 3 /var/log/nginx/error.log    # connect() failed (111: Connection refused) while connecting to upstream
     ```
     **Spiegazione.** Il `502` viene da Nginx, che non riesce a collegarsi al backend: l'errore 111 è proprio il
-    *Connection refused* della lezione 1.9. Questo è il ragionamento a strati che userai nel troubleshooting.
+    *Connection refused* della [lezione 1.9](09-diagnostica.md). Questo è il ragionamento a strati che userai nel troubleshooting.
 
     **Percorso RHEL.** Con l'applicazione attiva ma senza il boolean ottieni comunque `502`, e in
     `/var/log/nginx/error.log` trovi `connect() to 127.0.0.1:8000 failed (13: Permission denied)`. L'errore 13 non

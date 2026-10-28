@@ -3,19 +3,19 @@
 !!! obiettivi "Cosa dimostra questo progetto"
     Che sai trasformare operazioni manuali in codice affidabile: script Bash robusti, uno strumento Python con test,
     un'API web pronta per la produzione e un'installazione ripetibile su un server. Insieme al progetto della
-    Fase 1, mostra a un selezionatore che sai sia gestire un sistema sia automatizzarlo.
+    [Fase 1](../fase-1/index.md), mostra a un selezionatore che sai sia gestire un sistema sia automatizzarlo.
 
 | | |
 |---|---|
 | **Durata** | 12-18 ore |
-| **Consegna** | Due repository pubblici: `tasks-api` (iniziato nella lezione 2.8) e `ops-toolkit` |
+| **Consegna** | Due repository pubblici: `tasks-api` (iniziato nella [lezione 2.8](08-flask.md)) e `ops-toolkit` |
 | **Ambiente** | Dev Container per lo sviluppo, VM `web` del Progetto 1 per l'installazione |
 
 ## Il compito
 
 ### Repository `tasks-api`
 
-1. La Tasks API della lezione 2.8, con il filtro `?done=` dell'esercizio 2.
+1. La Tasks API della [lezione 2.8](08-flask.md), con il filtro `?done=` dell'esercizio 2.
 2. Almeno **8 test** pytest, inclusi i casi di errore (400, 404) e il filtro.
 3. Un endpoint in più a tua scelta, con i suoi test. Per esempio `GET /stats`, che restituisce
    `{"total": N, "done": N, "todo": N}`.
@@ -25,8 +25,8 @@
 
 ### Repository `ops-toolkit`
 
-1. `bin/backup.sh`: backup con rotazione (lezione 2.4), con opzioni `-k NUMERO` (archivi da conservare) e `-h`.
-2. `bin/check-sites.sh`: verifica di più URL da un file (lezione 2.4).
+1. `bin/backup.sh`: backup con rotazione ([lezione 2.4](04-bash-avanzato.md)), con opzioni `-k NUMERO` (archivi da conservare) e `-h`.
+2. `bin/check-sites.sh`: verifica di più URL da un file ([lezione 2.4](04-bash-avanzato.md)).
 3. `toolkit/healthcheck.py`: uno strumento Python che interroga l'endpoint `/health` di una o più istanze della
    Tasks API, con:
     - argomenti con `argparse`: gli URL, `--timeout`, `--json`;
@@ -67,7 +67,7 @@ dati salvati in modo persistente e il backup notturno del database attivo.
         assert healthcheck.main(["http://finto"]) == 0
     ```
 
-- Un `Makefile` minimo rende i comandi facili da ricordare (e la pipeline della Fase 7 li riuserà):
+- Un `Makefile` minimo rende i comandi facili da ricordare (e la pipeline della [Fase 7](../fase-7/index.md) li riuserà):
 
     ```makefile
     .PHONY: lint test

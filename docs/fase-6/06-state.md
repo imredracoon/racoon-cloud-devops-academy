@@ -20,7 +20,7 @@ le corrisponde (l'ID nel cloud) e i suoi attributi. Serve a:
 
 !!! danger "Lo state contiene segreti"
     Nello state finiscono **in chiaro** tutti gli attributi delle risorse, comprese password generate e chiavi
-    (lezione 6.8). Mai in Git, sempre in un backend cifrato con accesso limitato.
+    ([lezione 6.8](08-segreti.md)). Mai in Git, sempre in un backend cifrato con accesso limitato.
 
 ## Backend locale e remoto
 
@@ -62,7 +62,7 @@ Un **backend remoto** conserva lo state in un servizio condiviso, durevole e cif
     Il backend `gcs` supporta il blocco in modo nativo. Il bucket deve esistere prima, con **versioning** attivo e
     accesso uniforme.
 
-Altri backend: `azurerm`, `consul`, `pg`, `kubernetes`, `http`, e **HCP Terraform** (lezione 6.9), che oltre allo
+Altri backend: `azurerm`, `consul`, `pg`, `kubernetes`, `http`, e **HCP Terraform** ([lezione 6.9](09-hcp.md)), che oltre allo
 state esegue anche le operazioni.
 
 !!! note "Il problema dell'uovo e della gallina"
@@ -178,7 +178,7 @@ terraform apply                   # crea risorse separate, con uno state separat
 Nel codice il nome è disponibile come `terraform.workspace` (per esempio per i nomi: `"academy-${terraform.workspace}"`).
 I workspace della CLI vanno bene per copie temporanee e simili; per ambienti davvero diversi (dev e prod con account,
 permessi e backend separati) si preferiscono **cartelle o configurazioni root separate** che usano gli stessi moduli.
-I **workspace di HCP Terraform** sono un concetto diverso (lezione 6.9).
+I **workspace di HCP Terraform** sono un concetto diverso ([lezione 6.9](09-hcp.md)).
 
 ## Condividere dati tra configurazioni
 

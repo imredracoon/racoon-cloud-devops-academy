@@ -53,7 +53,7 @@ terraform show piano.tfplan         # rileggilo
 terraform apply piano.tfplan        # applica esattamente quello, senza chiedere conferma
 ```
 
-Nelle pipeline (Fase 7) si fa sempre così: il piano viene salvato, rivisto e poi applicato. Se nel frattempo lo
+Nelle pipeline ([Fase 7](../fase-7/index.md)) si fa sempre così: il piano viene salvato, rivisto e poi applicato. Se nel frattempo lo
 state è cambiato, Terraform rifiuta il piano "vecchio". Il file del piano può contenere valori sensibili: non
 versionarlo.
 
@@ -61,11 +61,11 @@ Altre opzioni utili:
 
 | Opzione | Uso |
 |---|---|
-| `-var="nome=valore"`, `-var-file=prod.tfvars` | passare variabili (lezione 6.5) |
+| `-var="nome=valore"`, `-var-file=prod.tfvars` | passare variabili ([lezione 6.5](05-variabili.md)) |
 | `-auto-approve` | non chiedere conferma: solo in automazione, mai per abitudine |
 | `-replace=aws_instance.web[0]` | forzare la sostituzione di una risorsa (per esempio un server guasto) |
 | `-target=aws_s3_bucket.dati` | limitare l'operazione a una risorsa: solo per emergenze, non per l'uso quotidiano |
-| `-refresh-only` | aggiornare lo state con la realtà senza cambiare le risorse (lezione 6.6) |
+| `-refresh-only` | aggiornare lo state con la realtà senza cambiare le risorse ([lezione 6.6](06-state.md)) |
 | `-destroy` | con `plan`, mostra cosa distruggerebbe `destroy` |
 | `-parallelism=N` | quante operazioni in parallelo (predefinito 10) |
 

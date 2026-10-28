@@ -100,7 +100,7 @@ kubectl create token deployer -n tasks --duration=1h     # token a scadenza
   `/var/run/secrets/kubernetes.io/serviceaccount/`. Se l'applicazione non parla con l'API di Kubernetes, come la
   Tasks API, disattiva il montaggio con `automountServiceAccountToken: false`: un token in meno da rubare.
 - Nel cloud lo stesso service account può ricevere permessi **del cloud** senza chiavi: **EKS Pod Identity** (o IRSA)
-  su AWS, **Workload Identity Federation for GKE** su Google Cloud. È il principio di OIDC della Fase 7 applicato ai
+  su AWS, **Workload Identity Federation for GKE** su Google Cloud. È il principio di OIDC della [Fase 7](../fase-7/index.md) applicato ai
   Pod.
 
 ## Un utente con certificato

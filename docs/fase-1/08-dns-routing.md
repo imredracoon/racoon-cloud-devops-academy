@@ -56,7 +56,7 @@ sequenceDiagram
 | **PTR** | Risoluzione inversa: da IP a nome | `10.113.0.203.in-addr.arpa → www.example.com.` |
 
 Un CNAME non può stare sulla radice del dominio (`example.com`), perché lì devono esserci SOA e NS. I fornitori
-cloud aggirano il limite con record speciali come l'**alias** di Route 53 (Fase 5).
+cloud aggirano il limite con record speciali come l'**alias** di Route 53 ([Fase 5](../fase-5/index.md)).
 
 ### Il DNS su Linux
 
@@ -106,7 +106,7 @@ ip route get 1.1.1.1             # quale rotta userebbe il sistema per questa de
 sudo ip route add 192.168.99.0/24 via 10.84.37.254   # rotta statica temporanea
 ```
 
-Nel cloud le **route table** delle reti virtuali (Fase 5) funzionano esattamente così: una rotta `0.0.0.0/0`
+Nel cloud le **route table** delle reti virtuali ([Fase 5](../fase-5/index.md)) funzionano esattamente così: una rotta `0.0.0.0/0`
 verso un *internet gateway* rende una subnet "pubblica".
 
 Un host Linux può anche fare da router se si abilita l'inoltro dei pacchetti:
@@ -128,7 +128,7 @@ Il **NAT** (*Network Address Translation*) riscrive gli indirizzi dei pacchetti 
 
 Il router tiene una tabella delle connessioni (*connection tracking*) per far tornare le risposte al giusto host.
 Nel cloud il **NAT gateway** permette ai server in subnet private di raggiungere Internet (per esempio per gli
-aggiornamenti) senza essere raggiungibili da Internet. Configurerai il NAT su Linux nella lezione 1.11.
+aggiornamenti) senza essere raggiungibili da Internet. Configurerai il NAT su Linux nella [lezione 1.11](11-firewall.md).
 
 ## Esercizi
 

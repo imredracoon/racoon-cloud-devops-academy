@@ -10,7 +10,7 @@
 
 In Windows ogni disco ha una lettera (`C:`, `D:`). In Linux esiste **un solo albero** di directory che parte dalla
 **radice** `/`. Dischi, chiavette e cartelle di rete vengono "agganciati" (**montati**) in un punto dell'albero,
-come vedrai nella lezione 1.6.
+come vedrai nella [lezione 1.6](06-storage.md).
 
 La struttura è definita dal **Filesystem Hierarchy Standard** (FHS), mantenuto dalla Linux Foundation:
 
@@ -108,7 +108,7 @@ readlink -f info-sistema    # mostra il percorso finale
 ```
 
 I symlink sono ovunque nei server: per esempio Nginx attiva i siti con un link da `sites-enabled` a
-`sites-available` (lezione 1.12).
+`sites-available` ([lezione 1.12](12-http-nginx.md)).
 
 ## Trovare i file: find
 
@@ -147,7 +147,7 @@ cd is a shell builtin
     generate dal kernel. Poi verifica nella VM.
 
 ??? success "Soluzione"
-    (a) `/etc/ssh/sshd_config`, (b) `/var/log` (per esempio `/var/log/syslog`; con systemd anche il journal, lezione 1.4),
+    (a) `/etc/ssh/sshd_config`, (b) `/var/log` (per esempio `/var/log/syslog`; con systemd anche il journal, [lezione 1.4](04-processi-systemd.md)),
     (c) `/usr/bin/cp` (`which cp`), (d) `/var/www`, (e) `/proc/meminfo`.
 
 !!! esercizio "Esercizio 2 · Link"
@@ -183,7 +183,7 @@ cd is a shell builtin
     find /etc -type l 2>/dev/null
     ```
     **Spiegazione.** `-maxdepth 1` limita la profondità della ricerca. Per `find`, `k` indica unità da 1024 byte.
-    `sudo` (lezione 1.3) serve perché alcuni log sono leggibili solo dall'amministratore.
+    `sudo` ([lezione 1.3](03-permessi.md)) serve perché alcuni log sono leggibili solo dall'amministratore.
 
 ## Verifica rapida
 

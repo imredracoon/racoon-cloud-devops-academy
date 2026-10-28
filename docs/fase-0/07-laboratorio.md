@@ -14,7 +14,7 @@
 ## Passo 1 · L'account GitHub
 
 **GitHub** è il servizio più usato al mondo per ospitare progetti software gestiti con Git (che studierai nella
-Fase 2). Per te avrà tre ruoli: ospita il corso, ospita i tuoi appunti e diventerà la **vetrina del tuo portfolio**.
+[Fase 2](../fase-2/index.md)). Per te avrà tre ruoli: ospita il corso, ospita i tuoi appunti e diventerà la **vetrina del tuo portfolio**.
 
 1. Registrati su [github.com/signup](https://github.com/signup). Scegli un nome utente **professionale**:
    comparirà nel tuo CV (per esempio `nome-cognome`).
@@ -49,13 +49,13 @@ uptime            # (9)!
 3.  Nome e versione della distribuzione. `/etc/os-release` è un file di testo standard presente in quasi tutte le distribuzioni.
 4.  La versione del **kernel** Linux.
 5.  Il numero di CPU (core) disponibili: dovrebbe essere 2, come richiesto a Multipass.
-6.  La memoria: totale, usata, libera. `-h` rende i numeri leggibili (Mi, Gi: unità binarie, ricordi la lezione 0.1?).
+6.  La memoria: totale, usata, libera. `-h` rende i numeri leggibili (Mi, Gi: unità binarie, ricordi la [lezione 0.1](01-computer.md)?).
 7.  Lo spazio sul disco della radice `/`.
 8.  Le interfacce di rete e i loro indirizzi IP. `lo` è l'interfaccia *loopback*, con cui la macchina parla con sé stessa (`127.0.0.1`).
 9.  Da quanto tempo la macchina è accesa e il carico medio della CPU.
 
 !!! esercizio "Esercizio 1 · La scheda della macchina"
-    Usando solo i comandi visti e la redirezione `>>` (lezione 0.4), crea nella home della VM il file
+    Usando solo i comandi visti e la redirezione `>>` ([lezione 0.4](04-terminale.md)), crea nella home della VM il file
     `scheda-lab.txt` che contenga, in ordine: hostname, distribuzione e versione, versione del kernel, numero di CPU,
     memoria totale, indirizzo IP dell'interfaccia principale.
 
@@ -70,7 +70,7 @@ uptime            # (9)!
     cat scheda-lab.txt
     ```
     **Spiegazione.** Il primo comando usa `>` per creare il file da zero, gli altri `>>` per aggiungere. Sono
-    comparsi due strumenti nuovi che studierai nella Fase 1: `grep`, che mostra solo le righe che contengono una
+    comparsi due strumenti nuovi che studierai nella [Fase 1](../fase-1/index.md): `grep`, che mostra solo le righe che contengono una
     parola, e il simbolo `|` (*pipe*), che passa l'output di un comando come input al successivo.
     Va bene anche una soluzione senza `grep`: l'importante è che il file contenga le informazioni richieste.
 
@@ -88,7 +88,7 @@ computer), fino al comando `docker run --rm hello-world`.
     `mcr.microsoft.com/devcontainers/base:ubuntu-24.04` (vedi il file `.devcontainer/Dockerfile`).
     CPU e memoria sono diverse perché un container, a differenza di una VM, **condivide il kernel** e le risorse
     del sistema che lo ospita: vede la macchina di Codespaces o quella su cui gira Docker. Capirai bene questa
-    differenza nella lezione 3.1.
+    differenza nella [lezione 3.1](../fase-3/01-concetti.md).
 
 ## Passo 5 · Spegni e riaccendi
 

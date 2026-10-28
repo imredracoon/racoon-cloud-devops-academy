@@ -186,7 +186,7 @@ listeners:
 ## Laboratorio
 
 !!! laboratorio "Laboratorio · Pubblicare la Tasks API"
-    Con la Tasks API in esecuzione dalla lezione 8.7:
+    Con la Tasks API in esecuzione dalla [lezione 8.7](07-storage.md):
 
     ```bash
     cd labs/k8s
