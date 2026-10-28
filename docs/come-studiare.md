@@ -86,7 +86,7 @@ Ogni lezione si chiude con un piccolo quiz interattivo. Scegli la risposta e pre
 <script type="application/json" class="quiz-data">
 {"title":"Verifica rapida di esempio","questions":[
  {"q":"Dove si trova la soluzione di un esercizio?","options":["Non c'è, gli esercizi non hanno soluzione","In un riquadro chiuso subito sotto l'esercizio","Solo alla fine del corso","In un file da scaricare"],"answer":[1],"explanation":"Ogni esercizio ha la soluzione spiegata in un riquadro chiuso che puoi aprire dopo aver provato."},
- {"q":"Quali elementi trovi in **ogni** fase? Scegli tutte le risposte corrette.","options":["Lezioni","Un progetto per il portfolio","Una verifica di fine fase","Un esame a pagamento"],"answer":[0,1,2],"explanation":"Ogni fase ha lezioni, un progetto e una verifica finale. Gli esami di certificazione sono facoltativi e sono descritti nelle appendici."}
+ {"q":"Quali elementi trovi in **ogni** fase?","options":["Lezioni","Un progetto per il portfolio","Una verifica di fine fase","Un esame a pagamento"],"answer":[0,1,2],"explanation":"Ogni fase ha lezioni, un progetto e una verifica finale. Gli esami di certificazione sono facoltativi e sono descritti nelle appendici."}
 ]}
 </script>
 
