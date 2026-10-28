@@ -37,7 +37,7 @@ runcmd:
     [Service]
     Type=oneshot
     RemainAfterExit=yes
-    ExecStart=/bin/sh -c 'for n in 1 2 3; do losetup -f /srv/lab-disks/disk$n.img; done'
+    ExecStart=/bin/sh -c 'for n in 1 2 3; do losetup -fP /srv/lab-disks/disk$n.img; done'
 
     [Install]
     WantedBy=local-fs-pre.target

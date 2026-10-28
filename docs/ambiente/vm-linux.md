@@ -116,7 +116,7 @@ Per gli esercizi sui dischi, nel playground crea i dischi di laboratorio a mano:
 
 ```bash
 sudo mkdir -p /srv/lab-disks
-for n in 1 2 3; do sudo truncate -s 1G /srv/lab-disks/disk$n.img; sudo losetup -f /srv/lab-disks/disk$n.img; done
+for n in 1 2 3; do sudo truncate -s 1G /srv/lab-disks/disk$n.img; sudo losetup -fP /srv/lab-disks/disk$n.img; done
 ```
 
 ## Fonti
