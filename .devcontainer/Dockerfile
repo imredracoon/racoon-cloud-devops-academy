@@ -20,7 +20,7 @@ RUN curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg \
 
 # kind (Kubernetes in Docker) dal rilascio ufficiale
 # https://kind.sigs.k8s.io/docs/user/quick-start/#installing-from-release-binaries
-ARG KIND_VERSION=v0.30.0
+ARG KIND_VERSION=v0.33.0
 RUN ARCH=$(dpkg --print-architecture) \
     && curl -fsSLo /usr/local/bin/kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-${ARCH}" \
     && chmod +x /usr/local/bin/kind

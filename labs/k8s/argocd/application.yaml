@@ -1,0 +1,22 @@
+# Argo CD sincronizza il cluster con la cartella overlays/gitops del TUO fork del repository (lezione 8.15).
+# Sostituisci TUO-UTENTE, poi: kubectl apply -n argocd -f argocd/application.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tasks-api
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/TUO-UTENTE/racoon-cloud-devops-academy.git
+    targetRevision: main
+    path: labs/k8s/overlays/gitops
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tasks
+  syncPolicy:
+    automated:
+      prune: true    # cancella dal cluster ciò che togli da Git
+      selfHeal: true # annulla le modifiche fatte a mano nel cluster
+    syncOptions:
+      - CreateNamespace=true

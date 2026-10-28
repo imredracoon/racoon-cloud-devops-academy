@@ -1,0 +1,5 @@
+La Tasks API è installata come rilascio "{{ .Release.Name }}" nel namespace "{{ .Release.Namespace }}".
+
+Per provarla dal tuo computer:
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "tasks-api.fullname" . }} 8080:{{ .Values.service.port }}
+  curl http://localhost:8080/health

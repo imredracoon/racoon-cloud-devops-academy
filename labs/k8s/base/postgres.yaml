@@ -1,0 +1,89 @@
+# PostgreSQL per il laboratorio: un solo pod con disco persistente.
+# In produzione si preferisce un database gestito (RDS, Cloud SQL) o un operatore.
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app.kubernetes.io/name: postgres
+spec:
+  clusterIP: None # servizio headless: un nome DNS stabile per ogni pod dello StatefulSet
+  selector:
+    app.kubernetes.io/name: postgres
+  ports:
+    - name: postgres
+      port: 5432
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  labels:
+    app.kubernetes.io/name: postgres
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgres
+        app.kubernetes.io/part-of: tasks
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999 # utente "postgres" dell'immagine ufficiale
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: postgres
+          image: postgres:17
+          ports:
+            - name: postgres
+              containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: tasks
+            - name: POSTGRES_USER
+              value: tasks
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tasks-db
+                  key: password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "tasks", "-d", "tasks"]
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: dati
+              mountPath: /var/lib/postgresql/data
+            - name: run
+              mountPath: /var/run/postgresql
+      volumes:
+        - name: run
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: dati
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi

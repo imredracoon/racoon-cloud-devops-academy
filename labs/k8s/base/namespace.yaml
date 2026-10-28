@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tasks
+  labels:
+    # il Gateway condiviso accetta route solo dai namespace con questa etichetta
+    gateway-academy: consentito
+    # Pod Security Admission: rifiuta i pod che non rispettano il profilo "restricted"
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/warn: restricted
