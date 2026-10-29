@@ -52,6 +52,31 @@ Nel repository `tasks-api-iac` ([Fase 6](../fase-6/index.md)):
     fallite, quanto budget di errore consumato), come è stato rilevato, causa, azioni correttive. Allega gli
     screenshot della dashboard e delle query.
 
+### Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il progetto come descritto.
+
+=== "Livello 2 · Workstation + server"
+
+    - **Parte A:** oltre al deploy nel cloud, il rilascio pull sulla VM `rhel-web` di `srv1` della [lezione 7.4](04-deploy-oidc.md#nei-tre-livelli), con
+      l'ambiente `homelab`.
+    - **Parte B:** lo stack gira su `srv1` e controlla server e VM come nella [lezione 7.6](06-prometheus.md#nei-tre-livelli); la dashboard
+      SLO legge la Tasks API di `srv1`. Il ricevitore di Alertmanager deve raggiungerti anche fuori casa (email o
+      chat): è il motivo per cui serve.
+    - **Parte C:** puoi scegliere come incidente anche un **guasto del server**: il disco USB del backup staccato o
+      una VM essenziale spenta.
+
+=== "Livello 3 · Mini data center"
+
+    - **Parte A:** rilascio pull su `nodo3` (Quadlet) e confronto scritto con l'aggiornamento manuale di `nodo2`.
+    - **Parte B:** monitoraggio dei tre nodi e delle due istanze della Tasks API; nella dashboard SLO un pannello per
+      istanza. Una quarta regola: `NodoGiu`.
+    - **Parte C:** l'incidente è un **nodo spento all'improvviso** (stacca la spina di `nodo3`): nel post-mortem
+      la cronologia parte dall'alert, e tra le azioni correttive valuti cosa servirebbe perché l'utente non se ne
+      accorga (un load balancer davanti alle due istanze, come nel cloud della [Fase 5](../fase-5/index.md)).
+
 ## Come verificare
 
 | Test | Risultato atteso |

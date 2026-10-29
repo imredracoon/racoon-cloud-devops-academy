@@ -54,6 +54,27 @@ AKS) e lo chiedono gran parte degli annunci DevOps e platform engineering.
 Tutti i manifest del laboratorio sono nella cartella [`labs/k8s`](https://github.com/imredracoon/racoon-cloud-devops-academy/tree/main/labs/k8s)
 e sono stati validati con un API server Kubernetes 1.37.
 
+## Nei tre livelli
+
+Le lezioni 8.1-8.11 e 8.13-8.15 si fanno con kind nel Dev Container in tutti i livelli: è il modo più rapido per
+imparare. Nei livelli 2 e 3, dalla [lezione 8.12](12-kubeadm.md#nei-tre-livelli), costruisci un **cluster vero** e ci porti il progetto.
+
+=== "Livello 1 · Un PC"
+
+    kind per tutta la fase. Per la lezione 8.12, se la workstation ha almeno 16 GB di RAM, le tre VM `k8s-cp`,
+    `k8s-w1` e `k8s-w2` di `academy-vm`; altrimenti il laboratorio con kind.
+
+=== "Livello 2 · Workstation + server"
+
+    Un cluster kubeadm sulle VM `k8s-cp`, `k8s-w1` e `k8s-w2` di **`srv1`** (servono almeno 12 GB di RAM sul
+    server), con lo storage NFS di `srv1` e **MetalLB** per i servizi `LoadBalancer`. Il progetto gira lì.
+
+=== "Livello 3 · Mini data center"
+
+    Un cluster kubeadm **sulle macchine fisiche**: `nodo2` (control plane, Ubuntu) e `nodo3` (worker, AlmaLinux).
+    Lo storage è l'NFS di `nodo1`, gli indirizzi dei servizi li assegna MetalLB sulla rete del laboratorio e `nodo1`
+    li pubblica verso casa. Se `nodo1` ha 16 GB, puoi aggiungere le VM `k8s-w1` e `k8s-w2` come worker.
+
 ## Le lezioni
 
 1. [Architettura di Kubernetes](01-architettura.md)

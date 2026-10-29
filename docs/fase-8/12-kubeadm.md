@@ -330,6 +330,138 @@ sugli altri. etcd può stare sugli stessi nodi (*stacked*, la scelta comune) o s
     aggiorna la configurazione locale del kubelet; il drain serve prima di riavviare il kubelet con la nuova
     versione.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il laboratorio con kind. Con 16 GB di RAM sulla workstation puoi fare anche la costruzione del livello 2 con le
+    VM in locale: i passi sono identici, senza `srv1`.
+
+=== "Livello 2 · Workstation + server"
+
+    **Il cluster sulle VM di `srv1`.**
+
+    1. Su `srv1` crea le VM (`./academy-vm crea k8s-cp`, poi `k8s-w1` e `k8s-w2`) e aggiorna `~/.ssh/config` della
+       workstation con `./academy-vm ssh-config srv1`.
+    2. Su tutte e tre esegui il [passo 1](#1-preparare-ogni-nodo) (scheda Debian/Ubuntu). Ancora meglio, scrivilo come ruolo
+       Ansible `kubernetes_nodo`: lo riuserai.
+    3. Su `k8s-cp`, poiché le VM sono in `192.168.56.0/24`, usa un CIDR dei Pod diverso, e aggiungi `127.0.0.1` ai
+       nomi del certificato dell'API server, per usare `kubectl` dalla workstation con un tunnel:
+
+        ```bash
+        sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-cert-extra-sans=127.0.0.1
+        ```
+
+        Nel file `custom-resources` di Calico imposta lo stesso `10.244.0.0/16`.
+
+    4. Unisci `k8s-w1` e `k8s-w2`.
+    5. **kubectl dalla workstation.** Copia `/etc/kubernetes/admin.conf` di `k8s-cp` in `~/.kube/homelab.conf` sulla
+       workstation, cambia la riga `server:` in `https://127.0.0.1:6443` e apri il tunnel:
+
+        ```bash
+        ssh -N -L 6443:192.168.56.31:6443 srv1 &
+        export KUBECONFIG=~/.kube/homelab.conf
+        kubectl get nodes -o wide
+        ```
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `kubectl get nodes -o wide` | tre nodi `Ready`, con indirizzi `192.168.56.31-33` |
+    | `kubectl get pods -A` | tutti `Running`, compresi Calico e CoreDNS |
+    | `kubectl create deployment prova --image=nginx:1.29 --replicas=4`, poi `kubectl get pods -o wide` | Pod distribuiti sui due worker |
+    | `kubectl run t --rm -it --image=busybox:1.37 -- nslookup kubernetes.default` | risponde il DNS del cluster |
+    | `ssh srv1 virsh shutdown k8s-w2` | dopo circa un minuto il nodo è `NotReady`; dopo 5 minuti i Pod vengono ricreati sull'altro worker |
+    | il backup di etcd del laboratorio, su `k8s-cp` con `etcdctl` installato o tramite il Pod di etcd | snapshot salvato e ripristino riuscito |
+    | l'aggiornamento di una versione minore, se disponibile ([passo 4](#4-aggiornare-il-cluster)) | `kubectl get nodes` mostra la nuova versione |
+
+    **Servizi `LoadBalancer` con MetalLB.** Su un cluster fuori dal cloud nessuno assegna gli indirizzi ai servizi
+    `LoadBalancer`: lo fa **MetalLB**, che annuncia sulla rete locale un indirizzo preso da un intervallo che gli
+    assegni (fuori dal DHCP: le VM usano `100-199`).
+
+    ```bash
+    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.15.2/config/manifests/metallb-native.yaml
+    kubectl -n metallb-system wait --for=condition=Available deployment --all --timeout=5m
+    ```
+
+    ```yaml title="metallb.yaml"
+    apiVersion: metallb.io/v1beta1
+    kind: IPAddressPool
+    metadata:
+      name: laboratorio
+      namespace: metallb-system
+    spec:
+      addresses: ["192.168.56.200-192.168.56.220"]
+    ---
+    apiVersion: metallb.io/v1beta1
+    kind: L2Advertisement
+    metadata:
+      name: laboratorio
+      namespace: metallb-system
+    spec:
+      ipAddressPools: [laboratorio]
+    ```
+
+    **Storage NFS.** Su `srv1` esporta `/srv/condivisa/k8s` a `192.168.56.0/24` ([lezione 1.6](../fase-1/06-storage.md#filesystem-di-rete-nfs-e-autofs)), installa
+    `nfs-common` sulle VM e il *provisioner* che crea un volume per ogni PVC:
+
+    ```bash
+    helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+    helm install nfs nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
+      -n nfs --create-namespace \
+      --set nfs.server=192.168.56.1 --set nfs.path=/srv/condivisa/k8s \
+      --set storageClass.name=nfs --set storageClass.defaultClass=true
+    ```
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `kubectl expose deployment prova --port=80 --type=LoadBalancer`, poi `kubectl get svc prova` | `EXTERNAL-IP` `192.168.56.200` |
+    | `ssh srv1 curl -sI http://192.168.56.200` | `200` da Nginx |
+    | un PVC con `storageClassName: nfs` usato da un Pod | `Bound`; su `srv1` compare una cartella in `/srv/condivisa/k8s` |
+    | il Pod spostato sull'altro worker (`kubectl drain` del primo) | i file scritti nel volume ci sono ancora: lo storage è condiviso, non locale al nodo |
+
+=== "Livello 3 · Mini data center"
+
+    **Il cluster sui nodi fisici.** `nodo2` diventa il control plane, `nodo3` il worker.
+
+    !!! warning "Prima di iniziare: liberare i nodi"
+        Su `nodo2` e `nodo3` girano gli stack delle fasi 3-7. Fai il **backup** dei database (lo ripristinerai nel
+        cluster con il progetto), poi la scelta più pulita è **reinstallare** i due nodi e applicare il playbook
+        `sito.yml` della [Fase 6](../fase-6/progetto.md#nei-tre-livelli): è anche la prova che il tuo codice ricostruisce davvero
+        il data center. In alternativa, ferma e disinstalla Docker e Podman e i loro servizi. Il monitoraggio della
+        Fase 7 si sposta nel cluster con il progetto.
+
+    1. Il [passo 1](#1-preparare-ogni-nodo) su `nodo2` (scheda Debian/Ubuntu) e su `nodo3` (scheda RHEL).
+    2. **Firewall.** Il perimetro del data center è `nodo1`: sui nodi del cluster fidati della rete del laboratorio e
+       di quella dei Pod. Su `nodo2`, nella catena `input` della tabella `homelab`,
+       `ip saddr { 10.10.10.0/24, 10.244.0.0/16 } accept`; su `nodo3`
+       `sudo firewall-cmd --permanent --zone=trusted --add-source=10.10.10.0/24 --add-source=10.244.0.0/16` e
+       `--reload`.
+    3. Su `nodo2`: `sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-cert-extra-sans=127.0.0.1`,
+       Calico con lo stesso CIDR, poi `kubeadm join` su `nodo3`.
+    4. Con due soli nodi, permetti al control plane di ospitare i Pod:
+       `kubectl taint nodes nodo2 node-role.kubernetes.io/control-plane:NoSchedule-`.
+    5. kubectl dalla workstation come nel livello 2, con il tunnel `ssh -N -L 6443:10.10.10.12:6443 nodo1 &`.
+    6. **MetalLB** come nel livello 2, con l'intervallo `10.10.10.200-10.10.10.220` (fuori dal DHCP di `nodo1`).
+    7. **Storage NFS** come nel livello 2, con `nfs.server=nodo1.lab`, la cartella `/srv/condivisa/k8s` esportata a
+       `10.10.10.0/24`, e i pacchetti client su `nodo2` e `nodo3` (dalla [lezione 1.6](../fase-1/06-storage.md#nei-tre-livelli) ci sono già).
+    8. **Pubblicazione verso casa.** Il Gateway della [lezione 8.9](09-ingress.md#nei-tre-livelli) riceverà da MetalLB un indirizzo,
+       per esempio `10.10.10.200`: nel firewall di `nodo1` le porte 80 e 443 vanno inoltrate lì invece che a `nodo2`.
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `kubectl get nodes -o wide` | `nodo2` (control plane) e `nodo3` `Ready`, con `OS-IMAGE` Ubuntu e AlmaLinux |
+    | `kubectl create deployment prova --image=nginx:1.29 --replicas=4`, poi `-o wide` | Pod su tutti e due i nodi |
+    | `kubectl expose deployment prova --port=80 --type=LoadBalancer` | `EXTERNAL-IP` `10.10.10.200`; `ssh nodo1 curl -sI http://10.10.10.200` risponde |
+    | **stacca il cavo di rete di `nodo3`** | `nodo3` `NotReady` dopo circa un minuto; i Pod tornano su `nodo2` dopo circa 5 minuti; il servizio risponde ancora |
+    | ricollega il cavo | `nodo3` torna `Ready` |
+    | PVC `nfs` e `kubectl drain nodo3` | il Pod riparte su `nodo2` con gli stessi dati |
+    | backup di etcd su `nodo2`, copiato su NFS e fuori sede ([lezione 4.6](../fase-4/06-storage.md#nei-tre-livelli)) | lo snapshot è nel bucket |
+    | riavvio di tutto il data center (prima `nodo1`, poi gli altri) | il cluster torna `Ready` senza interventi |
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

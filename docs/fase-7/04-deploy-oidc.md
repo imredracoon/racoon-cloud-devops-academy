@@ -396,6 +396,101 @@ Su Google Cloud cambia solo lo step di autenticazione (`google-github-actions/au
     assumere il ruolo nel tuo account. La condizione deve indicare l'utente o l'organizzazione **e** il repository, e
     possibilmente l'ambiente o il ramo: `repo:UTENTE/tasks-api:environment:produzione`.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il laboratorio nel cloud è tutto ciò che serve.
+
+=== "Livello 2 · Workstation + server"
+
+    GitHub Actions non può collegarsi a `srv1`: la tua rete di casa non accetta connessioni da Internet, ed è giusto
+    così. Esistono i *runner self-hosted*, installati sulle tue macchine, ma GitHub sconsiglia di usarli con i
+    repository **pubblici**: chiunque apra una pull request potrebbe far eseguire codice sul tuo server.
+
+    La soluzione è il **rilascio pull**: la pipeline pubblica l'immagine e sposta un tag, il server controlla
+    periodicamente il registry e si aggiorna da solo. Con Podman lo fa `podman auto-update`
+    ([lezione 3.7](../fase-3/07-podman.md#aggiornamento-automatico)).
+
+    1. Su `srv1` crea la VM `rhel-web` (AlmaLinux 10, con Podman 5): è il tuo **ambiente di prova in casa**. Lì la
+       Tasks API gira come Quadlet, con il database SQLite in un volume (senza `DATABASE_URL` l'applicazione usa
+       SQLite):
+
+        ```ini title="/etc/containers/systemd/tasks-api.container su rhel-web"
+        [Unit]
+        Description=Tasks API, aggiornata dal registry
+
+        [Container]
+        Image=ghcr.io/TUO-UTENTE/tasks-api:stabile
+        AutoUpdate=registry
+        PublishPort=8000:8000
+        Volume=tasks-dati:/app/instance:Z
+
+        [Service]
+        Restart=on-failure
+
+        [Install]
+        WantedBy=multi-user.target
+        ```
+
+        Apri la porta 8000 in firewalld, `sudo systemctl daemon-reload` e `sudo systemctl start tasks-api`. Il tag
+        `stabile` è l'unico tag mobile che usi, e lo muove solo la pipeline dopo l'approvazione.
+    2. Sempre su `rhel-web`, il controllo ogni 15 minuti invece che una volta al giorno:
+
+        ```ini title="sudo systemctl edit podman-auto-update.timer"
+        [Timer]
+        OnCalendar=
+        OnCalendar=*:0/15
+        ```
+
+        Poi `sudo systemctl enable --now podman-auto-update.timer`.
+
+    3. Nel workflow di deploy aggiungi un job `homelab`, con un ambiente GitHub `homelab` e approvazione, che sposta
+       il tag sull'immagine appena costruita:
+
+        ```yaml
+        homelab:
+          needs: build
+          runs-on: ubuntu-latest
+          environment: homelab
+          permissions:
+            packages: write
+          steps:
+            - uses: docker/login-action@v3
+              with:
+                registry: ghcr.io
+                username: ${{ github.actor }}
+                password: ${{ secrets.GITHUB_TOKEN }}
+            - uses: docker/setup-buildx-action@v3
+            - name: Il tag stabile punta alla nuova immagine
+              run: |
+                docker buildx imagetools create \
+                  -t ghcr.io/${{ github.repository_owner }}/tasks-api:stabile \
+                  ghcr.io/${{ github.repository_owner }}/tasks-api:sha-${{ github.sha }}
+        ```
+
+        Adatta il nome del job `build` e il formato del tag `sha-` a quelli della tua pipeline della [lezione 7.3](03-pipeline.md).
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | merge su `main`, approvazione dell'ambiente `homelab` | il tag `stabile` su GHCR punta al nuovo digest |
+    | entro 15 minuti, `ssh rhel-web journalctl -u podman-auto-update -n 20` | l'immagine scaricata e il servizio riavviato |
+    | `ssh rhel-web sudo podman inspect --format '{{.ImageDigest}}' systemd-tasks-api` | il nuovo digest |
+    | `ssh rhel-web curl -s localhost:8000/health` | la nuova versione risponde |
+    | un rilascio con un'immagine che non parte (per esempio un `CMD` sbagliato) | `podman auto-update` vede fallire il servizio e **torna alla versione precedente** |
+
+=== "Livello 3 · Mini data center"
+
+    Come nel livello 2, ma direttamente su **`nodo3`**, che dal [Progetto 3](../fase-3/progetto.md#nei-tre-livelli) esegue la Tasks
+    API con i Quadlet: in `tasks-api.container` imposta `Image=...:stabile` e `AutoUpdate=registry`. `nodo2` resta aggiornato a mano con Compose: confronta i due modelli nel README (chi decide quando
+    aggiornare, cosa succede se il registry non risponde, come si torna indietro).
+
+    **Collaudo:** le prove del livello 2 su `nodo3`, più `ssh nodo1 python3 healthcheck.py https://nodo3.lab --insecure`
+    durante l'aggiornamento, ripetuto ogni secondo: misura per quanti secondi l'istanza non risponde. È il motivo per
+    cui in produzione si aggiorna un'istanza alla volta dietro un load balancer.
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

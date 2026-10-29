@@ -53,6 +53,24 @@ Insieme sono il cuore del lavoro DevOps: rilasciare spesso, in sicurezza, sapend
 
 La Tasks API, dalla versione di questa fase, espone le **metriche** su `/metrics`: la [lezione 7.6](06-prometheus.md) spiega come.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Pipeline su GitHub e deploy nel cloud; lo stack di osservabilità gira sulla workstation, accanto alla Tasks API.
+
+=== "Livello 2 · Workstation + server"
+
+    Lo stack di osservabilità gira su **`srv1`** e controlla anche il server e le sue VM. La pipeline, oltre al
+    cloud, rilascia su `srv1` con il modello **pull**: GitHub non può entrare nella tua rete di casa, quindi è il
+    server a scaricare la nuova versione, su una VM di prova di `srv1` ([lezione 7.4](04-deploy-oidc.md#nei-tre-livelli)).
+
+=== "Livello 3 · Mini data center"
+
+    Il monitoraggio copre **tutto il data center**: Prometheus su `nodo2` legge le metriche dei tre nodi, un alert
+    scatta quando ne spegni uno. Il rilascio pull aggiorna la Tasks API su `nodo3` con i Quadlet della
+    [Fase 3](../fase-3/progetto.md#nei-tre-livelli).
+
 ## Le lezioni
 
 1. [Integrazione e rilascio continui](01-concetti.md)

@@ -257,6 +257,38 @@ listeners:
     Vince sempre la corrispondenza più specifica, quindi `/api` va a `shop-api` qualunque sia l'ordine delle regole.
     Esistono anche strumenti di conversione, come `ingress2gateway` del progetto Kubernetes.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il laboratorio con kind è tutto ciò che serve.
+
+=== "Livello 2 · Workstation + server"
+
+    Sul cluster di `srv1`, con MetalLB attivo ([lezione 8.12](12-kubeadm.md#nei-tre-livelli)), il Service del Gateway riceve un
+    `EXTERNAL-IP` dall'intervallo `192.168.56.200-220`, come un load balancer nel cloud.
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `kubectl get gateway academy` | `PROGRAMMED True` e un indirizzo `192.168.56.2xx` |
+    | `ssh srv1 curl -s -H 'Host: tasks.lab' http://INDIRIZZO-GATEWAY/health` | `{"status": "ok", ...}` |
+    | dalla workstation, `ssh -N -L 8080:INDIRIZZO-GATEWAY:80 srv1 &` e `curl -s -H 'Host: tasks.lab' localhost:8080/health` | la stessa risposta |
+
+    (Usa il nome host della rotta della lezione al posto di `tasks.lab`, se è diverso.)
+
+=== "Livello 3 · Mini data center"
+
+    Sul cluster `nodo2` + `nodo3` il Gateway riceve da MetalLB un indirizzo della rete del laboratorio, per esempio
+    `10.10.10.200`. Pubblicalo verso casa: nel firewall di `nodo1` (o nelle variabili del ruolo `gateway` della
+    [Fase 6](../fase-6/progetto.md#nei-tre-livelli)) inoltra le porte 80 e 443 a quell'indirizzo, e sulla workstation aggiungi
+    `IP-NODO1 tasks.lab` a `/etc/hosts`.
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `curl -s http://tasks.lab/health` dalla workstation | la risposta della Tasks API nel cluster |
+    | `kubectl -n envoy-gateway-system get svc` | il Service del Gateway con `EXTERNAL-IP` `10.10.10.200` |
+    | `kubectl delete pod` del Pod Envoy | dopo pochi secondi `curl` risponde di nuovo: MetalLB annuncia l'indirizzo dal nodo dove gira il nuovo Pod |
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

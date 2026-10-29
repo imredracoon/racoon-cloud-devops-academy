@@ -394,6 +394,157 @@ Nei task che maneggiano segreti usa `no_log: true`, così il valore non compare 
     `9000`: le extra vars vincono sempre. Senza `-e`, `8080`: `group_vars` ha precedenza sui `defaults` del ruolo,
     che sono pensati proprio per essere sovrascritti.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il laboratorio con i nodi in container è tutto ciò che serve.
+
+=== "Livello 2 · Workstation + server"
+
+    Dopo il laboratorio in container, porta Ansible sulle macchine vere. Installalo **sulla workstation** (scheda
+    *Debian/Ubuntu* per Ubuntu, `sudo dnf install -y ansible` per Fedora): lì ci sono la chiave e il
+    `~/.ssh/config` con i salti attraverso `srv1`, che Ansible usa così com'è, perché si appoggia a OpenSSH.
+
+    In una cartella `homelab-ansible`:
+
+    ```ini title="inventory.ini"
+    [server]
+    srv1
+
+    [debian]
+    lab
+    client
+
+    [rhel]
+    rhel-lab
+    rhel-client
+
+    [vm:children]
+    debian
+    rhel
+    ```
+
+    ```ini title="ansible.cfg"
+    [defaults]
+    inventory = inventory.ini
+    remote_user = ansible
+    interpreter_python = auto_silent
+
+    [privilege_escalation]
+    become_method = sudo
+    ```
+
+    Sulle macchine vere non si entra come root e `sudo` chiede la password. Si crea quindi un **utente di
+    servizio** `ansible`, con la tua chiave e `sudo` senza password, una volta sola, con un playbook di avvio
+    lanciato con il tuo utente:
+
+    ```yaml title="avvio.yml"
+    - name: Utente di servizio per Ansible
+      hosts: all
+      become: true
+      tasks:
+        - name: Il gruppo ssh-users della lezione 1.10 esiste
+          ansible.builtin.group:
+            name: ssh-users
+
+        - name: Utente ansible, nel gruppo che può usare SSH
+          ansible.builtin.user:
+            name: ansible
+            shell: /bin/bash
+            groups: ssh-users
+            append: true
+
+        - name: La chiave della workstation
+          ansible.posix.authorized_key:
+            user: ansible
+            key: "{{ lookup('ansible.builtin.file', lookup('ansible.builtin.env', 'HOME') ~ '/.ssh/id_ed25519.pub') }}"
+
+        - name: sudo senza password, con il file validato prima di installarlo
+          ansible.builtin.copy:
+            dest: /etc/sudoers.d/ansible
+            content: "ansible ALL=(ALL) NOPASSWD: ALL\n"
+            mode: "0440"
+            validate: visudo -cf %s
+    ```
+
+    ```bash
+    ansible-playbook avvio.yml -u tuoutente --ask-become-pass   # una volta sola, con la tua password di sudo
+    ansible all -m ansible.builtin.ping                           # da qui in poi, con l'utente ansible
+    ```
+
+    Il `-u tuoutente` serve solo qui: nelle VM create da `academy-vm` l'utente è `ubuntu` o `almalinux`, quindi
+    lancia il playbook due volte, una per `srv1` (`--limit server`) e una per le VM
+    (`--limit debian -u ubuntu`, `--limit rhel -u almalinux`, senza `--ask-become-pass`: lì sudo non chiede
+    password).
+
+    Poi ripeti i punti 2, 3 e 5 del laboratorio con questo inventario (il server web sulle VM, gli utenti su tutto).
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `ansible all -m ansible.builtin.ping` | `pong` da `srv1` e da tutte le VM |
+    | `ansible all -m ansible.builtin.setup -a 'filter=ansible_virtualization_role'` | `host` per `srv1`, `guest` per le VM |
+    | `ansible-playbook utenti.yml` due volte | la seconda con `changed=0` |
+    | `ssh ansible@IP-SRV1 sudo -n true` | nessuna richiesta di password |
+
+=== "Livello 3 · Mini data center"
+
+    Come nel livello 2, con l'inventario del data center:
+
+    ```ini title="inventory.ini"
+    [gateway]
+    nodo1
+
+    [server_fisici]
+    nodo1
+    nodo2
+    nodo3
+
+    [debian]
+    nodo1
+    nodo2
+    lab
+
+    [rhel]
+    nodo3
+    rhel-lab
+    ```
+
+    Lancia `avvio.yml` sui tre nodi con il tuo utente e sulle VM con il loro, poi il laboratorio. In più, il primo
+    passo verso il data center come codice: un play che legge lo stato del gateway **senza cambiarlo**.
+
+    ```yaml title="verifica-gateway.yml"
+    - name: Lo stato del gateway
+      hosts: gateway
+      become: true
+      tasks:
+        - name: Inoltro attivo
+          ansible.builtin.command: sysctl -n net.ipv4.ip_forward
+          register: forward
+          changed_when: false
+          failed_when: forward.stdout != "1"
+
+        - name: dnsmasq e nftables attivi
+          ansible.builtin.systemd_service:
+            name: "{{ item }}"
+            state: started
+          loop: [dnsmasq, nftables]
+          check_mode: true
+          register: servizi
+          failed_when: servizi.changed
+    ```
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `ansible-inventory --graph` | i gruppi del data center, con `nodo1` in più gruppi |
+    | `ansible server_fisici -m ansible.builtin.setup -a 'filter=ansible_memtotal_mb'` | la RAM dei tre nodi, da riportare nell'inventario della [lezione 0.8](../fase-0/08-homelab.md) |
+    | `ansible-playbook verifica-gateway.yml` | `ok`, nessun `changed`, nessun errore |
+    | `ssh nodo1 sudo systemctl stop dnsmasq`, poi di nuovo il playbook | fallisce e dice perché; riavvia dnsmasq |
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

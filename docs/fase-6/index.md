@@ -54,6 +54,26 @@ richiesto dalla certificazione Red Hat RHCE.
     stessi, con `tofu` al posto di `terraform`. Ciò che impari qui vale per entrambi; il corso usa Terraform perché è
     lo strumento della certificazione e il più richiesto negli annunci.
 
+## Nei tre livelli
+
+Terraform lavora sul cloud ed è uguale per tutti. Ansible invece cambia molto: nei livelli 2 e 3 configura
+**macchine vere**.
+
+=== "Livello 1 · Un PC"
+
+    Ansible sui quattro nodi in container di `labs/ansible-lab`, dal Dev Container.
+
+=== "Livello 2 · Workstation + server"
+
+    Ansible gira **sulla workstation**, dove hai le chiavi e il `~/.ssh/config`, e configura `srv1` e le sue VM.
+    Nel progetto descrivi `srv1` in codice: se il disco si rompe, un playbook lo ricostruisce.
+
+=== "Livello 3 · Mini data center"
+
+    Ansible configura l'**intero data center**: i tre nodi fisici e le VM di `nodo1`. Il gateway (NAT, firewall,
+    DHCP e DNS della Fase 1) diventa un ruolo: la rete del laboratorio è descritta in un repository e si ricostruisce
+    con un comando. Anche l'istanza VPN della [lezione 5.1](../fase-5/01-vpc.md#nei-tre-livelli) entra in Terraform.
+
 ## Le lezioni
 
 1. [Infrastructure as Code](01-iac.md)
