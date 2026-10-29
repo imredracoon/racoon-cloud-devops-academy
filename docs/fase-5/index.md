@@ -46,6 +46,23 @@ flowchart LR
     gateway, database. Restano nei crediti per i nuovi clienti **se distruggi tutto alla fine di ogni laboratorio**.
     Controlla il budget dopo ogni sessione.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Lezioni e progetto come descritti, dal Dev Container e dalla console.
+
+=== "Livello 2 · Workstation + server"
+
+    Nella [lezione 5.1](01-vpc.md#nei-tre-livelli) colleghi `srv1` alla rete privata del cloud con una **VPN WireGuard**: è il
+    **cloud ibrido**, la sede e il cloud che si parlano con indirizzi privati. Nel progetto la usi per migrare i
+    dati della Tasks API dal server di casa al database gestito, che non ha un indirizzo pubblico.
+
+=== "Livello 3 · Mini data center"
+
+    Come nel livello 2, ma il capo della VPN è il gateway `nodo1`: **tutta la rete del laboratorio**
+    `10.10.10.0/24` raggiunge la VPC e viceversa, come una sede aziendale collegata al cloud.
+
 ## Le lezioni
 
 1. [Reti private e pubbliche](01-vpc.md)

@@ -182,6 +182,142 @@ Gli intervalli di indirizzi delle reti collegate **non devono sovrapporsi**: un 
     4. **S3 via Internet**: aggiungi il gateway endpoint S3 (gratuito), con una endpoint policy.
     5. Mancano i security group a catena e i flow log per la diagnosi.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il laboratorio è tutto ciò che serve.
+
+=== "Livello 2 · Workstation + server"
+
+    Colleghi `srv1` alla VPC `tasks` del laboratorio con una VPN **WireGuard** verso una piccola istanza nel cloud.
+    I fornitori offrono anche VPN gestite (*AWS Site-to-Site VPN*, *Cloud VPN*), ma costano decine di euro al mese
+    anche senza traffico; un'istanza WireGuard costa pochi centesimi l'ora e ti fa vedere ogni pezzo.
+
+    ```mermaid
+    flowchart LR
+      subgraph Casa
+        S[srv1<br>tunnel 10.99.0.2]
+      end
+      S == "WireGuard UDP 51820<br>(attraverso il router di casa)" ==> G
+      subgraph VPC[VPC tasks 10.0.0.0/16]
+        G[istanza vpn<br>subnet pubblica<br>tunnel 10.99.0.1] --> A[istanza app<br>subnet privata]
+      end
+    ```
+
+    Gli intervalli non si sovrappongono: casa `192.168.1.0/24`, VM `192.168.56.0/24`, tunnel `10.99.0.0/24`,
+    VPC `10.0.0.0/16`. È proprio il motivo per cui si pianificano gli indirizzi.
+
+    **1. L'istanza VPN.** Nella VPC del laboratorio crea un'istanza Ubuntu 24.04 piccola (`t3.micro`, `e2-micro`)
+    nella subnet pubblica, con IP pubblico, e apri in ingresso **solo UDP 51820 dall'IP pubblico di casa**
+    (lo trovi con `curl -s https://ifconfig.me` da `srv1`). Poi:
+
+    === "AWS"
+
+        - nell'istanza: **Actions → Networking → Change source/destination check → Stop**: deve inoltrare pacchetti
+          non indirizzati a lei;
+        - nelle route table delle subnet private: rotta `10.99.0.0/24` → l'istanza `vpn` (target *Instance*);
+        - nel security group `app-sg`: ICMP e TCP 22 da `10.99.0.0/24`, per le prove.
+        - nel security group dell'istanza `vpn`: oltre a UDP 51820, tutto il traffico dalla VPC (`10.0.0.0/16`), che
+          lei inoltra nel tunnel.
+
+    === "Google Cloud"
+
+        - crea l'istanza con `--can-ip-forward` (si può impostare solo alla creazione);
+        - rotta: `gcloud compute routes create casa --network=tasks --destination-range=10.99.0.0/24 --next-hop-instance=vpn --next-hop-instance-zone=ZONA`;
+        - regola firewall: ICMP e TCP 22 da `10.99.0.0/24` verso le istanze della subnet `app`.
+        - regola firewall: tutto il traffico da `10.0.0.0/16` verso l'istanza `vpn`, che lo inoltra nel tunnel.
+
+    **2. WireGuard ai due capi.** Su entrambe le macchine installa `wireguard-tools` (`apt` o `dnf`) e genera le
+    chiavi:
+
+    ```bash
+    umask 077
+    wg genkey | sudo tee /etc/wireguard/privata | wg pubkey | sudo tee /etc/wireguard/pubblica
+    ```
+
+    Sull'istanza nel cloud attiva anche l'inoltro (`net.ipv4.ip_forward=1` in `/etc/sysctl.d/`, come nella
+    [lezione 1.8](../fase-1/08-dns-routing.md)).
+
+    ```ini title="/etc/wireguard/wg0.conf sull'istanza vpn"
+    [Interface]
+    Address = 10.99.0.1/24
+    ListenPort = 51820
+    PrivateKey = CHIAVE-PRIVATA-DELL-ISTANZA
+
+    [Peer]
+    # srv1, a casa
+    PublicKey = CHIAVE-PUBBLICA-DI-SRV1
+    AllowedIPs = 10.99.0.2/32
+    ```
+
+    ```ini title="/etc/wireguard/wg0.conf su srv1"
+    [Interface]
+    Address = 10.99.0.2/24
+    PrivateKey = CHIAVE-PRIVATA-DI-SRV1
+
+    [Peer]
+    # l'istanza vpn nel cloud
+    PublicKey = CHIAVE-PUBBLICA-DELL-ISTANZA
+    Endpoint = IP-PUBBLICO-DELL-ISTANZA:51820
+    AllowedIPs = 10.99.0.0/24, 10.0.0.0/16
+    PersistentKeepalive = 25
+    ```
+
+    ```bash
+    sudo systemctl enable --now wg-quick@wg0      # su entrambe le macchine
+    ```
+
+    `AllowedIPs` fa due cose: dice quali indirizzi possono arrivare da quel peer e quali rotte creare verso di lui.
+    `PersistentKeepalive` tiene aperto il passaggio nel NAT del router di casa: è `srv1` a iniziare il collegamento,
+    quindi sul router non serve aprire porte.
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `sudo wg show` su `srv1` | `latest handshake` di pochi secondi fa, byte ricevuti e inviati |
+    | `ip route get 10.0.10.5` su `srv1` | `dev wg0` |
+    | `ping -c 3 IP-PRIVATO-ISTANZA-APP` da `srv1` | risposte da un'istanza **senza IP pubblico** |
+    | `tracepath -n IP-PRIVATO-ISTANZA-APP` da `srv1` | due salti: `10.99.0.1`, poi l'istanza |
+    | sull'istanza app, `ping -c 3 10.99.0.2` | risponde `srv1`: il collegamento funziona nei due sensi |
+    | `sudo systemctl stop wg-quick@wg0` su `srv1`, di nuovo il `ping` | nessuna risposta: il percorso privato passa solo dal tunnel |
+
+    **Pulizia:** termina l'istanza `vpn`, cancella la rotta e le regole aggiunte; su `srv1`
+    `sudo systemctl disable --now wg-quick@wg0`. Conserva i file di configurazione, senza le chiavi private, nel
+    repository `academy-lab`: li riuserai nel progetto.
+
+=== "Livello 3 · Mini data center"
+
+    Come nel livello 2, con `nodo1` al posto di `srv1`: il tunnel collega l'**intera rete del laboratorio**.
+
+    Differenze rispetto al livello 2:
+
+    - nella configurazione dell'istanza `vpn`, il peer di casa ha `AllowedIPs = 10.99.0.2/32, 10.10.10.0/24`;
+    - nel cloud la rotta verso casa comprende anche `10.10.10.0/24` (un'altra rotta verso l'istanza `vpn`), e le
+      regole di `app-sg` o del firewall ammettono anche `10.10.10.0/24`;
+    - su `nodo1` il firewall della [lezione 1.11](../fase-1/11-firewall.md#nei-tre-livelli) deve far passare il traffico
+      tra laboratorio e tunnel, **senza** NAT: nella catena `forward` aggiungi
+
+        ```nft
+        iifname $LAB oifname "wg0" accept
+        iifname "wg0" oifname $LAB ip saddr 10.0.0.0/16 tcp dport { 22, 80, 443 } accept
+        ```
+
+      Il masquerade resta solo sull'uscita `$WAN`: i pacchetti nel tunnel mantengono gli indirizzi `10.10.10.x`, e
+      il cloud sa come restituirli grazie alla rotta.
+
+    `nodo2` e `nodo3` non vanno toccati: il loro gateway è `nodo1`, che ora conosce anche la strada per la VPC.
+
+    **Collaudo:** le prove del livello 2 eseguite da `nodo1`, più queste:
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `ssh nodo2 ping -c 3 IP-PRIVATO-ISTANZA-APP` | risponde: tutto il laboratorio raggiunge la VPC |
+    | `ssh nodo3 tracepath -n IP-PRIVATO-ISTANZA-APP` | `10.10.10.1`, `10.99.0.1`, l'istanza |
+    | sull'istanza app, `curl -sI http://10.10.10.12/` | la risposta del Nginx di `nodo2`: il cloud raggiunge la sede |
+    | sull'istanza app, `nc -zvw3 10.10.10.12 5432` | timeout: `nodo1` lascia entrare dal cloud solo le porte permesse |
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

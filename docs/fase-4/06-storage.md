@@ -199,6 +199,112 @@ più per la lettura, e hanno una durata minima di conservazione.
        dopo 365 giorni.
     5. **Trasferimento offline**: Snowball Edge o Transfer Appliance.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il laboratorio è tutto ciò che serve.
+
+=== "Livello 2 · Workstation + server"
+
+    Ogni notte `srv1` copia nel bucket l'ultimo archivio del backup della [lezione 2.5](../fase-2/05-pianificazione.md#nei-tre-livelli). La regola
+    d'oro del backup è **3-2-1**: tre copie, su due supporti diversi, una fuori sede. Il bucket è la copia fuori sede.
+
+    **1. Il bucket e l'identità del server.** Crea un bucket `academy-backup-NOME` con versioning e una regola di
+    ciclo di vita che cancella gli oggetti dopo 30 giorni. Poi un'identità solo per il server, che può **scrivere
+    ma non leggere né cancellare**: se un giorno `srv1` venisse compromesso, chi lo controlla non potrebbe
+    distruggere i backup.
+
+    === "AWS"
+
+        Un utente IAM `backup-srv1` (senza accesso alla console) con questa policy in linea e una **chiave di
+        accesso**:
+
+        ```json
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "s3:PutObject",
+              "Resource": "arn:aws:s3:::academy-backup-NOME/*"
+            }
+          ]
+        }
+        ```
+
+        Su `srv1` installa la AWS CLI con l'[installatore ufficiale](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+        e configura il profilo per root, che esegue il backup: `sudo aws configure --profile backup`.
+
+    === "Google Cloud"
+
+        Un service account `backup-srv1` con il ruolo **Storage Object Creator** (`roles/storage.objectCreator`)
+        concesso **solo sul bucket**, non sul progetto, e una **chiave JSON**. Su `srv1` installa la gcloud CLI dai
+        [repository ufficiali](https://cloud.google.com/sdk/docs/install) e attiva il service account per root:
+        `sudo gcloud auth activate-service-account --key-file=/root/backup-srv1.json` (permessi `600` sul file).
+
+    !!! warning "Chiavi a lunga durata"
+        Una chiave di accesso o una chiave JSON non scade da sola: tienila solo su `srv1`, mai in un repository, e
+        ruotala ogni pochi mesi. In azienda, per i server fuori dal cloud, si usano meccanismi senza chiavi
+        permanenti (*IAM Roles Anywhere* su AWS, *Workload Identity Federation* su Google Cloud): qui la chiave è un
+        compromesso accettabile per un laboratorio, da dichiarare nel README.
+
+    **2. Lo script e il timer.** `offsite.sh` carica gli archivi delle ultime 24 ore in una cartella con il nome
+    della macchina, e fallisce se non ne trova: un backup che non parte deve farsi notare.
+
+    ```bash title="offsite.sh"
+    #!/usr/bin/env bash
+    # Copia nel bucket gli archivi di backup delle ultime 24 ore.
+    # Uso: offsite.sh CARTELLA-BACKUP BUCKET
+    set -euo pipefail
+    [ $# -eq 2 ] || { echo "uso: $0 CARTELLA-BACKUP BUCKET" >&2; exit 2; }
+
+    caricati=0
+    while IFS= read -r -d '' archivio; do
+      aws s3 cp "$archivio" "s3://$2/$(hostname)/" --profile backup --only-show-errors
+      # Google Cloud: gcloud storage cp "$archivio" "gs://$2/$(hostname)/"
+      logger -t offsite "caricato $archivio in $2"
+      caricati=$((caricati + 1))
+    done < <(find "$1" -maxdepth 1 -name '*.tar.gz' -mmin -1440 -print0)
+
+    [ "$caricati" -gt 0 ] || { logger -t offsite "nessun archivio recente in $1"; exit 1; }
+    ```
+
+    Un servizio e un timer come quelli della [lezione 2.5](../fase-2/05-pianificazione.md), alle 4:00, quando il backup locale è finito.
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `sudo systemctl start offsite.service` su `srv1`, poi il bucket nella console | l'archivio in `srv1/` |
+    | `sudo aws s3 ls s3://academy-backup-NOME --profile backup` (o `gcloud storage ls`) su `srv1` | `AccessDenied`: il server non può leggere |
+    | `sudo aws s3 rm s3://academy-backup-NOME/srv1/ARCHIVIO --profile backup` su `srv1` | `AccessDenied`: il server non può cancellare |
+    | **ripristino**: dal Dev Container, con il tuo utente, scarica l'archivio ed elenca il contenuto (`tar -tzf`) | i file di `/etc` e `/srv` |
+    | `sha256sum` dell'archivio scaricato e di quello su `srv1` | identici |
+    | `journalctl -t offsite` su `srv1` il giorno dopo | il caricamento notturno è avvenuto |
+
+    Un backup che non hai mai ripristinato non è un backup: ripeti la prova di ripristino una volta al mese e annota
+    data ed esito nel README di `academy-lab`.
+
+=== "Livello 3 · Mini data center"
+
+    Come nel livello 2, con due differenze:
+
+    - l'identità del cloud si chiama `backup-nodo1` ed esiste **solo su `nodo1`**: è lui che carica nel bucket gli
+      archivi di tutti i nodi, raccolti in `/srv/condivisa/backup` dal backup centralizzato della
+      [lezione 2.5](../fase-2/05-pianificazione.md#nei-tre-livelli);
+    - `offsite.sh` carica gli archivi recenti **di ogni nodo**: aggiungi un ciclo `for` sulle sottocartelle di
+      `/srv/condivisa/backup`, con la destinazione `s3://BUCKET/NODO/` (o `gs://BUCKET/NODO/`) al posto di
+      `$(hostname)`.
+
+    **Collaudo:** le prove del livello 2 eseguite su `nodo1`, più queste:
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | il bucket dopo una notte | una cartella per `nodo2` e una per `nodo3`, con l'archivio di quella notte |
+    | `ssh nodo2 'ls ~/.aws /root/.aws 2>&1'` | nessuna credenziale sui nodi interni |
+    | ripristino su un nodo diverso: un archivio di `nodo2` estratto in una VM nuova di `nodo1` | i file ci sono e si leggono |
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">
