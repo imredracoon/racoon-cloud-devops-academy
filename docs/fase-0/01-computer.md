@@ -118,9 +118,9 @@ distanza, attraverso la rete. Per questo nel corso imparerai a lavorare soprattu
 !!! esercizio "Esercizio 3 · Esplora il tuo computer"
     Trova quanta RAM, quanti core e quanto disco ha il tuo computer.
 
-    - **Windows**: Impostazioni → Sistema → Informazioni; per il disco: Esplora file → Questo PC.
-    - **macOS**: menu Apple → Informazioni su questo Mac; per il disco: Impostazioni di sistema → Generali → Spazio.
-    - **Linux**: lo scoprirai dal terminale nella [lezione 0.4](04-terminale.md).
+    Ubuntu e Fedora usano lo stesso ambiente grafico, **GNOME**: apri **Impostazioni → Sistema → Informazioni**
+    (nelle versioni meno recenti la voce **Informazioni** è direttamente nell'elenco a sinistra). Trovi memoria,
+    processore e capacità del disco. Nella [lezione 0.4](04-terminale.md) imparerai a ricavare gli stessi dati dal terminale.
 
     Annota i valori: ti servono per capire quali ambienti di laboratorio puoi usare.
 

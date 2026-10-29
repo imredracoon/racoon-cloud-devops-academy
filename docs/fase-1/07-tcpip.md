@@ -180,9 +180,9 @@ La configurazione **permanente** cambia tra le due famiglie:
     diversi da quelli delle interfacce: controllali con `nmcli connection show`.
 
 !!! warning "Attenzione nelle VM di laboratorio"
-    Non cambiare la configurazione dell'interfaccia principale delle VM: rischi di perdere la connessione con
-    Multipass o Vagrant. Sulla VM `rhel-lab` puoi esercitarti sulla seconda interfaccia, quella della rete privata
-    `192.168.56.0/24` (di solito `eth1`), annotando prima la configurazione originale. Su un server remoto usa sempre
+    Cambiando l'indirizzo dell'interfaccia di una VM perdi la connessione SSH. Prima annota la configurazione
+    originale, poi fai l'esercizio dalla **console seriale** (`virsh console rhel-lab`), che non passa dalla rete.
+    Nelle VM AlmaLinux l'interfaccia si chiama di solito `eth0`: adatta il nome della connessione nei comandi. Su un server remoto usa sempre
     `netplan try` o tieni pronta una console di emergenza.
 
 ## Esercizi

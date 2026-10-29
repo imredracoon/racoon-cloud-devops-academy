@@ -110,7 +110,7 @@ Il file `.pcap` si può aprire con **Wireshark** sul tuo computer per un'analisi
 !!! laboratorio "Laboratorio · Due VM che si parlano · 1 ora"
     **Dove:** VM `lab` e VM `client` (vedi l'introduzione della fase per crearla).
 
-    1. Trova gli IP delle due VM con `multipass list`.
+    1. Trova gli IP delle due VM: sul tuo computer `./academy-vm elenco`, dentro ogni VM `ip -brief address`.
     2. Su `lab` avvia un server web di prova sulla porta 8000 **solo sulla loopback**:
        `python3 -m http.server 8000 --bind 127.0.0.1`.
     3. Da `client` prova a raggiungerlo con `curl` e con `nc`. Che errore ottieni?

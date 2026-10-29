@@ -1,30 +1,31 @@
-#cloud-config
-# VM di laboratorio per la Fase 1 e per la preparazione LFCS.
-# Uso (vedi docs/ambiente/vm-linux.md):
-#   multipass launch 24.04 --name lab --cpus 2 --memory 2G --disk 20G --cloud-init lab-vm/cloud-init.yaml
-# Documentazione cloud-init: https://cloudinit.readthedocs.io/
+# Profilo cloud-init della VM "rhel-lab" (AlmaLinux 10, compatibile con RHEL 10).
+# Lo script academy-vm aggiunge in testa nome host, chiave SSH e password della console.
+# Uso: ./academy-vm crea rhel-lab       (vedi docs/ambiente/vm-linux.md)
 
-hostname: lab
 package_update: true
 packages:
   - bash-completion
-  - man-db
-  - manpages
+  - man-pages
   - tree
   - jq
-  - dnsutils
+  - bind-utils
   - traceroute
   - tcpdump
-  - nftables
   - lvm2
+  - xfsprogs
   - acl
   - git
   - curl
   - nano
-  - vim
+  - vim-enhanced
+  - firewalld
+  - policycoreutils-python-utils
+  - setroubleshoot-server
 
 runcmd:
-  # Tre dischi "finti" da 1 GB (file + loop device) per gli esercizi su partizioni e LVM.
+  # firewalld attivo come su un server RHEL appena installato (lezione 1.11)
+  - systemctl enable --now firewalld
+  # Tre dischi "finti" da 1 GB (file + loop device) per gli esercizi su partizioni e LVM, come nella VM Ubuntu.
   - mkdir -p /srv/lab-disks
   - for n in 1 2 3; do truncate -s 1G /srv/lab-disks/disk$n.img; done
   - |
@@ -45,4 +46,4 @@ runcmd:
   - systemctl daemon-reload
   - systemctl enable --now lab-disks.service
 
-final_message: "VM di laboratorio pronta dopo $UPTIME secondi."
+final_message: "VM rhel-lab pronta dopo $UPTIME secondi."

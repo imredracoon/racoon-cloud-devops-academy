@@ -45,10 +45,9 @@ flowchart TB
 Le due tecnologie non si escludono: nel cloud i container girano quasi sempre **dentro** VM. La VM separa i
 clienti tra loro, i container separano le applicazioni.
 
-!!! info "E su Windows e macOS?"
-    I container Linux hanno bisogno di un kernel Linux. Docker Desktop e Podman Desktop, su Windows e macOS, avviano
-    in modo trasparente una piccola VM Linux in cui girano i container. Per questo nel corso lavori nel Dev
-    Container o nelle VM del laboratorio.
+!!! info "Perché serve Linux"
+    I container Linux hanno bisogno di un kernel Linux. Sul tuo computer con Ubuntu o Fedora girano direttamente,
+    senza VM intermedie: per questo sono così veloci da avviare.
 
 ## I mattoni del kernel Linux
 
@@ -221,7 +220,7 @@ flowchart LR
  {"q":"Quale meccanismo del kernel limita la memoria che un container può usare?","options":["I namespace","I cgroup","OverlayFS","seccomp"],"answer":[1],"explanation":"I namespace isolano ciò che il processo vede, i cgroup limitano ciò che può consumare."},
  {"q":"Cosa succede ai file scritti nello strato scrivibile quando il container viene eliminato?","options":["Vengono salvati nell'immagine","Vanno persi","Vengono copiati nel registry","Restano nell'host in /tmp"],"answer":[1],"explanation":"I dati persistenti vanno nei volumi."},
  {"q":"Quale nome identifica il contenuto esatto di un'immagine in modo immutabile?","options":["Il tag","Il digest sha256","Il nome del repository","latest"],"answer":[1],"explanation":"Un tag può essere spostato su un'altra immagine, il digest no."},
- {"q":"Quali affermazioni su Podman sono corrette?","options":["Non usa un demone centrale","È progettato per funzionare senza privilegi di root","Usa un formato di immagini incompatibile con Docker","Funziona solo su Windows","Richiede Kubernetes"],"answer":[0,1],"explanation":"Grazie agli standard OCI, le immagini sono le stesse di Docker."},
+ {"q":"Quali affermazioni su Podman sono corrette?","options":["Non usa un demone centrale","È progettato per funzionare senza privilegi di root","Usa un formato di immagini incompatibile con Docker","Funziona solo su Fedora","Richiede Kubernetes"],"answer":[0,1],"explanation":"Grazie agli standard OCI, le immagini sono le stesse di Docker."},
  {"q":"Perché aggiungere un utente al gruppo docker è delicato?","options":["Rallenta Docker","Equivale di fatto a dargli i privilegi di root sull'host","Disattiva SELinux","Cancella le immagini"],"answer":[1],"explanation":"Può avviare un container che monta il filesystem dell'host."}
 ]}
 </script>

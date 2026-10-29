@@ -76,8 +76,8 @@ Dopo `init` compare `.terraform.lock.hcl`: registra la **versione esatta** di og
 pacchetto alterato verrebbe rifiutato.
 
 - Per passare a una versione più recente, entro i vincoli dichiarati: `terraform init -upgrade`.
-- Per aggiungere le impronte di altre piattaforme (per esempio se lavori su macOS e la pipeline su Linux):
-  `terraform providers lock -platform=linux_amd64 -platform=darwin_arm64`.
+- Per aggiungere le impronte di altre piattaforme (per esempio se lavori su un computer con processore ARM e la pipeline
+  gira su Intel/AMD): `terraform providers lock -platform=linux_amd64 -platform=linux_arm64`.
 - I **moduli** non sono registrati nel file di lock: la loro versione si fissa con l'argomento `version`.
 
 ## Stile e convenzioni

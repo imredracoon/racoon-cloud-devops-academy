@@ -14,7 +14,7 @@
 |---|---|
 | **Durata indicativa** | 2,5-3 mesi, circa 90 ore (più circa 20 ore per ripetere i laboratori sulla seconda famiglia) |
 | **Prerequisiti** | [Fase 0](../fase-0/index.md) |
-| **Ambiente** | Percorso Debian/Ubuntu: VM `lab` e `client` (Multipass). Percorso RHEL: VM `rhel-lab` e `rhel-client` (Vagrant, AlmaLinux 10) |
+| **Ambiente** | Percorso Debian/Ubuntu: VM `lab` e `client` (Ubuntu 24.04). Percorso RHEL: VM `rhel-lab` e `rhel-client` (AlmaLinux 10). Tutte con KVM/libvirt ([macchine virtuali](../ambiente/vm-linux.md)) |
 | **Progetto** | [Server web messo in sicurezza](progetto.md) |
 | **Certificazioni collegate** | [LFCS](../appendici/lfcs/index.md), [RHCSA](../appendici/rhcsa/index.md), [Canonical Academy](../appendici/canonical/index.md) (tutte facoltative) |
 
@@ -42,17 +42,25 @@ affiancate**, come questa:
 La scelta della scheda resta memorizzata in tutte le pagine. I laboratori indicano come svolgerli su entrambe le
 famiglie. Le istruzioni per creare le VM sono nella pagina [Macchine virtuali Linux](../ambiente/vm-linux.md).
 
-## Preparare la seconda VM (percorso Ubuntu)
+## Preparare la seconda VM
 
 Alcuni esercizi di rete (SSH, firewall, Nginx) sono più realistici con due macchine. Quando la lezione lo
-richiede, crea una seconda VM leggera:
+richiede, crea una seconda VM leggera dalla cartella `~/academy/lab-vm`:
 
-```bash
-multipass launch 24.04 --name client --cpus 1 --memory 1G --disk 8G
-```
+=== "Debian/Ubuntu"
 
-Le due VM si vedono sulla stessa rete virtuale di Multipass: `multipass list` mostra i loro indirizzi IP.
-Nel percorso RHEL il `Vagrantfile` crea già entrambe le macchine (`rhel-lab` e `rhel-client`).
+    ```bash
+    ./academy-vm crea client
+    ```
+
+=== "RHEL (Rocky/AlmaLinux)"
+
+    ```bash
+    ./academy-vm crea rhel-client
+    ```
+
+Le VM stanno sulla stessa rete privata e si raggiungono per nome; `./academy-vm elenco` mostra gli indirizzi
+([tutte le VM del corso](../ambiente/vm-linux.md#tutte-le-vm-del-corso)).
 
 ## Le lezioni
 
@@ -75,5 +83,5 @@ Nel percorso RHEL il `Vagrantfile` crea già entrambe le macchine (`rhel-lab` e 
 Poi il [progetto](progetto.md) e la [verifica di fine fase](verifica.md).
 
 !!! tip "Fai uno snapshot"
-    Prima di ogni lezione dalla [1.3](03-permessi.md) in poi, crea uno snapshot: `multipass stop lab` e `multipass snapshot lab`,
-    oppure `vagrant snapshot save rhel-lab prima-lezione-X`. Se rompi qualcosa, torni indietro in un minuto.
+    Prima di ogni lezione dalla [1.3](03-permessi.md) in poi, crea uno snapshot: `virsh shutdown lab` e poi
+    `virsh snapshot-create-as lab prima-lezione-X` (oppure lo stesso con `rhel-lab`). Se rompi qualcosa, torni indietro in un minuto.

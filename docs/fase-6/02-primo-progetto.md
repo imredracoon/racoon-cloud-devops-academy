@@ -28,7 +28,7 @@ macchina usa il repository ufficiale di HashiCorp:
     sudo dnf install -y terraform
     ```
 
-Terraform è un singolo file eseguibile: esistono anche i pacchetti per macOS e Windows e lo zip da scaricare a mano.
+Terraform è un singolo file eseguibile: in alternativa ai repository puoi scaricare lo zip dalla pagina ufficiale e copiarlo in `/usr/local/bin`.
 
 ## La sintassi di HCL
 

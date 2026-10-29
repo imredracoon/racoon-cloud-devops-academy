@@ -1,0 +1,11 @@
+# Profilo cloud-init delle VM "client" e "web" (Ubuntu 24.04): pochi strumenti di rete.
+# Lo script academy-vm aggiunge in testa nome host, chiave SSH e password della console.
+
+package_update: true
+packages:
+  - bash-completion
+  - dnsutils
+  - tcpdump
+  - netcat-openbsd
+  - curl
+  - git

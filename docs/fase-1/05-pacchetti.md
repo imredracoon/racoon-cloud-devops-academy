@@ -145,7 +145,7 @@ sudo apt update && sudo apt install google-cloud-cli
 ## Altri formati: snap
 
 Ubuntu offre anche gli **snap**, pacchetti autocontenuti con le proprie dipendenze, aggiornati automaticamente
-(`snap install`, `snap list`). Li hai usati per Multipass su Linux. Sui server si preferiscono di norma i pacchetti
+(`snap install`, `snap list`). Su Ubuntu Desktop, per esempio, Firefox è uno snap. Sui server si preferiscono di norma i pacchetti
 della distribuzione.
 
 ## Aggiornamenti di sicurezza automatici

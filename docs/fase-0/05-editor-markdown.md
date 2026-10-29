@@ -58,8 +58,6 @@ Le funzioni da conoscere subito:
 - **Terminale integrato** (++ctrl+grave++): un terminale dentro l'editor.
 - **Anteprima Markdown** (++ctrl+shift+v++): mostra come apparirà il testo formattato.
 
-Su macOS usa ++cmd++ al posto di ++ctrl++.
-
 ## Markdown
 
 **Markdown** è un modo di scrivere testo formattato usando solo caratteri normali. È lo standard per la

@@ -8,7 +8,7 @@
 
 ## Un unico albero
 
-In Windows ogni disco ha una lettera (`C:`, `D:`). In Linux esiste **un solo albero** di directory che parte dalla
+Alcuni sistemi operativi danno a ogni disco una lettera (`C:`, `D:`). In Linux esiste invece **un solo albero** di directory che parte dalla
 **radice** `/`. Dischi, chiavette e cartelle di rete vengono "agganciati" (**montati**) in un punto dell'albero,
 come vedrai nella [lezione 1.6](06-storage.md).
 

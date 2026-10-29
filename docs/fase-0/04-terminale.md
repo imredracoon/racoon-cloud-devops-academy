@@ -16,7 +16,7 @@ remota lenta. È lo strumento principale di questo mestiere.
 
 - Il **terminale** è la finestra in cui scrivi i comandi e leggi i risultati.
 - La **shell** è il programma che legge i comandi, li interpreta e li esegue. Su Linux la più diffusa è **Bash**
-  (*Bourne Again SHell*); su macOS la shell predefinita è **zsh**, molto simile per quello che vedremo.
+  (*Bourne Again SHell*), la shell predefinita sia su Ubuntu sia su Fedora.
 - Il **prompt** è il testo che la shell mostra quando aspetta un comando, per esempio:
 
 ```text
@@ -32,12 +32,16 @@ ubuntu@lab:~$
 
 ## Dove esercitarti adesso
 
-Per questa lezione ti serve un terminale Linux. Hai tre possibilità:
+Per questa lezione ti serve un terminale Linux. Hai due possibilità:
 
-1. **Killercoda** (consigliato ora, zero installazioni): apri il
+1. **Il tuo computer** (consigliato): premi il tasto ++super++ (quello con il logo, accanto a ++alt++), scrivi
+   *terminale* e apri l'applicazione. Su Ubuntu si chiama **Terminale**; sulle versioni recenti di Fedora
+   **Ptyxis**, con l'icona del terminale. Su Ubuntu funziona anche la scorciatoia ++ctrl+alt+t++.
+2. **Killercoda** (zero installazioni, se non hai ancora Linux): apri il
    [playground Ubuntu](https://killercoda.com/playgrounds/scenario/ubuntu) e accedi con un account gratuito.
-2. **macOS**: apri l'app **Terminale**. Quasi tutti i comandi di questa lezione funzionano uguali.
-3. **Windows**: aspetta la [lezione 0.7](07-laboratorio.md), dove installerai la VM Linux; oppure usa Killercoda.
+
+Il prompt sarà diverso da quello dell'esempio, perché contiene il tuo nome utente e il nome del tuo computer.
+I comandi di questa lezione funzionano uguali ovunque.
 
 ## La struttura di un comando
 

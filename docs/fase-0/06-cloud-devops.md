@@ -25,13 +25,13 @@ flowchart TB
     H[Hypervisor]
     H --> V1[VM 1<br>Linux]
     H --> V2[VM 2<br>Linux]
-    H --> V3[VM 3<br>Windows]
+    H --> V3[VM 3<br>RHEL]
   end
 ```
 
 Con la virtualizzazione un server fisico viene sfruttato molto meglio e una nuova "macchina" si crea in pochi
 minuti. Le **vCPU** di cui hai letto nella [lezione 0.1](01-computer.md) sono le CPU virtuali assegnate a una VM. Anche la VM del
-corso, creata con Multipass, funziona così.
+corso, creata con KVM, la virtualizzazione integrata in Linux, funziona così.
 
 ### Il cloud
 

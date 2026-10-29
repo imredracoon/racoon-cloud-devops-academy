@@ -9,7 +9,7 @@
 
 Un **Dev Container** (*development container*, contenitore di sviluppo) è un ambiente di lavoro completo descritto
 in un file di testo. Il file elenca il sistema operativo di base e tutti gli strumenti da installare, con le loro
-versioni. Chiunque apra il progetto ottiene **esattamente lo stesso ambiente**, che usi Windows, macOS o Linux.
+versioni. Chiunque apra il progetto ottiene **esattamente lo stesso ambiente**, che usi Ubuntu, Fedora o il browser.
 
 Questo risolve il problema più comune di chi studia informatica: "a me non funziona". Con il Dev Container,
 se un comando funziona nel corso, funziona anche da te.
@@ -55,37 +55,86 @@ VS Code. È la strada più semplice.
 
 Questa strada non ha limiti di ore, ma richiede di installare due programmi.
 
-### 1. Installa Docker
+### 1. Installa Docker Engine
 
-Docker è il programma che esegue i container. Lo studierai a fondo nella [Fase 3](../fase-3/index.md).
+Docker è il programma che esegue i container. Lo studierai a fondo nella [Fase 3](../fase-3/index.md). Installiamo
+**Docker Engine** dal repository ufficiale di Docker, che offre sempre la versione aggiornata.
 
-=== "Windows"
+=== "Ubuntu"
 
-    1. Scarica e installa **Docker Desktop** dalla [pagina ufficiale](https://docs.docker.com/desktop/setup/install/windows-install/).
-    2. Durante l'installazione lascia selezionata l'opzione **WSL 2**: Docker userà il sottosistema Linux di Windows.
-    3. Riavvia il computer se richiesto, poi apri Docker Desktop e attendi che l'icona della balena diventi verde.
+    ```bash
+    # 1. strumenti e chiave di firma del repository Docker
+    sudo apt update
+    sudo apt install -y ca-certificates curl
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-=== "macOS"
+    # 2. il repository
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+      https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+      | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-    1. Scarica **Docker Desktop** dalla [pagina ufficiale](https://docs.docker.com/desktop/setup/install/mac-install/),
-       scegliendo la versione per il tuo processore (*Apple silicon* per i Mac M1/M2/M3/M4, *Intel* per gli altri).
-    2. Trascina Docker nella cartella Applicazioni, aprilo e accetta le richieste di autorizzazione.
+    # 3. Docker Engine con i plugin Buildx e Compose
+    sudo apt update
+    sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    ```
 
-=== "Linux"
+    Su Ubuntu il servizio parte da solo dopo l'installazione.
 
-    Installa **Docker Engine** seguendo la [guida ufficiale](https://docs.docker.com/engine/install/) per la tua
-    distribuzione, poi aggiungi il tuo utente al gruppo `docker` come indicato nei
-    [passi post-installazione](https://docs.docker.com/engine/install/linux-postinstall/).
+=== "Fedora"
 
-!!! note "Licenza di Docker Desktop"
-    Docker Desktop è gratuito per uso personale, studio e piccole aziende. Le condizioni sono nella
-    [pagina ufficiale](https://docs.docker.com/subscription/desktop-license/).
+    ```bash
+    # 1. il repository Docker
+    sudo dnf config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo
+
+    # 2. Docker Engine con i plugin Buildx e Compose
+    sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+    # 3. avvia il servizio ora e a ogni accensione
+    sudo systemctl enable --now docker
+    ```
+
+    Durante l'installazione `dnf` chiede di accettare la chiave di firma: controlla che l'impronta coincida con
+    quella della [guida ufficiale](https://docs.docker.com/engine/install/fedora/) e rispondi `y`.
+
+    !!! note "E Podman?"
+        Fedora include già **Podman**, che studierai nella [lezione 3.7](../fase-3/07-podman.md). Per il Dev Container
+        del corso usiamo comunque Docker: l'ambiente contiene a sua volta Docker (*docker-in-docker*), una
+        configurazione che con Docker funziona senza ritocchi.
+
+Poi, su entrambe, aggiungi il tuo utente al gruppo `docker` per usare Docker senza `sudo`, ed esci e rientra
+nella sessione perché la modifica abbia effetto:
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+!!! warning "Il gruppo `docker` equivale a root"
+    Chi appartiene al gruppo `docker` può ottenere i privilegi di amministratore sul computer. Va bene sul tuo
+    computer personale di studio; su un server condiviso no. Ne riparlerai nella [lezione 3.6](../fase-3/06-registry-sicurezza.md).
 
 ### 2. Installa Visual Studio Code e l'estensione Dev Containers
 
-1. Scarica e installa [Visual Studio Code](https://code.visualstudio.com/).
-2. Apri VS Code, vai nel pannello **Extensions** (icona dei quadratini a sinistra) e installa
-   **Dev Containers** di Microsoft.
+=== "Ubuntu"
+
+    ```bash
+    sudo snap install code --classic
+    ```
+
+=== "Fedora"
+
+    ```bash
+    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+    printf '%s\n' '[code]' 'name=Visual Studio Code' 'baseurl=https://packages.microsoft.com/yumrepos/vscode' \
+      'enabled=1' 'gpgcheck=1' 'gpgkey=https://packages.microsoft.com/keys/microsoft.asc' \
+      | sudo tee /etc/yum.repos.d/vscode.repo > /dev/null
+    sudo dnf install -y code
+    ```
+
+In alternativa puoi scaricare il pacchetto `.deb` o `.rpm` dalla [pagina ufficiale](https://code.visualstudio.com/docs/setup/linux).
+Poi apri VS Code, vai nel pannello **Extensions** (icona dei quadratini a sinistra) e installa
+**Dev Containers** di Microsoft.
 
 ### 3. Apri il corso nel container
 
@@ -111,14 +160,15 @@ prova e la esegue: capirai ogni parola nella [Fase 3](../fase-3/index.md).
     Riprova: premi ++f1++ e scegli `Dev Containers: Rebuild Container`. Se il problema persiste, controlla di non
     essere dietro una rete aziendale che blocca i download.
 
-??? question "Docker dice che non ha abbastanza memoria"
-    In Docker Desktop apri **Settings → Resources** e assegna almeno 6 GB di memoria. Su Windows con WSL 2 il
-    limite si imposta nel file `.wslconfig`, come spiegato nella
-    [documentazione Microsoft](https://learn.microsoft.com/windows/wsl/wsl-config).
+??? question "`permission denied while trying to connect to the Docker daemon socket`"
+    Il tuo utente non è ancora nel gruppo `docker`, oppure non sei uscito e rientrato dopo `usermod`. Controlla con
+    `groups`: deve comparire `docker`. Se non vuoi chiudere la sessione, apri una shell con il gruppo attivo:
+    `newgrp docker`.
 
-??? question "Su Windows compare un errore sulla virtualizzazione"
-    La virtualizzazione deve essere attiva nel BIOS/UEFI del computer. La procedura varia per ogni produttore:
-    cerca "abilitare virtualizzazione" insieme al modello del tuo computer sul sito del produttore.
+??? question "Il computer rallenta durante la costruzione"
+    Con Docker Engine i container usano direttamente la memoria del tuo computer, senza un limite fisso. Chiudi le
+    applicazioni pesanti mentre l'ambiente si costruisce e verifica di avere almeno 8 GB di RAM
+    ([requisiti](index.md#requisiti-del-computer)).
 
 ## Fonti
 
@@ -126,4 +176,7 @@ prova e la esegue: capirai ogni parola nella [Fase 3](../fase-3/index.md).
 - [Visual Studio Code: Developing inside a Container](https://code.visualstudio.com/docs/devcontainers/containers)
 - [GitHub Docs: GitHub Codespaces](https://docs.github.com/en/codespaces)
 - [GitHub Docs: come viene misurato l'uso di Codespaces](https://docs.github.com/en/billing/concepts/product-billing/github-codespaces)
-- [Docker Docs: installazione](https://docs.docker.com/get-started/get-docker/)
+- [Docker Docs: installare Docker Engine su Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+- [Docker Docs: installare Docker Engine su Fedora](https://docs.docker.com/engine/install/fedora/)
+- [Docker Docs: passi dopo l'installazione su Linux](https://docs.docker.com/engine/install/linux-postinstall/)
+- [Visual Studio Code on Linux](https://code.visualstudio.com/docs/setup/linux)

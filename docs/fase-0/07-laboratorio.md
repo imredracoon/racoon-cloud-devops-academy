@@ -29,7 +29,7 @@ computer non lo permette, usa il playground Killercoda indicato nella stessa pag
 
 ## Passo 3 · Esplora la VM
 
-Entra nella VM (`multipass shell lab`) e lancia questi comandi uno alla volta. Prima di passare al successivo,
+Entra nella VM (`ssh lab`) e lancia questi comandi uno alla volta. Prima di passare al successivo,
 leggi l'output e la spiegazione.
 
 ```bash
@@ -48,7 +48,7 @@ uptime            # (9)!
 2.  L'utente con cui sei collegato: `ubuntu`.
 3.  Nome e versione della distribuzione. `/etc/os-release` è un file di testo standard presente in quasi tutte le distribuzioni.
 4.  La versione del **kernel** Linux.
-5.  Il numero di CPU (core) disponibili: dovrebbe essere 2, come richiesto a Multipass.
+5.  Il numero di CPU (core) disponibili: dovrebbe essere 2, come previsto dallo script `academy-vm`.
 6.  La memoria: totale, usata, libera. `-h` rende i numeri leggibili (Mi, Gi: unità binarie, ricordi la [lezione 0.1](01-computer.md)?).
 7.  Lo spazio sul disco della radice `/`.
 8.  Le interfacce di rete e i loro indirizzi IP. `lo` è l'interfaccia *loopback*, con cui la macchina parla con sé stessa (`127.0.0.1`).
@@ -96,8 +96,8 @@ Abituati fin da subito a non lasciare accese le risorse che non usi:
 
 ```bash
 exit                  # esci dalla VM
-multipass stop lab    # spegni la VM
-multipass list        # lo stato deve essere Stopped
+virsh shutdown lab    # spegni la VM
+virsh list --all      # dopo qualche secondo lo stato deve essere "shut off" (spenta)
 ```
 
 Ferma anche il Codespace se lo stai usando (menu **Codespaces** in basso a sinistra → *Stop Current Codespace*).
@@ -111,7 +111,7 @@ Nel cloud questa abitudine ti farà risparmiare denaro.
  {"q":"Quale comando mostra la versione del kernel?","options":["uname -r","nproc","free -h","hostname"],"answer":[0],"explanation":"uname mostra informazioni sul kernel; -r stampa la release."},
  {"q":"Cosa indica l'interfaccia `lo`?","options":["L'interfaccia Wi-Fi","L'interfaccia di loopback, con cui la macchina comunica con sé stessa","Un errore di configurazione","L'interfaccia verso Internet"],"answer":[1],"explanation":"La loopback ha indirizzo 127.0.0.1 ed è sempre presente."},
  {"q":"Perché il Dev Container può mostrare più CPU della VM?","options":["Perché i container sono più veloci","Perché condivide il kernel e le risorse del sistema che lo ospita","Perché Ubuntu nei container è diverso","Per un errore"],"answer":[1],"explanation":"Un container non ha un hardware virtuale suo: vede le risorse dell'host, salvo limiti impostati."},
- {"q":"Quale comando spegne la VM di laboratorio?","options":["multipass delete lab","multipass stop lab","exit","shutdown lab"],"answer":[1],"explanation":"exit esce solo dalla shell; delete la cancella."}
+ {"q":"Quale comando spegne la VM di laboratorio?","options":["./academy-vm elimina lab","virsh shutdown lab","exit","virsh list --all"],"answer":[1],"explanation":"exit esce solo dalla shell della VM; elimina la cancella; list mostra lo stato."}
 ]}
 </script>
 
@@ -119,5 +119,5 @@ Nel cloud questa abitudine ti farà risparmiare denaro.
 
 - [GitHub Docs: Configuring two-factor authentication](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa/configuring-two-factor-authentication)
 - [os-release(5), man page](https://man7.org/linux/man-pages/man5/os-release.5.html)
-- [Multipass: documentazione](https://canonical.com/multipass/docs)
+- [libvirt: virsh(1)](https://libvirt.org/manpages/virsh.html)
 - [iproute2: ip(8)](https://man7.org/linux/man-pages/man8/ip.8.html)

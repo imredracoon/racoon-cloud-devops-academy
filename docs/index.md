@@ -30,7 +30,7 @@ simulazioni d'esame e contenuti multimediali restano sul sito, dove sono interat
 
     ---
 
-    Un ambiente di laboratorio identico per tutti, su Windows, macOS o Linux, oppure direttamente
+    Un ambiente di laboratorio identico per tutti, sul tuo computer con Ubuntu o Fedora, oppure direttamente
     dal browser con GitHub Codespaces.
 
     [:octicons-arrow-right-24: Prepara l'ambiente](ambiente/index.md)

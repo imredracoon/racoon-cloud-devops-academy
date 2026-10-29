@@ -18,7 +18,7 @@ flowchart LR
   C -- SSH --> N4[app1<br>AlmaLinux]
 ```
 
-- Il **nodo di controllo** è la macchina su cui è installato Ansible (Linux o macOS; il tuo Dev Container).
+- Il **nodo di controllo** è la macchina su cui è installato Ansible (un sistema Linux: il tuo Dev Container o il tuo computer).
 - I **nodi gestiti** non hanno agenti da installare: servono solo **SSH** e **Python**. Ansible copia sul nodo un
   piccolo programma (il **modulo**), lo esegue e lo cancella.
 - L'**inventario** elenca i nodi e li raggruppa.

@@ -139,7 +139,7 @@ sudo systemctl reload ssh        # su Ubuntu il servizio si chiama ssh; su RHEL 
     Prima di disattivare le password, **verifica di riuscire a entrare con la chiave**. Prima di ricaricare la
     configurazione, lascia **aperta** la sessione corrente e prova il nuovo accesso da un **secondo terminale**.
     Se qualcosa non va, la prima sessione ti permette di correggere. Nella VM di laboratorio hai comunque
-    `multipass shell` come accesso di emergenza; su un server remoto potresti non averlo.
+    `virsh console` come accesso di emergenza; su un server remoto potresti non averlo.
 
 Il pacchetto **fail2ban** legge i log e blocca temporaneamente gli IP che sbagliano troppe volte l'accesso: lo
 configurerai nel progetto della fase.
@@ -180,8 +180,8 @@ configurerai nel progetto della fase.
        chiave venga rifiutato; root non possa entrare.
 
     **Percorso RHEL:** ripeti il laboratorio con `rhel-client` (192.168.56.11) e `rhel-lab` (192.168.56.10), usando
-    il servizio `sshd` e il gruppo `wheel` al posto di `sudo`. Ricorda che l'utente `vagrant` deve restare nel
-    gruppo `ssh-users`, altrimenti `vagrant ssh` smette di funzionare.
+    il servizio `sshd` e il gruppo `wheel` al posto di `sudo`. Ricorda che l'utente `almalinux` deve restare nel
+    gruppo `ssh-users`, altrimenti `ssh rhel-lab` dal tuo computer smette di funzionare.
 
 ??? success "Soluzione"
     ```bash
@@ -189,7 +189,7 @@ configurerai nel progetto della fase.
     ssh-keygen -t ed25519 -C "deploy@client"
     cat ~/.ssh/id_ed25519.pub            # copia questa riga
 
-    # --- su lab (multipass shell lab) ---
+    # --- su lab (dal tuo computer: ssh lab) ---
     sudo groupadd ssh-users
     sudo useradd -m -s /bin/bash -G ssh-users deploy
     sudo usermod -aG ssh-users ubuntu

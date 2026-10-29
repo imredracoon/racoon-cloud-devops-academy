@@ -156,6 +156,7 @@ docker run -d --restart unless-stopped --name web -p 8080:80 nginx:1.30-alpine
 
 Con Podman le politiche di riavvio dopo un reboot si gestiscono con systemd, tramite i **Quadlet** (file
 `.container` in `~/.config/containers/systemd/`): è l'integrazione naturale con il sistema che conosci già.
+Li vedrai nella [lezione 3.7](07-podman.md#i-quadlet-container-gestiti-da-systemd).
 
 ## Le immagini
 

@@ -2,7 +2,8 @@
 
 !!! obiettivi "Obiettivi"
     - Capire perché alcune lezioni richiedono una macchina virtuale e non un container.
-    - Creare la VM di laboratorio Ubuntu con Multipass e quella RHEL (AlmaLinux) con Vagrant.
+    - Installare KVM/QEMU e libvirt, la virtualizzazione integrata in Linux.
+    - Creare le VM di laboratorio Ubuntu e AlmaLinux con un solo script e gestirle con `virsh`.
     - Conoscere le alternative nel browser se il tuo computer non può ospitare una VM.
 
 ## Perché una macchina virtuale
@@ -19,82 +20,109 @@ Nel mondo dei server Linux dominano due famiglie ([lezione 0.2](../fase-0/02-sis
 entrambe, e gli annunci di lavoro le chiedono tutte e due. Per questo nella [Fase 1](../fase-1/index.md) ogni argomento che cambia tra le
 due famiglie è presentato in schede affiancate, e i laboratori si possono svolgere su entrambe.
 
-| Percorso | Distribuzione | Strumento | Certificazioni collegate |
+| Percorso | Distribuzione | VM | Certificazioni collegate |
 |---|---|---|---|
-| **Debian/Ubuntu** | Ubuntu 24.04 LTS | Multipass | LFCS, Canonical Academy |
-| **RHEL** | AlmaLinux 10 (compatibile con RHEL 10) | Vagrant | RHCSA, RHCE, LFCS |
+| **Debian/Ubuntu** | Ubuntu 24.04 LTS | `lab`, `client`, `web` | LFCS, Canonical Academy |
+| **RHEL** | AlmaLinux 10 (compatibile binariamente con RHEL 10) | `rhel-lab`, `rhel-client`, `rhel-web` | RHCSA, RHCE, LFCS |
+
+Tutte le VM, delle due famiglie, si creano con **lo stesso strumento** e vivono sulla stessa rete privata.
 
 !!! tip "Quale scegliere?"
     Se è la prima volta, segui **Ubuntu** come percorso principale e ripeti i laboratori su **AlmaLinux** quando
     la scheda RHEL mostra differenze. Se punti alle certificazioni Red Hat, fai il contrario. Conoscere entrambe è un
     vantaggio concreto nei colloqui.
 
-## Percorso Debian/Ubuntu: Multipass
+## Lo strumento: KVM, QEMU e libvirt
 
-Usiamo **Multipass**, uno strumento gratuito e open source di Canonical (l'azienda che sviluppa Ubuntu) che crea
-VM Ubuntu con un solo comando su Windows, macOS e Linux.
+Linux ha la virtualizzazione **dentro il kernel**: si chiama **KVM** (*Kernel-based Virtual Machine*) ed è la stessa
+tecnologia su cui girano molti cloud pubblici. Le VM sono processi normali del tuo computer, quindi sono leggere e
+veloci. Tre componenti lavorano insieme:
 
-### 1. Installa Multipass
+| Componente | Ruolo |
+|---|---|
+| **KVM** | il modulo del kernel che usa le istruzioni di virtualizzazione del processore |
+| **QEMU** | il programma che simula il resto della macchina: dischi, schede di rete, console |
+| **libvirt** | il gestore che crea, avvia e ferma le VM e le loro reti; si comanda con `virsh` o con la grafica di **virt-manager** |
 
-=== "Windows"
+Per non farti creare le VM a mano, il corso include lo script
+[`lab-vm/academy-vm`](https://github.com/imredracoon/racoon-cloud-devops-academy/blob/main/lab-vm/academy-vm):
+scarica le **immagini cloud ufficiali** di Ubuntu e AlmaLinux (le stesse che si usano su AWS e Google Cloud) e le
+configura al primo avvio con **cloud-init**, lo standard con cui si preparano automaticamente i server nel cloud.
 
-    Requisiti: Windows 10 o 11 (Home, Pro o Enterprise), versione 1809 o successiva, con la funzionalità
-    **Piattaforma macchina virtuale** attiva (Pannello di controllo → Programmi → Attiva o disattiva funzionalità
-    di Windows).
+### 1. Controlla che la virtualizzazione sia attiva
 
-    Scarica il file `.msi` dalla [pagina ufficiale](https://canonical.com/multipass/install) ed eseguilo come
-    amministratore.
+```bash
+grep -cE 'vmx|svm' /proc/cpuinfo
+```
 
-=== "macOS"
+Deve stampare un numero maggiore di zero. Se stampa `0`, attiva la virtualizzazione (*Intel VT-x* o *AMD-V*, a volte
+chiamata *SVM*) nel BIOS/UEFI del computer: il manuale o il sito del produttore indicano dove si trova l'opzione.
 
-    Requisiti: macOS 14 Sonoma o successivo, Mac con processore Apple (M) o Intel, account amministratore.
+### 2. Installa KVM, libvirt e gli strumenti
 
-    Scarica il file `.pkg` dalla [pagina ufficiale](https://canonical.com/multipass/install) ed eseguilo.
-
-=== "Linux"
-
-    Multipass si installa come pacchetto *snap*:
+=== "Ubuntu"
 
     ```bash
-    sudo snap install multipass
+    sudo apt install -y qemu-system-x86 libvirt-daemon-system virtinst virt-manager git
     ```
 
-    Se la tua distribuzione non ha `snapd`, installalo seguendo la [guida di Snapcraft](https://snapcraft.io/docs/installing-snapd).
+=== "Fedora"
 
-Apri un terminale (su Windows: **PowerShell**; su macOS: **Terminale**) e verifica:
+    ```bash
+    sudo dnf install -y @virtualization git
+    sudo systemctl enable --now libvirtd
+    ```
 
-```bash
-multipass version
-```
-
-### 2. Crea la VM di laboratorio
-
-Il repository del corso contiene il file
-[`lab-vm/cloud-init.yaml`](https://github.com/imredracoon/racoon-cloud-devops-academy/blob/main/lab-vm/cloud-init.yaml):
-descrive come preparare la VM (pacchetti da installare e tre dischi virtuali da 1 GB per gli esercizi sui dischi).
-**cloud-init** è lo standard con cui si configurano automaticamente i server al primo avvio, anche nel cloud.
-
-1. Scarica il file: apri il link qui sopra, premi l'icona **Download raw file** e salvalo in una cartella
-   che ricordi, per esempio `Documenti/academy`.
-2. Nel terminale, spostati in quella cartella (`cd Documenti/academy`) e lancia:
+Poi, su entrambe:
 
 ```bash
-multipass launch 24.04 --name lab --cpus 2 --memory 2G --disk 20G --cloud-init cloud-init.yaml
+sudo usermod -aG libvirt $USER                                   # (1)!
+echo 'export LIBVIRT_DEFAULT_URI=qemu:///system' >> ~/.bashrc     # (2)!
 ```
 
-| Parte del comando | Significato |
+1.  Il gruppo `libvirt` ti permette di gestire le VM senza `sudo`.
+2.  libvirt ha due "modalità": quella **di sistema**, con reti vere tra le VM, e quella **di sessione**, ridotta.
+    Usiamo quella di sistema, e questa riga dice a `virsh` di usarla sempre.
+
+**Esci e rientra nella sessione** (o riavvia), poi verifica:
+
+```bash
+virsh list --all          # nessun errore, e per ora nessuna VM
+virt-host-validate qemu   # le righe sulla virtualizzazione devono dire PASS
+```
+
+`virt-host-validate` può segnalare qualche `WARN` su funzioni facoltative (per esempio IOMMU): per il corso non
+servono.
+
+### 3. Scarica i file del corso
+
+```bash
+git clone https://github.com/imredracoon/racoon-cloud-devops-academy.git ~/academy
+cd ~/academy/lab-vm
+```
+
+`git clone` scarica una copia del repository: lo studierai nella [Fase 2](../fase-2/index.md). Per aggiornare i file in futuro basta
+`git pull` dentro `~/academy`.
+
+### 4. Crea la rete e la prima VM
+
+```bash
+./academy-vm rete         # una volta sola
+./academy-vm crea lab     # la VM Ubuntu
+```
+
+| Cosa fa lo script | Dettagli |
 |---|---|
-| `multipass launch 24.04` | Crea una VM con Ubuntu 24.04 LTS. |
-| `--name lab` | La chiama `lab`. |
-| `--cpus 2 --memory 2G --disk 20G` | Le assegna 2 processori, 2 GB di memoria e 20 GB di disco. |
-| `--cloud-init cloud-init.yaml` | Applica la configurazione del corso al primo avvio. |
+| crea la rete privata `academy` | `192.168.56.0/24`, con accesso a Internet e un indirizzo fisso per ogni VM |
+| scarica l'immagine di base | solo la prima volta, in `/var/lib/libvirt/images/academy/`: per questo ti chiede la password di `sudo` |
+| crea il disco della VM | registra solo le differenze rispetto all'immagine di base, quindi occupa poco |
+| prepara la configurazione | nome, la tua chiave SSH (se non l'hai, la crea), pacchetti e tre dischi di laboratorio da 1 GB |
+| aggiunge la VM a `~/.ssh/config` | così ti basta scrivere `ssh lab` |
 
-La prima volta richiede qualche minuto, perché scarica l'immagine di Ubuntu.
-
-### 3. Entra nella VM e verifica
+La prima volta richiede qualche minuto. Quando compare `Pronta: ssh lab`, entra:
 
 ```bash
-multipass shell lab
+ssh lab
 ```
 
 Ora il terminale è **dentro** la VM: il prompt diventa `ubuntu@lab:~$`. Verifica che i dischi di laboratorio
@@ -109,91 +137,95 @@ $ losetup -a
 
 I numeri dei `loop` possono essere diversi da te: conta che ci siano tre righe. Per uscire dalla VM scrivi `exit`.
 
-### Comandi utili
+### 5. Le VM della famiglia Red Hat
 
-| Comando | Cosa fa |
-|---|---|
-| `multipass list` | Elenca le VM e il loro stato. |
-| `multipass stop lab` | Spegne la VM (libera memoria sul tuo computer). |
-| `multipass start lab` | La riaccende. |
-| `multipass snapshot lab` | Salva una "fotografia" della VM da spenta, per tornare indietro se rompi qualcosa. |
-| `multipass restore lab.snapshot1` | Ripristina la fotografia. |
-| `multipass delete --purge lab` | Cancella definitivamente la VM. |
-
-!!! tip "Rompere senza paura"
-    Prima di un laboratorio rischioso (dischi, firewall), spegni la VM e fai uno **snapshot**. Se qualcosa va storto,
-    ripristinalo. Se proprio vuoi ricominciare da zero, cancella la VM e ricreala con il comando del passo 2.
-
-## Percorso RHEL: AlmaLinux con Vagrant
-
-Multipass crea solo VM Ubuntu. Per la famiglia Red Hat usiamo **Vagrant** di HashiCorp, uno strumento gratuito che
-crea VM a partire da un file di testo, il `Vagrantfile`, e le **box** ufficiali di **AlmaLinux 10**, compatibile
-binariamente con RHEL 10: quello che impari vale identico su Red Hat Enterprise Linux.
-
-Il file [`lab-vm/rhel/Vagrantfile`](https://github.com/imredracoon/racoon-cloud-devops-academy/blob/main/lab-vm/rhel/Vagrantfile)
-del corso crea due VM su una rete privata con indirizzi fissi:
-
-| VM | Indirizzo | Ruolo |
-|---|---|---|
-| `rhel-lab` | 192.168.56.10 | il server, con tre dischi di laboratorio come la VM Ubuntu |
-| `rhel-client` | 192.168.56.11 | il client per gli esercizi di rete |
-
-### 1. Installa Vagrant e un hypervisor
-
-=== "Windows e Linux"
-
-    1. Installa [VirtualBox](https://www.virtualbox.org/wiki/Downloads) (gratuito).
-    2. Installa [Vagrant](https://developer.hashicorp.com/vagrant/install).
-
-    Su Windows VirtualBox convive con Hyper-V (usato da Docker Desktop e Multipass), ma può essere più lento.
-    Su Linux puoi usare in alternativa **libvirt/KVM** con il plugin `vagrant-libvirt`.
-
-=== "macOS (Intel)"
-
-    Installa [VirtualBox](https://www.virtualbox.org/wiki/Downloads) e [Vagrant](https://developer.hashicorp.com/vagrant/install).
-
-=== "macOS (Apple M1-M4)"
-
-    Le box AlmaLinux per processori ARM sono disponibili per **VMware** e **Parallels**. Installa
-    [VMware Fusion](https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion) (gratuito per uso
-    personale), [Vagrant](https://developer.hashicorp.com/vagrant/install), la
-    [Vagrant VMware Utility](https://developer.hashicorp.com/vagrant/install/vmware) e il plugin:
-
-    ```bash
-    vagrant plugin install vagrant-vmware-desktop
-    ```
-
-    Poi aggiungi `--provider=vmware_desktop` al comando `vagrant up`.
-
-### 2. Crea le VM
-
-Scarica la cartella `lab-vm/rhel` del corso (oppure clona il repository), aprila nel terminale e lancia:
+Con lo stesso comando crei le VM AlmaLinux 10, compatibile binariamente con RHEL 10: quello che impari vale identico
+su Red Hat Enterprise Linux.
 
 ```bash
-vagrant up
-```
-
-La prima volta scarica la box (circa 1 GB) e prepara le macchine. Poi:
-
-```bash
-vagrant ssh rhel-lab          # entra nel server
+./academy-vm crea rhel-lab rhel-client
+ssh rhel-lab
 cat /etc/os-release           # AlmaLinux 10
 getenforce                    # Enforcing: SELinux è attivo (lezione 1.14)
 losetup -a                    # i tre dischi di laboratorio
 ```
 
+### Tutte le VM del corso
+
+Non serve crearle tutte subito: il corso ti dice quando ne serve una nuova.
+
+| VM | Sistema | Indirizzo | Utente | Risorse | Dove si usa |
+|---|---|---|---|---|---|
+| `lab` | Ubuntu 24.04 | 192.168.56.21 | `ubuntu` | 2 vCPU, 2 GB, 20 GB | Fase 0, Fase 1, LFCS |
+| `client` | Ubuntu 24.04 | 192.168.56.22 | `ubuntu` | 1 vCPU, 1 GB, 10 GB | Fase 1, esercizi di rete |
+| `web` | Ubuntu 24.04 | 192.168.56.23 | `ubuntu` | 1 vCPU, 1 GB, 10 GB | [Progetto 1](../fase-1/progetto.md) |
+| `rhel-lab` | AlmaLinux 10 | 192.168.56.10 | `almalinux` | 2 vCPU, 2 GB, 20 GB | Fase 1, RHCSA, RHCE |
+| `rhel-client` | AlmaLinux 10 | 192.168.56.11 | `almalinux` | 1 vCPU, 1,5 GB, 10 GB | esercizi di rete, RHCE |
+| `rhel-web` | AlmaLinux 10 | 192.168.56.12 | `almalinux` | 1 vCPU, 1,5 GB, 10 GB | [Progetto 1](../fase-1/progetto.md), percorso RHEL |
+
+Le VM si vedono tra loro **per nome**: da `lab` puoi scrivere `ping client`, da `rhel-client` `ssh rhel-lab`. Il
+gateway della rete, cioè il tuo computer, è `192.168.56.1`.
+
+### Comandi utili
+
 | Comando | Cosa fa |
 |---|---|
-| `vagrant status` | Stato delle VM |
-| `vagrant halt` | Spegne le VM |
-| `vagrant snapshot save rhel-lab pulita` | Salva uno snapshot |
-| `vagrant snapshot restore rhel-lab pulita` | Lo ripristina |
-| `vagrant destroy -f` | Cancella le VM |
+| `./academy-vm elenco` | le VM del corso, con indirizzo e stato |
+| `virsh list --all` | tutte le VM e il loro stato |
+| `virsh start lab` | accende la VM |
+| `virsh shutdown lab` | la spegne in modo ordinato (libera memoria sul tuo computer) |
+| `virsh destroy lab` | la spegne di colpo, come staccare la spina: non cancella nulla |
+| `virsh console lab` | la **console seriale**: entri anche se la rete della VM non funziona; esci con ++ctrl+bracket-right++ |
+| `virsh snapshot-create-as lab pulita` | salva una "fotografia" della VM con il nome `pulita` |
+| `virsh snapshot-list lab` | elenca le fotografie |
+| `virsh snapshot-revert lab pulita` | torna alla fotografia |
+| `./academy-vm elimina lab` | cancella definitivamente la VM e i suoi dischi |
+
+!!! tip "Rompere senza paura"
+    Prima di un laboratorio rischioso (dischi, firewall, rete), spegni la VM e fai uno **snapshot**. Se qualcosa va
+    storto, ripristinalo. Se proprio vuoi ricominciare da zero, cancella la VM e ricreala con `./academy-vm crea`.
+
+!!! note "La console di emergenza"
+    `virsh console` chiede utente e password: l'utente è quello della tabella (`ubuntu` o `almalinux`), la password
+    è `academy`. Vale **solo** per la console: via SSH si entra unicamente con la chiave. È l'equivalente della
+    console che i provider cloud offrono quando un server non risponde più in rete.
+
+### Se preferisci la grafica
+
+Apri **Gestore macchine virtuali** (*virt-manager*) dal menu delle applicazioni: vedrai le VM del corso, potrai
+avviarle, spegnerle, guardarne la console e i grafici di CPU e memoria. È la stessa libvirt di `virsh`, solo con le
+finestre.
+
+!!! info "E GNOME Boxes?"
+    GNOME Boxes usa lo stesso motore KVM, ma lavora nella modalità *di sessione* di libvirt: non vede le VM del corso
+    e non gestisce reti private tra VM. Va benissimo per provare una distribuzione al volo da un file ISO, non per
+    i laboratori.
 
 !!! note "Red Hat Enterprise Linux vero, gratis"
     Red Hat offre la **Red Hat Developer Subscription for Individuals**: con un account gratuito su
     [developers.redhat.com](https://developers.redhat.com/) puoi installare RHEL originale per uso personale e
     di sviluppo. È utile soprattutto nelle ultime settimane prima dell'esame RHCSA.
+
+### Problemi frequenti
+
+??? question "`error: failed to connect to the hypervisor` o `Permission denied`"
+    Il tuo utente non è ancora nel gruppo `libvirt`, oppure non sei uscito e rientrato dopo `usermod`. Controlla con
+    `groups`. Verifica anche che `echo $LIBVIRT_DEFAULT_URI` stampi `qemu:///system`.
+
+??? question "Lo script resta fermo su «Attendo che … completi la configurazione»"
+    La prima volta la VM scarica gli aggiornamenti e i pacchetti: può servire qualche minuto. Se dopo 10 minuti è
+    ancora fermo, apri un altro terminale ed entra con `virsh console NOME` per vedere cosa succede: cloud-init
+    scrive i suoi messaggi in `/var/log/cloud-init-output.log`.
+
+??? question "AlmaLinux 10 e i processori meno recenti"
+    AlmaLinux 10, come RHEL 10, richiede un processore con le istruzioni **x86-64-v3** (in pratica: AVX2, presenti
+    sui processori Intel e AMD dal 2013-2015 in poi). Lo script se ne accorge e, se il tuo processore non le ha,
+    scarica la variante **x86-64-v2** di AlmaLinux, pensata proprio per questi casi.
+
+??? question "Ho ricreato una VM e `ssh` segnala un cambio di chiave"
+    Lo script rimuove la vecchia chiave dal file `~/.ssh/known_hosts_academy` quando ricrei una VM. Se il messaggio
+    compare comunque, eseguilo a mano: `ssh-keygen -R 192.168.56.21 -f ~/.ssh/known_hosts_academy` (con l'indirizzo
+    della VM).
 
 ## Alternativa nel browser: Killercoda
 
@@ -211,10 +243,13 @@ for n in 1 2 3; do sudo truncate -s 1G /srv/lab-disks/disk$n.img; sudo losetup -
 
 ## Fonti
 
-- [Multipass: documentazione ufficiale](https://canonical.com/multipass/docs)
-- [Multipass: installazione](https://canonical.com/multipass/docs/latest/how-to-guides/install-multipass/)
+- [KVM: documentazione del kernel Linux](https://docs.kernel.org/virt/kvm/index.html)
+- [libvirt: documentazione](https://libvirt.org/docs.html) e [virsh(1)](https://libvirt.org/manpages/virsh.html)
+- [virt-install(1)](https://github.com/virt-manager/virt-manager/blob/main/man/virt-install.rst)
+- [Ubuntu Server: libvirt](https://documentation.ubuntu.com/server/how-to/virtualisation/libvirt/)
+- [Fedora Docs: Getting started with virtualization](https://docs.fedoraproject.org/en-US/quick-docs/virtualization-getting-started/)
+- [Ubuntu: immagini cloud ufficiali](https://cloud-images.ubuntu.com/)
+- [AlmaLinux: immagini cloud generiche](https://wiki.almalinux.org/cloud/Generic-cloud.html)
 - [cloud-init: documentazione ufficiale](https://cloudinit.readthedocs.io/)
 - [Killercoda: playground](https://killercoda.com/playgrounds)
-- [Vagrant: documentazione](https://developer.hashicorp.com/vagrant/docs)
-- [AlmaLinux: box Vagrant ufficiali](https://wiki.almalinux.org/installation/vagrant-boxes.html)
 - [Red Hat Developer Subscription for Individuals](https://developers.redhat.com/articles/faqs-no-cost-red-hat-enterprise-linux)

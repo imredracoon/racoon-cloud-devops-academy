@@ -137,8 +137,9 @@ non duplicare gli alert.
     1 - node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}
     ```
 
-    **Spiegazione.** Nel Dev Container o con Docker Desktop, `node_exporter` vede la macchina virtuale che esegue
-    Docker, non il tuo computer: i numeri sono reali, ma riferiti a quella macchina. Su un server Linux vedresti il
+    **Spiegazione.** Nel Dev Container `node_exporter` gira dentro un container: vede il kernel della macchina che
+    esegue Docker (in Codespaces la VM di GitHub, altrimenti il tuo computer), ma i dischi e i file system che vede
+    sono quelli del container. I numeri sono reali, ma vanno letti sapendo da dove vengono. Su un server Linux vedresti il
     server stesso. Al punto 4 la dashboard ricompare dopo il riavvio perché ora è **codice** nel repository.
 
 ## Esercizi

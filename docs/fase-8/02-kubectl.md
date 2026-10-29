@@ -49,8 +49,7 @@ Per eliminarlo: `kind delete cluster --name academy`. Le immagini costruite in l
 si caricano con `kind load docker-image NOME:TAG --name academy`.
 
 !!! note "Alternative locali"
-    **minikube** (anche lui progetto ufficiale), **k3d** (k3s in Docker) e Docker Desktop offrono cluster locali
-    simili. Usiamo kind perché è leggero, multi-nodo e funziona identico nel Dev Container e in Codespaces.
+    **minikube** (anche lui progetto ufficiale) e **k3d** (k3s in Docker) offrono cluster locali simili. Usiamo kind perché è leggero, multi-nodo e funziona identico nel Dev Container e in Codespaces.
 
 ## Il kubeconfig
 
