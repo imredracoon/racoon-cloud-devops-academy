@@ -35,6 +35,29 @@ di riferimento si trova nel repository del corso, nella cartella
 [`labs/tasks-api`](https://github.com/imredracoon/racoon-cloud-devops-academy/tree/main/labs/tasks-api):
 consultala **dopo** aver scritto la tua.
 
+## Nei tre livelli
+
+Il codice si scrive sempre nel Dev Container della workstation e si salva su GitHub. Cambia dove lo fai girare.
+
+=== "Livello 1 · Un PC"
+
+    Dev Container per Git, Bash e Python; VM `lab` per i job pianificati della [lezione 2.5](05-pianificazione.md) e VM `web` per
+    l'installazione del progetto.
+
+=== "Livello 2 · Workstation + server"
+
+    Gli script li provi nel Dev Container e li **installi su `srv1`**, che diventa il tuo primo server "di
+    produzione": il backup notturno gira lì e salva sul disco USB della [lezione 1.6](../fase-1/06-storage.md#nei-tre-livelli),
+    la Tasks API del progetto è servita da `srv1`. In più scrivi `fleet.sh`, uno script che lancia un comando su
+    `srv1` e sulle sue VM ([lezione 2.4](04-bash-avanzato.md#nei-tre-livelli)).
+
+=== "Livello 3 · Mini data center"
+
+    Gli script agiscono su **tutti i nodi**: `fleet.sh` controlla il data center in un colpo solo, il backup
+    notturno di `nodo2` e `nodo3` finisce sullo storage NFS di `nodo1`, la Tasks API gira su due nodi e
+    `healthcheck.py` li controlla entrambi. È l'automazione "fatta a mano" che nella [Fase 6](../fase-6/index.md)
+    sostituirai con Ansible.
+
 ## Le lezioni
 
 1. [Git: i fondamenti](01-git-base.md)

@@ -311,6 +311,47 @@ systemctl list-timers                                # compare come run-....time
     `sudo ausearch -m AVC -ts recent` mostrerebbe il blocco. `/usr/local/bin/` ha l'etichetta corretta (`bin_t`).
     Su Ubuntu funzionerebbe anche dalla home, ma la buona pratica è la stessa ovunque.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Gli esercizi nella VM `lab` sono tutto ciò che serve.
+
+=== "Livello 2 · Workstation + server"
+
+    Metti in servizio un backup vero: ogni notte `srv1` salva `/etc` e `/srv` con lo script `backup.sh` della
+    [lezione 2.4](04-bash-avanzato.md), sul disco USB montato in `/srv/dati` ([lezione 1.6](../fase-1/06-storage.md#nei-tre-livelli)); senza disco USB
+    usa `/var/backups/academy`. Crea `backup.service` e `backup.timer` come negli esempi, con
+    `OnCalendar=*-*-* 02:30:00` e `Persistent=true`. Nel servizio aggiungi `RequiresMountsFor=/srv/dati` nella
+    sezione `[Unit]`: se il disco non c'è, il backup fallisce invece di riempire il disco di sistema.
+
+    **Collaudo**
+
+    | Prova (su `srv1`) | Risultato atteso |
+    |---|---|
+    | `systemctl list-timers backup.timer` | la prossima esecuzione alle 2:30 |
+    | `sudo systemctl start backup.service`, poi `ls -l /srv/dati` | un archivio nuovo |
+    | `journalctl -u backup.service -n 5` | l'esito dell'ultima esecuzione |
+    | imposta `OnCalendar` a 5 minuti da ora, spegni `srv1`, riaccendilo dopo 10 minuti | il backup parte all'avvio (`Persistent=true`) |
+    | stacca il disco USB e avvia il servizio | il servizio fallisce e compare in `systemctl --failed` |
+
+=== "Livello 3 · Mini data center"
+
+    Il backup diventa centralizzato: ogni notte `nodo2` e `nodo3` salvano `/etc` e `/srv` sullo storage NFS di
+    `nodo1` ([lezione 1.6](../fase-1/06-storage.md#nei-tre-livelli)), in una cartella per nodo:
+    `/mnt/condivisa/backup/nodo2` su `nodo2`, `/mnt/auto/dati/backup/nodo3` su `nodo3`. Usa lo stesso
+    `backup.sh` con la destinazione come argomento, e su `nodo2` `RequiresMountsFor=/mnt/condivisa`. Sfasa gli
+    orari (2:30 e 2:45), così i nodi non scrivono insieme.
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `./fleet.sh systemctl list-timers backup.timer --no-pager` | il timer su `nodo2` e `nodo3` |
+    | avvio manuale del servizio sui due nodi, poi `ssh nodo1 ls -R /srv/condivisa/backup` | un archivio per nodo |
+    | `nodo1` spento, avvio manuale del servizio su `nodo2` | fallisce in modo visibile (`systemctl --failed`) invece di salvare in locale |
+    | ripristino di prova: estrai un file da un archivio in `/tmp` su `nodo3` | il file è identico all'originale (`diff`) |
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

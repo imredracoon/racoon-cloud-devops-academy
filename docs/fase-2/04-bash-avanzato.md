@@ -357,6 +357,74 @@ essere eseguito, e lo rende più ordinato.
     si rompe con nomi che contengono spazi: si usa direttamente il modello `./*.log`. 4) `$cartella` e `$f` senza
     virgolette. 5) Lo shebang `/bin/sh` su Ubuntu è dash: con le funzioni di Bash sarebbe un problema.
 
+## Nei tre livelli
+
+!!! esercizio "Esercizio per i livelli 2 e 3 · fleet.sh"
+    Scrivi `fleet.sh`, uno script che esegue lo stesso comando su più macchine e riassume l'esito. Le macchine sono
+    elencate in un file, una per riga, con i nomi del tuo `~/.ssh/config`; le righe vuote e quelle che iniziano
+    con `#` si saltano.
+
+    === "Livello 2 · Workstation + server"
+
+        ```text title="nodi.txt"
+        srv1
+        lab
+        client
+        ```
+
+    === "Livello 3 · Mini data center"
+
+        ```text title="nodi.txt"
+        nodo1
+        nodo2
+        nodo3
+        lab
+        ```
+
+    Requisiti: opzione `-f FILE` (predefinito `nodi.txt`) e `-h`; una riga per macchina con `OK` o `ERRORE` e
+    l'output del comando; codice di uscita 1 se anche una sola macchina ha fallito; nessuna richiesta di password
+    (se la chiave non basta, la macchina è in errore). Deve passare `shellcheck`.
+
+    **Collaudo:** `./fleet.sh uptime` mostra tutte le macchine in `OK`. Spegni una VM (`virsh shutdown client` sul
+    server) o un nodo: lo script la segnala in `ERRORE` dopo al massimo 5 secondi e `echo $?` stampa `1`.
+
+??? success "Soluzione"
+    ```bash title="fleet.sh"
+    #!/usr/bin/env bash
+    # Esegue un comando su tutte le macchine elencate in un file e riassume l'esito.
+    # Uso: fleet.sh [-f FILE] COMANDO...
+    set -euo pipefail
+
+    file=nodi.txt
+    while getopts "f:h" opt; do
+      case $opt in
+        f) file=$OPTARG ;;
+        h) sed -n '2,3p' "$0"; exit 0 ;;
+        *) exit 2 ;;
+      esac
+    done
+    shift $((OPTIND - 1))
+    [ $# -gt 0 ] || { echo "manca il comando da eseguire" >&2; exit 2; }
+    [ -r "$file" ] || { echo "non riesco a leggere $file" >&2; exit 2; }
+
+    falliti=0
+    while read -r nodo; do
+      [[ -z $nodo || $nodo == \#* ]] && continue
+      if out=$(ssh -n -o BatchMode=yes -o ConnectTimeout=5 "$nodo" "$@" 2>&1); then
+        printf '%-8s OK     %s\n' "$nodo" "$out"
+      else
+        printf '%-8s ERRORE %s\n' "$nodo" "$out"
+        falliti=$((falliti + 1))
+      fi
+    done < "$file"
+
+    exit $((falliti > 0))
+    ```
+    **Spiegazione.** `ssh -n` è indispensabile: senza, `ssh` leggerebbe il resto di `nodi.txt` dal suo input
+    standard e il ciclo si fermerebbe alla prima macchina. `BatchMode=yes` vieta le richieste di password,
+    `ConnectTimeout=5` evita di aspettare a lungo una macchina spenta. L'`if` intorno a `ssh` impedisce a
+    `set -e` di fermare lo script al primo errore: è uno dei casi in cui si gestisce l'errore invece di subirlo.
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

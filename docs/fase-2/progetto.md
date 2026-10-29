@@ -47,6 +47,38 @@ Tutti gli script Bash devono passare `shellcheck` senza avvisi.
 La VM `web` del Progetto 1 deve servire la Tasks API su `https://web.lab/` al posto della pagina statica, con i
 dati salvati in modo persistente e il backup notturno del database attivo.
 
+### Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Come descritto: la Tasks API sulla VM `web`.
+
+=== "Livello 2 · Workstation + server"
+
+    Il server è **`srv1`**, già messo in sicurezza nel [Progetto 1](../fase-1/progetto.md#nei-tre-livelli). `install-tasks-api.sh`
+    lo provi prima su una VM nuova (`./academy-vm crea web`), poi lo lanci su `srv1`. Il backup notturno è quello
+    della [lezione 2.5](05-pianificazione.md#nei-tre-livelli), con in più il database della Tasks API. Aggiungi a `ops-toolkit` lo
+    script `bin/fleet.sh` della [lezione 2.4](04-bash-avanzato.md#nei-tre-livelli). I test "dal client" li lanci dalla workstation.
+
+=== "Livello 3 · Mini data center"
+
+    La Tasks API gira su **due istanze**, `nodo2` e `nodo3`: lo stesso `install-tasks-api.sh` deve funzionare su
+    Ubuntu e su AlmaLinux (rileva la famiglia da `/etc/os-release`). `nodo1` continua a pubblicare `nodo2` sulle
+    porte 80 e 443. Aggiungi a `ops-toolkit` `bin/fleet.sh` e il backup centralizzato della
+    [lezione 2.5](05-pianificazione.md#nei-tre-livelli).
+
+    Test aggiuntivi:
+
+    | Test | Risultato atteso |
+    |---|---|
+    | `ssh nodo1 python3 healthcheck.py https://nodo2.lab https://nodo3.lab` (copia lo strumento su `nodo1` e installa `python3-requests`; `--insecure` per il certificato autofirmato) | entrambe sane, codice 0 |
+    | spento `nodo3`, lo stesso comando | `nodo3` non sano, codice 1, entro il timeout |
+    | `install-tasks-api.sh` lanciato due volte su `nodo3` | nessun errore la seconda volta, SELinux in enforcing |
+    | `./fleet.sh systemctl is-active tasks-api` dalla workstation | `active` su `nodo2` e `nodo3` |
+
+    Per `--insecure` aggiungi a `healthcheck.py` un'opzione che passa `verify=False` a `requests.get`, e spiega
+    nel README perché in produzione non si usa.
+
 ## Suggerimenti
 
 - Per testare `healthcheck.py` senza rete, separa la logica in una funzione che riceve una **funzione per fare la
