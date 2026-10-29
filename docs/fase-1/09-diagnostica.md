@@ -144,6 +144,37 @@ Il file `.pcap` si può aprire con **Wireshark** sul tuo computer per un'analisi
     il kernel di `lab` risponde con un RST. Ascoltando su `0.0.0.0` il servizio diventa raggiungibile. HTTP non è
     cifrato, per questo puoi leggere la richiesta: con HTTPS vedresti solo dati illeggibili.
 
+## Nei tre livelli
+
+Il laboratorio si fa nelle VM in tutti i livelli. In più, una prova che rende visibile il **NAT** della
+[lezione 1.8](08-dns-routing.md#nat): catturi lo stesso `ping` sulle due schede del router, prima e dopo la
+traduzione degli indirizzi. Apri due terminali sul router e lancia il `ping` dalla macchina indicata.
+
+=== "Livello 1 · Un PC"
+
+    | Router | Terminale 1 | Terminale 2 | Il `ping` parte da |
+    |---|---|---|---|
+    | la workstation | `sudo tcpdump -ni virbr56 icmp` | `sudo tcpdump -ni wlp2s0 icmp` (la tua scheda verso Internet: `ip route get 1.1.1.1`) | `ssh lab ping -c 3 1.1.1.1` |
+
+=== "Livello 2 · Workstation + server"
+
+    | Router | Terminale 1 | Terminale 2 | Il `ping` parte da |
+    |---|---|---|---|
+    | `srv1` | `sudo tcpdump -ni virbr56 icmp` | `sudo tcpdump -ni eno1 icmp` (la scheda verso il router di casa) | `ssh lab ping -c 3 1.1.1.1` |
+
+=== "Livello 3 · Mini data center"
+
+    | Router | Terminale 1 | Terminale 2 | Il `ping` parte da |
+    |---|---|---|---|
+    | `nodo1` | `sudo tcpdump -ni lab0 icmp` | `sudo tcpdump -ni eno1 icmp` | `ssh nodo2 ping -c 3 1.1.1.1` |
+
+    Ripeti con `ssh nodo3 ping -c 3 1.1.1.1`: sulla scheda `eno1` i pacchetti dei due nodi sono indistinguibili.
+
+**Cosa devi vedere.** Sulla scheda interna il pacchetto ha come sorgente l'indirizzo privato (`192.168.56.21`
+oppure `10.10.10.12`); su quella esterna lo stesso pacchetto ha come sorgente l'indirizzo del router. Le risposte
+fanno il percorso inverso: è il *connection tracking* che sa a chi restituirle. Annota nel README di `academy-lab`
+le righe catturate e spiega la differenza.
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

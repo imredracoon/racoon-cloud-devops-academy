@@ -200,6 +200,28 @@ spec:
     con capacità, modalità di accesso e `storageClassName` compatibili. Nota che `storageClassName` di un PVC
     esistente non si può modificare: va ricreato.
 
+## Nei tre livelli
+
+Il laboratorio si fa con kind in tutti i livelli: lo StatefulSet usa lo storage **locale** del nodo. Nei livelli 2
+e 3 ripetilo sul cluster kubeadm della [lezione 8.12](12-kubeadm.md#nei-tre-livelli), dove la StorageClass predefinita è **NFS**:
+
+=== "Livello 1 · Un PC"
+
+    Il laboratorio con kind è tutto ciò che serve.
+
+=== "Livello 2 · Workstation + server"
+
+    Sul cluster delle VM di `srv1`, con l'immagine pubblicata su GHCR al posto di `tasks-api:dev` (nell'overlay,
+    `images:` con `newName` e `newTag`): ripeti i punti 2-4, poi `kubectl drain` del worker che ospita `postgres-0`.
+    Il Pod riparte sull'altro worker **con i dati**, perché il volume sta su `srv1` e non sul nodo. Con kind, al punto
+    3, avevi visto il contrario.
+
+=== "Livello 3 · Mini data center"
+
+    Come nel livello 2, sul cluster `nodo2` + `nodo3`, con i dati sullo storage di `nodo1`. Prova anche il caso
+    peggiore: con `postgres-0` in esecuzione, **spegni `nodo1`**. Cosa succede alle scritture? E quando lo riaccendi?
+    Annota la risposta: è il motivo per cui nel cloud si usa uno storage gestito e replicato, o un database gestito.
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

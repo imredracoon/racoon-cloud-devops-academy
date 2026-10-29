@@ -103,6 +103,45 @@ Nel repository `tasks-api-cloud`:
 - `scripts/startup.sh` (variante A) e `scripts/destroy.sh`;
 - screenshot essenziali (load balancer con destinazioni sane, allarme, grafico del failover) in `docs/img/`.
 
+### Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il progetto come descritto.
+
+=== "Livello 2 · Workstation + server"
+
+    Prima della produzione nel cloud c'era `srv1`: le attività della Tasks API sono nel suo PostgreSQL in container
+    ([Progetto 3](../fase-3/progetto.md#nei-tre-livelli)). Una parte del progetto è la **migrazione** di quei dati nel database
+    gestito, attraverso la VPN della [lezione 5.1](01-vpc.md#nei-tre-livelli): il database nel cloud non ha un indirizzo pubblico,
+    quindi il tunnel è l'unica strada.
+
+    1. Riattiva la VPN e aggiungi l'istanza `vpn` alla VPC del progetto, con le rotte verso `10.99.0.0/24`.
+    2. Permetti la porta 5432 del database **da `10.99.0.2/32`** e solo per la durata della migrazione.
+    3. Ferma l'API su `srv1` (nessuna scrittura durante la copia), poi esegui il dump e caricalo:
+
+        ```bash
+        docker compose exec -T db pg_dump -U tasks -d tasks --no-owner \
+          | psql "postgresql://UTENTE@INDIRIZZO-DB-PRIVATO:5432/tasks?sslmode=require"
+        ```
+
+    4. Togli la regola della porta 5432 e documenta in `docs/migrazione.md` passi, durata del fermo e verifica.
+
+    Test aggiuntivi:
+
+    | Test | Risultato atteso |
+    |---|---|
+    | `GET /tasks` sul load balancer dopo la migrazione | le stesse attività che c'erano su `srv1` |
+    | numero di righe: `SELECT count(*) FROM tasks` sui due database | uguale |
+    | `nc -zvw3 INDIRIZZO-DB-PRIVATO 5432` da `srv1`, dopo aver tolto la regola | timeout |
+
+=== "Livello 3 · Mini data center"
+
+    Come nel livello 2, con il dump fatto da `nodo2` (il suo stack Compose) e il tunnel su `nodo1`. Permetti la
+    porta 5432 **da `10.10.10.12/32`**: è l'indirizzo con cui `nodo2` arriva nel cloud, perché nel tunnel non c'è
+    NAT. Nel `docs/decisioni.md` aggiungi una decisione: cosa cambierebbe usando la VPN gestita del fornitore
+    (costo, alta disponibilità con due tunnel, routing dinamico BGP).
+
 ## Come verificare
 
 | Test | Risultato atteso |

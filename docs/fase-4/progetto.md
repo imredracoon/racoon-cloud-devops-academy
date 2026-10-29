@@ -78,6 +78,30 @@ Nel repository:
 - Un budget attivo con avvisi.
 - Nessuna credenziale nel repository.
 
+### Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il progetto come descritto.
+
+=== "Livello 2 · Workstation + server"
+
+    Il progetto ha una **seconda parte**, il backup fuori sede di `srv1` della [lezione 4.6](06-storage.md#nei-tre-livelli),
+    documentata nel repository `ops-toolkit`:
+
+    - `bin/offsite.sh`, il servizio e il timer in `systemd/`;
+    - `cloud/policy-backup.json` (AWS) o il comando che concede il ruolo sul bucket (Google Cloud);
+    - `docs/ripristino.md`: la procedura di ripristino passo per passo, con la data e l'esito dell'ultima prova;
+    - nel README, il **costo** stimato al mese dello spazio usato (calcolatore del fornitore) e il compromesso
+      sulle chiavi a lunga durata.
+
+    Le prove sono il collaudo della [lezione 4.6](06-storage.md#nei-tre-livelli).
+
+=== "Livello 3 · Mini data center"
+
+    Come il livello 2, con il caricamento fatto da `nodo1` per tutti i nodi. Nel diagramma del README compare il
+    percorso dei dati: `nodo2` e `nodo3` → NFS su `nodo1` → bucket nel cloud.
+
 ## Come verificare
 
 | Test | Risultato atteso |

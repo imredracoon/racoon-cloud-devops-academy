@@ -40,6 +40,51 @@ Sulla VM `web` (percorso Debian/Ubuntu, con Docker) oppure su `rhel-lab` (percor
 - lo stack riparte da solo dopo un riavvio della VM;
 - il backup gira ogni notte con un timer di systemd ([lezione 2.5](../fase-2/05-pianificazione.md)).
 
+### Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Come descritto: VM `web` o `rhel-lab`.
+
+=== "Livello 2 · Workstation + server"
+
+    Lo stack gira su **`srv1`** e sostituisce la Tasks API installata con systemd nel
+    [Progetto 2](../fase-2/progetto.md#nei-tre-livelli) (ferma e disattiva `tasks-api.service`).
+
+    - Il servizio `proxy` pubblica solo `127.0.0.1:8080`; il Nginx dell'host continua a servire
+      `https://web.lab` e inoltra a `http://127.0.0.1:8080`. Il certificato resta all'host.
+    - Il backup del database va sul disco USB, `/srv/dati` ([lezione 2.5](../fase-2/05-pianificazione.md#nei-tre-livelli)).
+
+    Test aggiuntivi (dalla workstation):
+
+    | Test | Risultato atteso |
+    |---|---|
+    | `curl -sk https://web.lab/health` | `{"status": "ok", ...}` |
+    | `nc -zvw3 IP-SRV1 8080` | errore: lo stack non è esposto direttamente |
+    | riavvio di `srv1`, poi `curl -sk https://web.lab/health` e `ssh lab hostname` | lo stack riparte e le VM funzionano ancora accanto a Docker |
+
+=== "Livello 3 · Mini data center"
+
+    La stessa immagine, due motori:
+
+    - su **`nodo2`** lo stack con Docker Compose (`compose.prod.yaml`), dietro il Nginx dell'host, pubblicato da
+      `nodo1` sulle porte 80 e 443 come nei progetti precedenti;
+    - su **`nodo3`** lo stesso stack con **Quadlet** (obbligatorio a questo livello): `tasks.network`,
+      `tasks-db.volume`, `tasks-db.container`, `tasks-api.container`, `tasks-proxy.container` in
+      `/etc/containers/systemd/`, con `Requires=` e `After=` tra i servizi;
+    - il backup notturno dei due database va sullo storage NFS di `nodo1`.
+
+    Test aggiuntivi:
+
+    | Test | Risultato atteso |
+    |---|---|
+    | `ssh nodo1 python3 healthcheck.py https://nodo2.lab https://nodo3.lab --insecure` | entrambe sane |
+    | `ssh nodo3 systemctl list-dependencies tasks-api.service` | dipende dal database e dalla rete |
+    | `ssh nodo3 sudo systemctl stop tasks-db`, poi `systemctl is-active tasks-api` su `nodo3` | anche l'API si ferma: le dipendenze funzionano |
+    | i digest dell'immagine su `nodo2` e `nodo3` | identici |
+    | riavvio di tutti i nodi | i due stack ripartono senza interventi |
+    | ripristino del backup di `nodo2` **su `nodo3`** | le attività di `nodo2` compaiono su `nodo3`: il backup è portabile |
+
 ## Suggerimenti
 
 - Per lo script di backup:

@@ -31,5 +31,25 @@ basi che si inciampa nei colloqui tecnici.
 5. [Editor, file di testo e Markdown](05-editor-markdown.md)
 6. [Cloud, DevOps e i ruoli del mestiere](06-cloud-devops.md)
 7. [Laboratorio: prepara l'ambiente](07-laboratorio.md)
+8. [Homelab: workstation, server e mini data center](08-homelab.md) (livelli 2 e 3)
 
 Poi il [progetto](progetto.md) e la [verifica di fine fase](verifica.md).
+
+## Nei tre livelli
+
+Il corso si segue con uno dei [tre livelli del laboratorio](../ambiente/livelli.md). In questa fase:
+
+=== "Livello 1 · Un PC"
+
+    Fai le lezioni 0.1-0.7 e il progetto sulla tua workstation. La lezione 0.8 è da leggere: ti mostra dove potrai
+    arrivare.
+
+=== "Livello 2 · Workstation + server"
+
+    Dopo la lezione 0.7 costruisci `srv1` con la [lezione 0.8](08-homelab.md): installazione, accesso SSH, VM di
+    laboratorio spostate sul server e collaudo. Nel progetto documenti anche il server.
+
+=== "Livello 3 · Mini data center"
+
+    Dopo la lezione 0.7 costruisci `nodo1`, `nodo2` e `nodo3` con la [lezione 0.8](08-homelab.md) e superi il collaudo.
+    Nel progetto documenti i tre nodi e l'inventario dell'hardware. Calcola un paio di ore in più per questa fase.

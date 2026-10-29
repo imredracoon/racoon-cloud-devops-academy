@@ -96,6 +96,7 @@ nav:
       - Il percorso e le certificazioni: percorso.md
       - Ambiente di laboratorio:
           - ambiente/index.md
+          - I tre livelli del laboratorio: ambiente/livelli.md
           - "Non hai ancora Linux?": ambiente/linux-sul-pc.md
           - Dev Container: ambiente/devcontainer.md
           - Macchine virtuali Linux: ambiente/vm-linux.md
@@ -111,6 +112,7 @@ nav:
       - "0.5 Editor, file di testo e Markdown": fase-0/05-editor-markdown.md
       - "0.6 Cloud, DevOps e i ruoli del mestiere": fase-0/06-cloud-devops.md
       - "0.7 Laboratorio: prepara l'ambiente": fase-0/07-laboratorio.md
+      - "0.8 Homelab: workstation, server e mini data center": fase-0/08-homelab.md
       - "Progetto 0 · Laboratorio documentato": fase-0/progetto.md
       - "Verifica di fine fase": fase-0/verifica.md
   - "Fase 1 · Linux e reti":

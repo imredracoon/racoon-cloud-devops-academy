@@ -20,6 +20,11 @@ tuo computer sono gli stessi che userai sui server.
     Nessun problema: la pagina [Non hai ancora Linux?](linux-sul-pc.md) spiega come installare Ubuntu o Fedora,
     oppure come seguire il corso dal browser con GitHub Codespaces e Killercoda.
 
+!!! info "Uno, due o più computer"
+    Il corso si fa con un solo computer, ma puoi anche costruire un piccolo laboratorio fisico: una workstation più
+    un server, oppure un mini data center con tre mini PC usati. La pagina [I tre livelli del laboratorio](livelli.md)
+    spiega le tre strade, l'hardware e i costi.
+
 ## I tre ambienti di laboratorio
 
 | Ambiente | Cos'è | Dove si usa | Costo |

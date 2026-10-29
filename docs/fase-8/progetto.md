@@ -51,6 +51,39 @@
     database eliminato) e, per ciascuno: sintomi visti in Grafana, diagnosi, riparazione, tempo impiegato,
     miglioramento proposto.
 
+### Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il progetto come descritto, su kind (o EKS/GKE).
+
+=== "Livello 2 · Workstation + server"
+
+    La piattaforma gira sul **cluster kubeadm delle VM di `srv1`** ([lezione 8.12](12-kubeadm.md#nei-tre-livelli)). In più:
+
+    - **Parte A:** MetalLB e il provisioner NFS sono Application di Argo CD, come il resto della piattaforma;
+    - **Parte D:** `backup-etcd.sh` gira su `k8s-cp` con un timer e copia lo snapshot su `srv1` e nel bucket
+      fuori sede; il *game day* "un nodo fermo" è uno spegnimento brusco (`virsh destroy k8s-w2`), non un drain.
+
+=== "Livello 3 · Mini data center"
+
+    La piattaforma gira sul **cluster fisico `nodo2` + `nodo3`**, con lo storage di `nodo1` e il Gateway pubblicato
+    dal gateway del data center. In più:
+
+    - **Parte A:** MetalLB e il provisioner NFS gestiti da Argo CD; la regola di inoltro su `nodo1` nelle variabili
+      del ruolo `gateway` della [Fase 6](../fase-6/progetto.md#nei-tre-livelli);
+    - **Parte B:** i dati della Tasks API ripristinati dal backup fatto prima di trasformare i nodi;
+    - **Parte D:** tre guasti **fisici** nel *game day*: il cavo di rete di `nodo3` staccato, `nodo1` spento (lo
+      storage sparisce: cosa vedi?), un riavvio di tutto il data center. Per ognuno la cronologia letta in Grafana.
+
+    Test aggiuntivi:
+
+    | Test | Risultato atteso |
+    |---|---|
+    | `curl -s http://tasks.lab/health` dalla workstation durante il `kubectl drain nodo3` | risponde per tutto il tempo |
+    | riavvio di tutto il data center | Argo CD riporta tutto `Synced` e `Healthy` senza interventi |
+    | `kubectl get nodes -o wide` | due sistemi operativi diversi nello stesso cluster |
+
 ## Come verificare
 
 | Test | Risultato atteso |

@@ -288,6 +288,64 @@ Un alert passa per tre stati: **inactive**, **pending** (la condizione è vera m
     Prometheus esplode. Le informazioni per singola richiesta o utente vanno nei **log** o nelle **tracce**, non nelle
     etichette delle metriche.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il laboratorio sulla workstation è tutto ciò che serve.
+
+=== "Livello 2 · Workstation + server"
+
+    Avvia lo stack del laboratorio su **`srv1`** e aggiungi alle destinazioni le **VM**.
+
+    1. Su ogni VM installa node exporter: `sudo apt install -y prometheus-node-exporter` su Ubuntu; su AlmaLinux
+       un Quadlet con l'immagine `quay.io/prometheus/node-exporter`, rete `host` e la radice del sistema montata in
+       sola lettura (`Volume=/:/host:ro,rslave` ed `Exec=--path.rootfs=/host`). Meglio ancora: un ruolo Ansible
+       `node_exporter` ([lezione 6.10](../fase-6/10-ansible.md#nei-tre-livelli)) che sceglie il metodo in base alla famiglia.
+    2. In `osservabilita/prometheus.yml` aggiungi un job:
+
+        ```yaml
+          - job_name: nodi
+            static_configs:
+              - targets: ["192.168.56.21:9100", "192.168.56.10:9100"]   # lab, rhel-lab
+        ```
+
+    3. Una regola di alert `NodoGiu`: `up{job=~"node|nodi"} == 0` per 2 minuti, con severità `critical`.
+    4. In Grafana importa la dashboard **Node Exporter Full** (ID `1860` su grafana.com).
+    5. Per aprire Prometheus e Grafana dalla workstation senza esporli: `ssh -L 3000:localhost:3000 -L 9090:localhost:9090 srv1`.
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | Prometheus, *Target health* | `node` (`srv1` stesso) e le VM in stato UP |
+    | `ssh srv1 virsh shutdown rhel-lab` | dopo 2 minuti `NodoGiu` è `firing` per `192.168.56.10` |
+    | riaccendi la VM | l'alert si risolve da solo |
+    | dashboard Node Exporter Full | CPU, RAM, disco e rete di `srv1` e delle VM |
+    | `curl -m 5 http://IP-SRV1:9090` dalla workstation | errore: le interfacce si raggiungono solo con il tunnel SSH |
+
+=== "Livello 3 · Mini data center"
+
+    Lo stack gira su **`nodo2`** e controlla i tre nodi fisici.
+
+    1. node exporter su `nodo1` e `nodo2` (pacchetto) e su `nodo3` (Quadlet), con un ruolo Ansible per tutti.
+    2. La porta 9100 aperta **solo per Prometheus**: su `nodo1` nel firewall della
+       [lezione 1.11](../fase-1/11-firewall.md#nei-tre-livelli) `iifname $LAB ip saddr 10.10.10.12 tcp dport 9100 accept`; su `nodo3`
+       `sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="10.10.10.12" port port="9100" protocol="tcp" accept'`.
+    3. Il job `nodi` con le destinazioni `nodo1.lab:9100`, `nodo3.lab:9100` (`nodo2` è già il job `node`), la
+       regola `NodoGiu` e la dashboard Node Exporter Full, come nel livello 2.
+    4. Prometheus e Grafana dalla workstation con il tunnel: `ssh -L 3000:localhost:3000 -L 9090:localhost:9090 nodo2`.
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | Prometheus, *Target health* | tre nodi UP |
+    | **stacca la spina di `nodo3`** | dopo 2 minuti `NodoGiu` è `firing` per `nodo3.lab:9100`, la notifica arriva |
+    | riaccendi `nodo3` | l'alert si risolve; nel grafico dell'uptime si vede il riavvio |
+    | `ssh nodo3 'curl -m 5 http://nodo1.lab:9100/metrics'` | timeout: solo Prometheus può leggere le metriche |
+    | un `stress` o un `yes > /dev/null` su `nodo1` per qualche minuto | il carico compare nella dashboard di `nodo1` |
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

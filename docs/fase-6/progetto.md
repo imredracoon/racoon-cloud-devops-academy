@@ -66,6 +66,66 @@ Sui quattro nodi di `labs/ansible-lab` (copiati nel repository in `ansible/`), s
 3. un playbook `sito.yml` che applica i ruoli, idempotente (seconda esecuzione con `changed=0`) e senza errori di
    `ansible-lint`.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il progetto come descritto.
+
+=== "Livello 2 · Workstation + server"
+
+    La **Parte B** si svolge sull'inventario della [lezione 6.10](10-ansible.md#nei-tre-livelli): `base` su `srv1` e su tutte le VM,
+    `tasks_api` sulle VM `lab` e `rhel-lab` (il gruppo `app`). In più un ruolo **`homelab_host`** per `srv1`, che lo
+    descrive in codice:
+
+    - pacchetti di KVM e libvirt, il tuo utente nel gruppo `libvirt`;
+    - il firewall della [lezione 1.11](../fase-1/11-firewall.md#nei-tre-livelli) da un template, con un handler che ricarica nftables (o le
+      regole di firewalld, su AlmaLinux);
+    - il backup locale e fuori sede (script, servizi e timer delle lezioni [2.5](../fase-2/05-pianificazione.md#nei-tre-livelli) e
+      [4.6](../fase-4/06-storage.md#nei-tre-livelli)), senza la chiave del cloud, che resta fuori dal repository.
+
+    Test aggiuntivi:
+
+    | Test | Risultato atteso |
+    |---|---|
+    | `ansible-playbook sito.yml --check --diff` dopo un'esecuzione | nessuna differenza |
+    | modifica a mano `/etc/nftables.conf` su `srv1`, poi `sito.yml` | il file torna com'era e nftables viene ricaricato |
+    | `sito.yml` su una VM nuova al posto di `srv1` (`--limit` e un inventario di prova) | la VM diventa un host KVM con lo stesso firewall |
+
+=== "Livello 3 · Mini data center"
+
+    La **Parte B** configura il data center: `base` su tutti i nodi e le VM, `tasks_api` sulle VM `lab` e
+    `rhel-lab`, e un ruolo **`gateway`** per `nodo1`, con tutto quello che hai costruito a mano nella Fase 1:
+
+    - inoltro (`ansible.posix.sysctl`), `/etc/nftables.conf` e `/etc/dnsmasq.d/homelab.conf` da **template**;
+    - le prenotazioni DHCP e le regole di port forwarding come **variabili** in `host_vars/nodo1.yml`, per esempio:
+
+        ```yaml title="host_vars/nodo1.yml"
+        gateway_wan: eno1
+        gateway_lab: lab0
+        gateway_nodi:
+          - { nome: nodo2, mac: "aa:bb:cc:00:00:02", ip: 10.10.10.12 }
+          - { nome: nodo3, mac: "aa:bb:cc:00:00:03", ip: 10.10.10.13 }
+        gateway_pubblicati:
+          - { porta: 80, verso: 10.10.10.12 }
+          - { porta: 443, verso: 10.10.10.12 }
+        ```
+
+    - handler che controllano la sintassi (`nft -c -f`, `dnsmasq --test`) **prima** di ricaricare.
+
+    Nella **Parte A** aggiungi un modulo Terraform `vpn` con l'istanza WireGuard della [lezione 5.1](../fase-5/01-vpc.md#nei-tre-livelli),
+    il suo security group (o regola firewall) e le rotte, con l'IP pubblico come output. La configurazione di
+    WireGuard su `nodo1` la scrive Ansible, leggendo quell'output.
+
+    Test aggiuntivi:
+
+    | Test | Risultato atteso |
+    |---|---|
+    | aggiungi un dispositivo a `gateway_nodi`, poi `sito.yml` | dnsmasq riavviato, `getent hosts NOME.lab` da `nodo2` risponde |
+    | un errore di sintassi nel template di nftables | il playbook si ferma al controllo e il firewall attivo **non** cambia |
+    | `ansible-playbook sito.yml --check --diff` dopo un'esecuzione | nessuna differenza su nessun nodo |
+    | `terraform apply` del modulo `vpn`, poi `sito.yml --tags vpn` | `sudo wg show` su `nodo1` mostra l'handshake |
+
 ## Come verificare
 
 | Test | Risultato atteso |

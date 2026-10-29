@@ -259,6 +259,157 @@ a vicenda. Su un server scegli un solo strumento.
     client mostra come *No route to host*: è un rifiuto (`reject`), quindi arriva subito, a differenza del timeout
     del `drop`. Il comportamento si può cambiare impostando il *target* della zona a `DROP`.
 
+## Nei tre livelli
+
+!!! warning "Un firewall su un host con le VM"
+    Su `srv1` e `nodo1` libvirt crea regole proprie per la rete delle VM. Per questo, sulle macchine fisiche, il
+    tuo `/etc/nftables.conf` **non** inizia con `flush ruleset` (cancellerebbe anche le regole di libvirt) ma
+    ricrea solo la propria tabella, e lascia passare il traffico dell'interfaccia `virbr56`.
+
+=== "Livello 1 · Un PC"
+
+    Il laboratorio con `lab` e `client` è tutto ciò che serve. Il firewall della workstation lascialo com'è.
+
+=== "Livello 2 · Workstation + server"
+
+    Fai il laboratorio nelle VM, poi proteggi `srv1`.
+
+    === "srv1 con Ubuntu Server"
+
+        ```nft title="/etc/nftables.conf"
+        #!/usr/sbin/nft -f
+        # Firewall di srv1. Niente "flush ruleset": libvirt ha le sue regole per le VM.
+        table inet homelab
+        delete table inet homelab
+
+        table inet homelab {
+            chain input {
+                type filter hook input priority filter; policy drop;
+                ct state established,related accept
+                ct state invalid drop
+                iif "lo" accept
+                meta l4proto { icmp, ipv6-icmp } accept
+                iifname "virbr56" accept                                # le VM chiedono DHCP e DNS a srv1
+                tcp dport 22 accept
+                ip saddr 192.168.1.0/24 tcp dport 2049 accept           # NFS verso la workstation (lezione 1.6)
+                limit rate 5/minute log prefix "srv1-drop: "
+            }
+        }
+        ```
+
+        ```bash
+        sudo nft -c -f /etc/nftables.conf && sudo nft -f /etc/nftables.conf
+        sudo systemctl enable nftables
+        ```
+
+    === "srv1 con AlmaLinux"
+
+        firewalld è già attivo. libvirt mette da solo `virbr56` nella zona `libvirt`, quindi le VM non vanno toccate:
+
+        ```bash
+        sudo firewall-cmd --get-active-zones                      # public (la scheda di rete) e libvirt (virbr56)
+        sudo firewall-cmd --permanent --remove-service=cockpit
+        sudo firewall-cmd --permanent --add-service=nfs           # se hai fatto NFS nella lezione 1.6
+        sudo firewall-cmd --reload && sudo firewall-cmd --list-all
+        ```
+
+    **Facoltativo, con la seconda rete:** consenti SSH **solo dalla rete di gestione**, come nei data center veri.
+    Con nftables cambia la riga di SSH in `iifname "gest0" tcp dport 22 accept`; con firewalld metti la connessione
+    nella zona `internal` (`sudo nmcli connection modify gest0 connection.zone internal`) e togli `ssh` dalla zona
+    `public`. Poi, in `~/.ssh/config` della workstation, cambia l'`HostName` di `srv1` in `10.20.20.1`.
+
+    **Collaudo** (dalla workstation; su `srv1` avvia prima `python3 -m http.server 9000`)
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `ssh srv1 hostname` | `srv1` |
+    | `curl -m 5 http://IP-SRV1:9000/` | timeout con nftables, `No route to host` con firewalld |
+    | `ssh lab ping -c 2 1.1.1.1` | risponde: le VM escono ancora su Internet |
+    | `ssh lab hostname` | `lab` |
+    | `ssh srv1 journalctl -k --since -10min \| grep srv1-drop` (Ubuntu) | la riga del pacchetto per la porta 9000 |
+    | riavvio di `srv1`, poi le prove 1, 3 e 4 | tutto come prima |
+    | (con la rete di gestione) `ssh -o HostName=IP-SRV1-DI-CASA srv1` | timeout: SSH dalla rete di casa è chiuso |
+
+=== "Livello 3 · Mini data center"
+
+    Fai il laboratorio **su `nodo2`** (al posto di `lab`, firewall nftables) e **su `nodo3`** (al posto di
+    `rhel-lab`, firewalld), usando l'altro nodo come client. Poi la parte più importante: il firewall del gateway.
+    `nodo1` deve lasciar uscire il laboratorio, non far entrare nulla che non sia stato pubblicato, e
+    **pubblicare** con il port forwarding (DNAT) il servizio web di `nodo2`.
+
+    ```nft title="/etc/nftables.conf su nodo1 (sostituisce la prima versione della lezione 1.8)"
+    #!/usr/sbin/nft -f
+    # Firewall di nodo1, gateway del laboratorio.
+    # Niente "flush ruleset": cancellerebbe anche le regole che libvirt crea per le VM.
+    table inet homelab
+    delete table inet homelab
+
+    define WAN = "eno1"        # la scheda integrata, verso il router di casa
+    define LAB = "lab0"        # l'adattatore USB, verso lo switch
+    define VM  = "virbr56"     # la rete delle VM di libvirt
+
+    table inet homelab {
+        chain input {
+            type filter hook input priority filter; policy drop;
+            ct state established,related accept
+            ct state invalid drop
+            iif "lo" accept
+            meta l4proto { icmp, ipv6-icmp } accept
+            iifname $VM accept                                     # DHCP e DNS per le VM
+            iifname $LAB udp dport { 53, 67 } accept               # DNS e DHCP per i nodi
+            iifname $LAB tcp dport { 53, 2049 } accept             # DNS e NFS (lezione 1.6)
+            tcp dport 22 accept                                    # SSH da casa e dal laboratorio
+            limit rate 5/minute log prefix "nodo1-in-drop: "
+        }
+
+        chain forward {
+            type filter hook forward priority filter; policy drop;
+            ct state established,related accept
+            ct state invalid drop
+            iifname $LAB oifname $WAN accept                       # il laboratorio esce
+            iifname $WAN oifname $LAB ct status dnat accept        # da casa entra solo ciò che è pubblicato
+            iifname $VM accept                                     # le VM: decidono le regole di libvirt
+            oifname $VM accept
+            limit rate 5/minute log prefix "nodo1-fwd-drop: "
+        }
+
+        chain prerouting {
+            type nat hook prerouting priority dstnat; policy accept;
+            iifname $WAN tcp dport 8080 dnat ip to 10.10.10.12:80   # pubblica il web di prova di nodo2
+        }
+
+        chain postrouting {
+            type nat hook postrouting priority srcnat; policy accept;
+            oifname $WAN ip saddr 10.10.10.0/24 masquerade
+        }
+    }
+    ```
+
+    ```bash
+    sudo nft -c -f /etc/nftables.conf && sudo nft -f /etc/nftables.conf
+    sudo nft list ruleset | less          # la tua tabella homelab e, separate, le regole di libvirt
+    ```
+
+    Tieni aperta una seconda sessione su `nodo1` mentre applichi le regole. Se perdi l'accesso, schermo e
+    tastiera su `nodo1` e `sudo nft delete table inet homelab` ti riportano indietro (il NAT si ferma finché non
+    correggi).
+
+    **Collaudo** (su `nodo2` avvia prima `sudo python3 -m http.server 80`)
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `curl -sI http://IP-NODO1:8080/` dalla workstation | `200`: il DNAT pubblica `nodo2` |
+    | `curl -m 5 http://10.10.10.12/` dalla workstation | errore: la rete del laboratorio resta privata |
+    | `nc -zvw3 IP-NODO1 53` dalla workstation | timeout: il DNS del laboratorio non è esposto a casa |
+    | `ssh nodo2 getent hosts ubuntu.com` e `ssh nodo3 curl -sI https://almalinux.org` | rispondono: il laboratorio esce |
+    | `ssh lab ping -c 2 1.1.1.1` | risponde: le VM di `nodo1` escono ancora |
+    | `ssh nodo2 'curl -m 5 http://nodo3.lab:9000/'` con un server sulla 9000 di `nodo3` | `No route to host`: lo blocca firewalld di `nodo3` |
+    | `ssh nodo1 journalctl -k --since -10min \| grep nodo1-` | i pacchetti scartati, con interfaccia di ingresso e porta |
+    | riavvio di `nodo1`, poi le prove 1 e 4 | tutto come prima |
+
+    Nel log del server di prova su `nodo2` le richieste arrivano dall'indirizzo della **workstation**, non da quello
+    di `nodo1`: il DNAT cambia la destinazione, non la sorgente.
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

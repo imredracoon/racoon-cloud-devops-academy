@@ -38,6 +38,26 @@ leggi la scheda Google Cloud per confronto.
     Leggi [Account cloud in sicurezza](../ambiente/account-cloud.md). Ogni laboratorio di questa fase termina con una
     sezione **Pulizia**: eseguila sempre. Tutti i laboratori restano nei limiti dei crediti per i nuovi clienti.
 
+## Nei tre livelli
+
+Il cloud è lo stesso per tutti: le lezioni si fanno dal Dev Container e dalla console web. Nei livelli 2 e 3 il
+tuo laboratorio diventa la **sede** di una piccola azienda, che usa il cloud per ciò che a casa manca.
+
+=== "Livello 1 · Un PC"
+
+    Lezioni e progetto come descritti.
+
+=== "Livello 2 · Workstation + server"
+
+    Nella [lezione 4.6](06-storage.md#nei-tre-livelli) `srv1` comincia a mandare i suoi backup notturni in un bucket: è il
+    **backup fuori sede**, la copia che sopravvive anche se a casa si rompe tutto. Il progetto ha una seconda parte
+    dedicata a questo.
+
+=== "Livello 3 · Mini data center"
+
+    Come nel livello 2, ma è `nodo1` a mandare nel cloud i backup di tutto il data center raccolti sul suo
+    storage NFS: le credenziali del cloud stanno su una sola macchina.
+
 ## Le lezioni
 
 1. [Cos'è il cloud computing](01-cloud-computing.md)

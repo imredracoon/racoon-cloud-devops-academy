@@ -55,6 +55,48 @@ Il repository deve contenere:
     Non pubblicare **mai** chiavi private, né la chiave del certificato TLS. Nello script, genera il certificato
     sulla VM. Aggiungi un file `.gitignore` che escluda `*.key` e `*.pem`.
 
+### Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il progetto come descritto: VM `web` (o `rhel-web`) e `client` sulla workstation.
+
+=== "Livello 2 · Workstation + server"
+
+    Il server da mettere in sicurezza è **`srv1`** stesso: una macchina vera, sempre accesa sulla tua rete. Cambia
+    poco:
+
+    - il firewall segue la [lezione 1.11](11-firewall.md#nei-tre-livelli): niente `flush ruleset`, interfaccia
+      `virbr56` permessa, porte 22, 80 e 443 aperte;
+    - il tuo utente resta nel gruppo `ssh-users` insieme ad `admin`, e niente `AllowTcpForwarding no`, altrimenti
+      perdi il salto verso le VM;
+    - il ruolo di `client` lo fa la **workstation** (con `IP-SRV1 web.lab` in `/etc/hosts`), tranne il test di
+      fail2ban: lancialo dalla VM `client` verso `192.168.56.1` (l'indirizzo di `srv1` sulla rete delle VM), così
+      se il blocco funziona non chiudi fuori la workstation;
+    - `setup.sh` lo provi su una VM nuova (`./academy-vm crea web` su `srv1`), perché `srv1` non si può
+      ricreare in pochi minuti. Nel README spiega la differenza.
+
+=== "Livello 3 · Mini data center"
+
+    Il server è **`nodo2`** (e `nodo3` per il percorso RHEL, oppure entrambi per il portfolio completo), dietro il
+    gateway `nodo1`, che pubblica le porte 80 e 443 come nella [lezione 1.12](12-http-nginx.md#nei-tre-livelli).
+    L'architettura è quella di un'azienda vera: servizio su una rete privata, un solo punto di ingresso
+    controllato.
+
+    - Sulla workstation `IP-NODO1 web.lab` in `/etc/hosts`; i test HTTP e HTTPS li lanci da lì.
+    - I test di SSH e fail2ban li lanci da `nodo3` verso `nodo2` (e viceversa): sono dentro la rete del laboratorio.
+    - `setup.sh` lo provi su una VM nuova di `nodo1`; se hai tempo, reinstalla davvero `nodo2` e lancialo lì: è il
+      collaudo più convincente.
+    - Nel README il diagramma mostra router di casa, `nodo1` (con le regole DNAT), switch e nodi.
+
+    Test aggiuntivi, oltre a quelli della tabella:
+
+    | Test | Risultato atteso |
+    |---|---|
+    | `curl -m 5 http://10.10.10.12/` dalla workstation | errore: il server non è raggiungibile direttamente |
+    | `ssh nodo1 sudo nft list chain inet homelab prerouting` | solo le porte 80 e 443 inoltrate a `nodo2` |
+    | `ssh nodo2 sudo tail -n 1 /var/log/nginx/access.log` dopo una richiesta | l'IP della workstation: fail2ban e i log vedono il client vero |
+
 ## Suggerimenti
 
 - Configura fail2ban creando `/etc/fail2ban/jail.local` (non modificare `jail.conf`):

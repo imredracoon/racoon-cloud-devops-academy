@@ -62,6 +62,55 @@ richiede, crea una seconda VM leggera dalla cartella `~/academy/lab-vm`:
 Le VM stanno sulla stessa rete privata e si raggiungono per nome; `./academy-vm elenco` mostra gli indirizzi
 ([tutte le VM del corso](../ambiente/vm-linux.md#tutte-le-vm-del-corso)).
 
+## Nei tre livelli
+
+Gli argomenti sono gli stessi per tutti; cambia **dove** li provi. Scegli la scheda del tuo
+[livello](../ambiente/livelli.md): il sito la ricorda in tutte le pagine.
+
+=== "Livello 1 · Un PC"
+
+    Tutti i laboratori si svolgono nelle VM sulla workstation, come descritto sopra.
+
+=== "Livello 2 · Workstation + server"
+
+    Le VM `lab`, `client` e le altre girano su `srv1` ([lezione 0.8](../fase-0/08-homelab.md)): i comandi sono identici,
+    entri con `ssh lab` passando dal server. Fai gli **esercizi nelle VM**, dove hai gli snapshot, e ripeti sul
+    server vero le parti indicate nelle sezioni *Nei tre livelli* delle lezioni:
+
+    | Lezione | Sul server `srv1` |
+    |---|---|
+    | [1.6](06-storage.md#nei-tre-livelli) | una chiavetta USB come disco vero, NFS verso la workstation |
+    | [1.7](07-tcpip.md#nei-tre-livelli) | la seconda rete (facoltativa): indirizzi statici su un cavo diretto |
+    | [1.8](08-dns-routing.md#nei-tre-livelli) | `srv1` è già un router: la rete NAT delle VM |
+    | [1.9](09-diagnostica.md#nei-tre-livelli) | vedere il NAT con `tcpdump` su due interfacce |
+    | [1.10](10-ssh.md#nei-tre-livelli) | SSH solo con chiave sul server |
+    | [1.11](11-firewall.md#nei-tre-livelli) | il firewall del server, senza rompere le VM |
+    | [1.12](12-http-nginx.md#nei-tre-livelli) | Nginx sul server, visto dal browser della workstation |
+    | [Progetto](progetto.md#nei-tre-livelli) | il server web sicuro è `srv1` |
+
+=== "Livello 3 · Mini data center"
+
+    I nodi fisici prendono il posto delle VM principali: **`nodo2`** è il server del percorso Debian/Ubuntu (al
+    posto di `lab`), **`nodo3`** quello del percorso RHEL (al posto di `rhel-lab`). Le VM su `nodo1` restano a
+    disposizione per gli esercizi distruttivi, con gli snapshot. In questa fase costruisci la rete del data center:
+
+    | Lezione | Nel mini data center |
+    |---|---|
+    | [1.6](06-storage.md#nei-tre-livelli) | chiavetta USB come disco vero su `nodo2` e `nodo3`; `nodo1` server NFS |
+    | [1.7](07-tcpip.md#nei-tre-livelli) | il piano degli indirizzi `10.10.10.0/24` e la scheda `lab0` di `nodo1` |
+    | [1.8](08-dns-routing.md#nei-tre-livelli) | **`nodo1` diventa il gateway**: inoltro, NAT, DHCP e DNS per la rete del laboratorio |
+    | [1.9](09-diagnostica.md#nei-tre-livelli) | il NAT visto con `tcpdump` sulle due schede di `nodo1` |
+    | [1.10](10-ssh.md#nei-tre-livelli) | SSH solo con chiave su tutti i nodi |
+    | [1.11](11-firewall.md#nei-tre-livelli) | il firewall del gateway, con port forwarding verso `nodo2` |
+    | [1.12](12-http-nginx.md#nei-tre-livelli) | Nginx su `nodo2`, pubblicato da `nodo1` |
+    | [Progetto](progetto.md#nei-tre-livelli) | il server web sicuro su `nodo2` (e `nodo3`), pubblicato dal gateway |
+
+!!! warning "Sulle macchine fisiche non ci sono snapshot"
+    Prima di modificare un file di configurazione su `srv1` o su un nodo, fanne una copia
+    (`sudo cp -a /etc/ssh/sshd_config.d /root/sshd_config.d.bak`) e tieni **aperta una seconda sessione SSH** finché
+    non hai verificato che la modifica funziona. Se perdi l'accesso, schermo e tastiera collegati al server sono la
+    tua console di emergenza.
+
 ## Le lezioni
 
 1. [Il filesystem](01-filesystem.md)
