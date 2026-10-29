@@ -6,11 +6,12 @@
     - scrivere Dockerfile efficienti e sicuri, con build multi-stage e utenti senza privilegi;
     - gestire dati persistenti con i volumi e far comunicare i container in reti dedicate;
     - descrivere un'applicazione a più servizi con Docker Compose;
-    - pubblicare immagini in un registry e verificarne le vulnerabilità.
+    - pubblicare immagini in un registry e verificarne le vulnerabilità;
+    - usare Podman rootless, i pod e i Quadlet per far gestire i container a systemd.
 
 | | |
 |---|---|
-| **Durata indicativa** | 1 mese, circa 40 ore |
+| **Durata indicativa** | 1 mese, circa 45 ore |
 | **Prerequisiti** | Fasi 1 e 2 |
 | **Ambiente** | Dev Container (Docker è già disponibile) oppure VM `lab` / `rhel-lab` |
 | **Progetto** | [Stack containerizzato](progetto.md) |
@@ -47,5 +48,6 @@ lo dà per acquisito.
 4. [Volumi e reti](04-volumi-reti.md)
 5. [Docker Compose](05-compose.md)
 6. [Registry e sicurezza](06-registry-sicurezza.md)
+7. [Podman in profondità](07-podman.md)
 
 Poi il [progetto](progetto.md) e la [verifica di fine fase](verifica.md).

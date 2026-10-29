@@ -152,6 +152,7 @@ nav:
       - "3.4 Volumi e reti": fase-3/04-volumi-reti.md
       - "3.5 Docker Compose": fase-3/05-compose.md
       - "3.6 Registry e sicurezza": fase-3/06-registry-sicurezza.md
+      - "3.7 Podman in profondità": fase-3/07-podman.md
       - "Progetto 3 · Stack containerizzato": fase-3/progetto.md
       - "Verifica di fine fase": fase-3/verifica.md
   - "Fase 4 · Cloud":
