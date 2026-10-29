@@ -231,6 +231,114 @@ La configurazione **permanente** cambia tra le due famiglie:
     **No.** Con `/26` i blocchi sono 0-63, 64-127, 128-191, 192-255: il primo host è nella rete `192.168.1.64`, il
     secondo nella `192.168.1.128`. Sono reti diverse e serve un router.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Fai gli esercizi nelle VM, seguendo l'avviso sulla console seriale.
+
+=== "Livello 2 · Workstation + server"
+
+    Senza la seconda rete, fai gli esercizi nelle VM su `srv1`: la console seriale si apre con
+    `ssh -t srv1 virsh console lab`.
+
+    **Con la seconda rete** ([lezione 0.8, passo 7](../fase-0/08-homelab.md#7-facoltativo-la-seconda-rete)) configuri
+    indirizzi statici su un collegamento vero. È la **rete di gestione** che hanno molti data center: un
+    collegamento separato, usato solo per amministrare i server. Collega con un cavo l'adattatore USB di `srv1` alla
+    porta di rete della workstation (se la workstation usa già quella porta per il router, mettile un secondo
+    adattatore).
+
+    | Macchina | Interfaccia | Indirizzo |
+    |---|---|---|
+    | `srv1` | l'adattatore USB, rinominato `gest0` | `10.20.20.1/24` |
+    | workstation | la porta collegata al cavo | `10.20.20.2/24` |
+
+    Nessun gateway e nessun DNS su questa rete: Internet continua a passare dal router di casa.
+
+    === "srv1 con Ubuntu Server"
+
+        ```yaml title="/etc/netplan/60-gestione.yaml"
+        network:
+          version: 2
+          ethernets:
+            gest0:
+              match:
+                macaddress: "aa:bb:cc:dd:ee:ff"   # il MAC dell'adattatore: ip -brief link
+              set-name: gest0
+              addresses: [10.20.20.1/24]
+        ```
+
+        ```bash
+        sudo chmod 600 /etc/netplan/60-gestione.yaml
+        sudo netplan try
+        ```
+
+    === "srv1 con AlmaLinux"
+
+        ```bash
+        nmcli device status                                  # il nome dell'adattatore, per esempio enx001122aabbcc
+        sudo nmcli connection add type ethernet ifname enx001122aabbcc con-name gest0 \
+          ipv4.method manual ipv4.addresses 10.20.20.1/24 ipv6.method disabled
+        ```
+
+    Sulla workstation (Ubuntu e Fedora usano entrambe NetworkManager):
+
+    ```bash
+    nmcli device status                                      # il nome della porta, per esempio enp3s0
+    sudo nmcli connection add type ethernet ifname enp3s0 con-name gestione \
+      ipv4.method manual ipv4.addresses 10.20.20.2/24 ipv4.never-default yes ipv6.method disabled
+    ```
+
+    Aggiungi a `~/.ssh/config` della workstation un blocco `Host srv1-gest` con `HostName 10.20.20.1`.
+
+    **Collaudo**
+
+    | Prova (dalla workstation) | Risultato atteso |
+    |---|---|
+    | `ping -c 3 10.20.20.1` | 3 risposte |
+    | `ip route get 10.20.20.1` | esce dalla porta del cavo, senza `via` (rete direttamente collegata) |
+    | `ip route get 1.1.1.1` | esce verso il router di casa, come prima |
+    | `ssh srv1-gest hostname` | `srv1` |
+    | `ssh srv1 cat /sys/class/net/gest0/speed` (su AlmaLinux usa il nome `enx...`) | `1000` |
+    | riavvio di `srv1` | gli indirizzi restano |
+
+=== "Livello 3 · Mini data center"
+
+    Progetta la rete del laboratorio, che nella [lezione 1.8](08-dns-routing.md#nei-tre-livelli) separerai da quella
+    di casa:
+
+    | Indirizzo | Chi | Come lo riceve |
+    |---|---|---|
+    | `10.10.10.0/24` | la rete del laboratorio: lo switch | |
+    | `10.10.10.1` | `nodo1`, scheda `lab0` (l'adattatore USB) | statico |
+    | `10.10.10.12` | `nodo2` | DHCP con prenotazione, da `nodo1` |
+    | `10.10.10.13` | `nodo3` | DHCP con prenotazione, da `nodo1` |
+    | `10.10.10.100`-`199` | altri dispositivi (lo switch, un portatile) | DHCP |
+
+    Copia la tabella nel README di `academy-lab`. Poi configura `lab0` su `nodo1`, con lo stesso file Netplan
+    della scheda *Livello 2* (nome `lab0`, indirizzo `10.10.10.1/24`), e collega l'adattatore USB allo switch.
+
+    Una prova che mostra la differenza tra rete fisica e rete IP: per ora lo switch è ancora collegato al router,
+    quindi sullo stesso cavo viaggiano **due reti IP**. Su `nodo2` aggiungi un indirizzo temporaneo:
+
+    ```bash
+    ssh nodo2
+    ip -brief link                                   # il nome della scheda, per esempio eno1
+    sudo ip address add 10.10.10.12/24 dev eno1      # temporaneo: sparisce al riavvio
+    ping -c 3 10.10.10.1                             # risponde nodo1, sulla rete 10.10.10.0/24
+    ping -c 3 192.168.1.1                            # risponde il router, sulla rete di casa
+    sudo ip address del 10.10.10.12/24 dev eno1
+    ```
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `ssh nodo1 ip -brief address show lab0` | `UP`, `10.10.10.1/24` |
+    | `ssh nodo1 cat /sys/class/net/lab0/speed` | `1000` (un adattatore USB 2.0 darebbe `100`: usa una porta USB 3) |
+    | la prova con l'indirizzo temporaneo | i due `ping` rispondono |
+    | riavvio di `nodo1` | `lab0` ha ancora il suo indirizzo |
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

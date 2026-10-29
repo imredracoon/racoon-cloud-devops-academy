@@ -178,6 +178,148 @@ aggiornamenti) senza essere raggiungibili da Internet. Configurerai il NAT su Li
     (a) Nessun gateway: consegna diretta su `eth0`. (b) `10.0.0.253`: la `/24` è più specifica della `/16`.
     (c) `10.0.0.254`. (d) `10.0.0.1`, la rotta predefinita.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Fai gli esercizi nelle VM. Guarda anche la tua workstation: è già un router! La rete delle VM
+    `192.168.56.0/24` esce su Internet attraverso di lei, con il NAT che libvirt ha configurato:
+
+    ```bash
+    ip route | grep virbr56                   # la rete delle VM, direttamente collegata
+    sysctl net.ipv4.ip_forward                # 1: l'inoltro è attivo
+    virsh net-dhcp-leases academy             # le concessioni DHCP date alle VM
+    ```
+
+=== "Livello 2 · Workstation + server"
+
+    Fai gli esercizi nelle VM. Poi studia `srv1`, che è un router vero: le sue VM escono su Internet attraverso di
+    lui.
+
+    ```bash
+    ssh srv1
+    ip route                                  # default verso il router di casa, 192.168.56.0/24 su virbr56
+                                              # (e 10.20.20.0/24 su gest0, se hai la seconda rete)
+    sysctl net.ipv4.ip_forward                # 1
+    sudo nft list ruleset | grep -i masquerade   # le regole NAT create da libvirt
+    virsh net-dhcp-leases academy             # il DHCP delle VM
+    ssh lab tracepath -n 1.1.1.1              # dalla workstation: il primo salto è 192.168.56.1, cioè srv1
+    ```
+
+    **Collaudo:** scrivi nel README di `academy-lab` la tabella di routing di `srv1` spiegando ogni riga, e il
+    percorso di un pacchetto da `lab` a Internet: `lab` → `srv1` (NAT) → router di casa (NAT di nuovo) → Internet.
+
+=== "Livello 3 · Mini data center"
+
+    È il momento di costruire la rete del data center. `nodo1` diventa il **gateway**: la rete del laboratorio
+    `10.10.10.0/24` esce su Internet solo attraverso di lui, che le fornisce anche DHCP e DNS. È esattamente lo
+    schema di una rete privata nel cloud con il suo NAT gateway ([Fase 5](../fase-5/01-vpc.md)).
+
+    ```mermaid
+    flowchart LR
+      I((Internet)) --- R[Router di casa<br>192.168.1.1]
+      R --- W[workstation]
+      R ---|eno1<br>192.168.1.51| N1[nodo1<br>gateway: NAT, DHCP, DNS]
+      N1 ---|lab0<br>10.10.10.1| SW[switch]
+      SW --- N2[nodo2<br>10.10.10.12]
+      SW --- N3[nodo3<br>10.10.10.13]
+    ```
+
+    **1. Inoltro e NAT.** Su `nodo1` (sostituisci `eno1` con il nome della scheda integrata, `ip -brief link`):
+
+    ```bash
+    echo "net.ipv4.ip_forward=1" | sudo tee /etc/sysctl.d/99-gateway.conf
+    sudo sysctl --system
+    sudo apt install -y nftables dnsmasq      # un errore di dnsmasq all'installazione è normale: lo configuri ora
+    ```
+
+    ```nft title="/etc/nftables.conf (prima versione: la completerai nella lezione 1.11)"
+    #!/usr/sbin/nft -f
+    # Niente "flush ruleset": cancellerebbe anche le regole che libvirt crea per le VM.
+    table inet homelab
+    delete table inet homelab
+
+    table inet homelab {
+        chain postrouting {
+            type nat hook postrouting priority srcnat; policy accept;
+            oifname "eno1" ip saddr 10.10.10.0/24 masquerade   # il laboratorio esce con l'IP di nodo1
+        }
+    }
+    ```
+
+    ```bash
+    sudo nft -c -f /etc/nftables.conf && sudo systemctl enable --now nftables && sudo nft -f /etc/nftables.conf
+    ```
+
+    **2. DHCP e DNS con dnsmasq.** Annota i MAC di `nodo2` e `nodo3` (li hai nell'inventario della
+    [lezione 0.8](../fase-0/08-homelab.md)).
+
+    ```ini title="/etc/dnsmasq.d/homelab.conf"
+    # Ascolta solo sulla rete del laboratorio: non disturba il DNS di sistema né quello di libvirt
+    interface=lab0
+    bind-interfaces
+
+    # DNS: i nomi del laboratorio finiscono in .lab; il resto va al DNS di nodo1
+    domain=lab
+    local=/lab/
+    host-record=nodo1.lab,nodo1,10.10.10.1
+
+    # DHCP: indirizzi fissi per i nodi, un intervallo per tutto il resto
+    dhcp-range=10.10.10.100,10.10.10.199,12h
+    dhcp-host=aa:bb:cc:00:00:02,nodo2,10.10.10.12
+    dhcp-host=aa:bb:cc:00:00:03,nodo3,10.10.10.13
+    dhcp-option=option:router,10.10.10.1
+    dhcp-option=option:dns-server,10.10.10.1
+    dhcp-option=option:domain-search,lab
+    ```
+
+    ```bash
+    sudo dnsmasq --test --conf-file=/etc/dnsmasq.d/homelab.conf     # controlla la sintassi
+    sudo systemctl enable dnsmasq && sudo systemctl restart dnsmasq
+    ```
+
+    **3. Il cambio di rete.** Programma il riavvio di `nodo2` e `nodo3` tra un minuto
+    (`ssh nodo2 sudo shutdown -r +1`, lo stesso per `nodo3`), poi **stacca il cavo tra lo switch e il router di
+    casa**. Al riavvio i nodi chiedono un indirizzo e trovano solo il DHCP di `nodo1`: da ora la rete del
+    laboratorio è collegata al mondo solo attraverso di lui.
+
+    **4. Raggiungere i nodi dalla workstation.** La rete `10.10.10.0/24` non è visibile da casa: si entra passando
+    da `nodo1`, come con le VM. In `~/.ssh/config` della workstation cambia i blocchi di `nodo2` e `nodo3`:
+
+    ```text title="~/.ssh/config"
+    Host nodo2
+        HostName 10.10.10.12
+        User tuoutente
+        ProxyJump nodo1
+
+    Host nodo3
+        HostName 10.10.10.13
+        User tuoutente
+        ProxyJump nodo1
+    ```
+
+    Se nella [lezione 1.6](06-storage.md#nei-tre-livelli) hai configurato NFS, su `nodo1` cambia la rete in
+    `/etc/exports` in `10.10.10.0/24` (`sudo exportfs -ra`) e sui client l'indirizzo del server in `nodo1.lab`.
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `ssh nodo2 ip route` | `default via 10.10.10.1` |
+    | `ssh nodo3 ip -brief address` | `10.10.10.13/24` |
+    | `ssh nodo2 getent hosts nodo3.lab` | `10.10.10.13` |
+    | `ssh nodo3 ping -c 3 nodo2` | risponde `nodo2.lab` (il dominio `lab` è aggiunto dalla ricerca DNS) |
+    | `ssh nodo2 getent hosts ubuntu.com` | un indirizzo: il DNS esterno funziona attraverso `nodo1` |
+    | `ssh nodo2 tracepath -n 1.1.1.1` | primo salto `10.10.10.1`, secondo `192.168.1.1` |
+    | `ssh nodo1 cat /var/lib/misc/dnsmasq.leases` | le concessioni di `nodo2` e `nodo3` |
+    | `ping -c 2 10.10.10.12` dalla workstation | nessuna risposta: la rete del laboratorio è privata, come deve essere |
+    | riavvio di `nodo1`, poi le prime tre prove | tutto funziona di nuovo |
+
+    !!! tip "Se qualcosa non va"
+        Procedi per strati ([lezione 1.13](13-troubleshooting.md)): il collegamento è attivo (`ip -brief link`)? Il nodo ha
+        ricevuto l'indirizzo (`journalctl -u dnsmasq` su `nodo1`)? Raggiunge `10.10.10.1`? `nodo1` raggiunge Internet?
+        Il NAT conta pacchetti (`sudo nft list ruleset`)?
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

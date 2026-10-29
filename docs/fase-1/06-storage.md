@@ -288,6 +288,75 @@ esistenti**: per questo nei laboratori usa sempre i dischi di laboratorio, mai i
     **Spiegazione.** `sort -h` ordina capendo le unità (K, M, G); `-r` inverte. Si chiede `head -6` perché la prima
     riga è il totale di `/usr`.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Fai la lezione e gli esercizi con i dischi di laboratorio della VM `lab`. Per NFS usa `lab` come server e
+    `client` come client.
+
+=== "Livello 2 · Workstation + server"
+
+    Fai gli esercizi nelle VM su `srv1`. Poi due prove su hardware vero.
+
+    **Un disco vero.** Ti serve una chiavetta USB **che puoi cancellare**. Collegala a `srv1`:
+
+    ```bash
+    lsblk -o NAME,SIZE,TRAN,MODEL      # la chiavetta ha TRAN "usb": per esempio sdb, 16G
+    ```
+
+    !!! danger "Controlla due volte il nome del disco"
+        Il disco di sistema di `srv1` è di solito `sda` o `nvme0n1`. Se nei comandi che seguono sbagli nome,
+        cancelli il server. Usa il nome che ha `usb` nella colonna `TRAN`.
+
+    ```bash
+    D=/dev/sdb                                   # il nome che hai trovato
+    sudo wipefs -a $D                            # cancella le firme dei vecchi filesystem
+    sudo parted -s $D mklabel gpt mkpart dati 1MiB 100%
+    sudo pvcreate ${D}1 && sudo vgcreate vgusb ${D}1
+    sudo lvcreate -n dati -l 80%VG vgusb         # lascia il 20% libero per ingrandire
+    sudo mkfs.ext4 -L dati /dev/vgusb/dati       # su AlmaLinux: sudo mkfs.xfs -L dati /dev/vgusb/dati
+    sudo mkdir -p /srv/dati
+    echo "UUID=$(sudo blkid -s UUID -o value /dev/vgusb/dati) /srv/dati auto defaults,nofail 0 2" | sudo tee -a /etc/fstab
+    sudo systemctl daemon-reload && sudo mount -a && df -h /srv/dati
+    ```
+
+    **NFS verso la workstation.** `srv1` fa da server, come nella sezione [NFS](#filesystem-di-rete-nfs-e-autofs),
+    esportando `/srv/condivisa` alla rete di casa (per esempio `192.168.1.0/24`). Sulla workstation installa il
+    client (`sudo apt install nfs-common` su Ubuntu, `sudo dnf install nfs-utils` su Fedora) e monta la cartella in
+    `/mnt/srv1`.
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `ssh srv1 findmnt /srv/dati` | montato da `/dev/mapper/vgusb-dati` |
+    | `sudo lvextend -r -l +100%FREE vgusb/dati` su `srv1`, poi `df -h /srv/dati` | spazio aumentato, senza smontare |
+    | riavvio di `srv1` **con la chiavetta staccata** | il server si avvia lo stesso, grazie a `nofail` |
+    | riattacchi la chiavetta e lanci `sudo mount -a` | i file sono ancora lì |
+    | `touch /mnt/srv1/prova` dalla workstation, poi `ssh srv1 ls -l /srv/condivisa` | il file compare sul server |
+
+=== "Livello 3 · Mini data center"
+
+    Fai gli esercizi distruttivi nelle VM su `nodo1`. Poi:
+
+    1. **Un disco vero su `nodo2` e `nodo3`.** Segui la prova della chiavetta USB della scheda *Livello 2*, su `nodo2`
+       con ext4 e su `nodo3` con **XFS** montato per **etichetta** (`LABEL=dati` in fstab), come chiedono gli esami
+       Red Hat. Una sola chiavetta basta: rifai la prova sul secondo nodo, cancellandola di nuovo.
+    2. **Uno storage condiviso.** `nodo1` diventa il server NFS del data center: esporta `/srv/condivisa` alla rete
+       di casa (per ora i nodi sono lì; nella [lezione 1.8](08-dns-routing.md#nei-tre-livelli) la cambierai in `10.10.10.0/24`).
+       `nodo2` la monta con `/etc/fstab` (`_netdev,nofail`), `nodo3` con **autofs**. Lo stesso server NFS servirà
+       ai volumi di Kubernetes nella [Fase 8](../fase-8/index.md).
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `ssh nodo2 findmnt /srv/dati`, `ssh nodo3 findmnt /srv/dati` | ext4 su `nodo2`, xfs su `nodo3` |
+    | `ssh nodo2 'echo ciao > /mnt/condivisa/da-nodo2'`, poi `ssh nodo3 cat /mnt/auto/dati/da-nodo2` | `ciao`: il file passa da un nodo all'altro tramite `nodo1` |
+    | `ssh nodo1 sudo exportfs -v` | `/srv/condivisa` esportata alla rete giusta |
+    | riavvio di `nodo2` con `nodo1` **spento** | `nodo2` si avvia lo stesso (`nofail`); quando riaccendi `nodo1`, `sudo mount -a` rimonta |
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

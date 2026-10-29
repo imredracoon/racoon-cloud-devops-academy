@@ -227,6 +227,55 @@ configurerai nel progetto della fase.
     `sshd_config.d` sono inclusi all'inizio di `sshd_config`, e per sshd vale **il primo valore letto** di ogni
     opzione: per questo le tue impostazioni vincono su quelle successive.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il laboratorio con `client` e `lab` è tutto ciò che serve.
+
+=== "Livello 2 · Workstation + server"
+
+    Fai il laboratorio nelle VM, poi metti in sicurezza **`srv1`**, che è sempre acceso sulla tua rete: è il
+    server su cui la sicurezza conta davvero.
+
+    1. Apri **due** sessioni: `ssh srv1` in due terminali. La seconda resta aperta finché non hai finito: se sbagli
+       qualcosa, la usi per correggere.
+    2. Crea il gruppo `ssh-users` e aggiungi il tuo utente (`sudo groupadd ssh-users && sudo usermod -aG ssh-users $USER`).
+    3. Crea `/etc/ssh/sshd_config.d/10-sicurezza.conf` come nel laboratorio, verifica con `sudo sshd -t` e ricarica
+       (`sudo systemctl reload ssh` su Ubuntu, `sudo systemctl reload sshd` su AlmaLinux).
+
+    !!! warning "Non disattivare l'inoltro su un server di salto"
+        `ProxyJump` chiede a `srv1` di aprire la connessione verso la VM. Se nelle guide di hardening trovi
+        `AllowTcpForwarding no`, **non** applicarlo a `srv1`: `ssh lab` smetterebbe di funzionare.
+
+    **Collaudo** (dalla workstation, con la seconda sessione ancora aperta)
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `ssh srv1 whoami` | il tuo utente, senza password |
+    | `ssh -o PubkeyAuthentication=no srv1` | `Permission denied (publickey)` |
+    | `ssh root@srv1` (con l'indirizzo di `srv1`) | rifiutato |
+    | `ssh lab hostname` | `lab`: il salto attraverso `srv1` funziona ancora |
+    | `ssh srv1 sudo sshd -T \| grep -E '^(passwordauthentication\|permitrootlogin)'` | entrambe `no` |
+
+=== "Livello 3 · Mini data center"
+
+    Fai il laboratorio nelle VM, poi applica la stessa configurazione a **tutti e tre i nodi**, uno alla volta, con
+    la seconda sessione aperta come nella scheda *Livello 2*. Su `nodo3` il servizio si chiama `sshd`. `nodo1` è il
+    server di salto per tutto il laboratorio: anche lì niente `AllowTcpForwarding no`.
+
+    Il salto si può anche scrivere a mano: `ssh -J nodo1 tuoutente@10.10.10.12` è ciò che fa `ProxyJump` nel tuo
+    `~/.ssh/config`. Con `ssh -v nodo2 2>&1 | grep -i jump` vedi il client che lo usa.
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `for n in nodo1 nodo2 nodo3; do ssh $n whoami; done` | tre volte il tuo utente, senza password |
+    | `for n in nodo1 nodo2 nodo3; do ssh -o PubkeyAuthentication=no $n true; done` | tre `Permission denied (publickey)` |
+    | `ssh nodo3 sudo sshd -T \| grep -E '^(passwordauthentication\|permitrootlogin\|allowgroups)'` | `no`, `no`, `ssh-users` |
+    | `ssh lab hostname` e `ssh nodo2 hostname` | funzionano: il salto attraverso `nodo1` è intatto |
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

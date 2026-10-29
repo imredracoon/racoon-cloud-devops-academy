@@ -319,14 +319,15 @@ ip -brief link                  # la nuova interfaccia "enx..." in stato DOWN: �
 
 ### 5. Lo switch
 
-Lo switch gestibile funziona anche senza configurazione. Per ora fai solo due cose dalla sua pagina web (l'indirizzo
+Se lo switch non è gestibile, non c'è nulla da fare: salta questo passo. Uno switch gestibile funziona anche senza
+configurazione; per ora fai solo due cose dalla sua pagina web (l'indirizzo
 e la password iniziali sono sull'etichetta o nel manuale; per il TP-Link TL-SG108E si usa anche il programma
 *Easy Smart Configuration Utility*):
 
 1. cambia la **password di amministrazione** predefinita;
 2. annota il modello e la versione del firmware nel README.
 
-Le **VLAN** le userai nella [Fase 1](../fase-1/index.md).
+Le **VLAN**, che dividono uno switch in più reti separate, sono un approfondimento facoltativo: il corso non le richiede.
 
 ### Collaudo del livello 3
 

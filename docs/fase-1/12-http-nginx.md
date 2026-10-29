@@ -277,6 +277,47 @@ curl -k --resolve app.lab:443:127.0.0.1 https://app.lab/   # -k accetta il certi
     con `sudo setsebool -P httpd_can_network_connect on`. Stesso sintomo, causa diversa: per questo si leggono
     sempre i log.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Il laboratorio nelle VM è tutto ciò che serve.
+
+=== "Livello 2 · Workstation + server"
+
+    Ripeti il laboratorio direttamente su **`srv1`**, con la workstation al posto di `client`:
+
+    1. apri nel firewall di `srv1` le porte 80 e 443 (`tcp dport { 22, 80, 443 } accept`, oppure
+       `firewall-cmd --permanent --add-service={http,https}` e `--reload`);
+    2. sulla workstation aggiungi a `/etc/hosts` la riga `IP-SRV1 app.lab`;
+    3. apri `https://app.lab` nel **browser** della workstation: vedrai l'avviso sul certificato autofirmato.
+       Aprendo i dettagli del certificato ritrovi i campi della sezione [TLS](#tls-e-https).
+
+    **Collaudo:** i test del punto 4 del laboratorio, lanciati dalla workstation, più `curl -m 5 http://app.lab:8000/`
+    che va in timeout.
+
+=== "Livello 3 · Mini data center"
+
+    Ripeti il laboratorio su **`nodo2`** (e su `nodo3` per il percorso RHEL). Poi **pubblica** il sito attraverso il
+    gateway: nel firewall di `nodo1` sostituisci la regola di prova della porta 8080 con
+
+    ```nft
+    iifname $WAN tcp dport { 80, 443 } dnat ip to 10.10.10.12
+    ```
+
+    e sulla workstation aggiungi a `/etc/hosts` la riga `IP-NODO1 app.lab`. Per chi visita il sito, `nodo1` è il
+    server; il servizio sta in realtà su una rete privata dietro di lui. È lo stesso schema di un *load balancer*
+    pubblico davanti a server privati nel cloud ([Fase 5](../fase-5/02-ha-scaling.md)).
+
+    **Collaudo** (dalla workstation)
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `curl -sI http://app.lab \| head -3` | `301` verso `https://app.lab/` |
+    | `curl -skI https://app.lab \| head -1` | `200` |
+    | `ssh nodo2 sudo tail -n 2 /var/log/nginx/access.log` | le richieste, con l'IP della workstation |
+    | `ssh nodo2 sudo systemctl stop nginx`, poi `curl -m 5 -skI https://app.lab` | errore: il gateway inoltra, ma dietro non risponde nessuno |
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

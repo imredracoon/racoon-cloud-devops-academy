@@ -102,7 +102,7 @@ usali come ordine di grandezza.
 | Mini PC 6ª-7ª gen., i5, 8 GB, SSD 128-256 GB | **80-140 €** | la scelta più economica, ottima per i laboratori |
 | Mini PC 8ª-9ª gen., i5, 8 GB, SSD 256 GB | **190-220 €** da venditori professionali su eBay | nei negozi di ricondizionato con licenza e garanzia: 250-310 € |
 | RAM DDR4 SO-DIMM 16 GB, usata | **55-70 €** | nel 2026 la RAM è cara: meglio comprare un mini PC che abbia già 16 GB |
-| Switch 8 porte Gigabit gestibile (per esempio TP-Link TL-SG108E) | **30-50 €** nuovo | "gestibile" vuol dire che supporta le VLAN, utili nella [Fase 1](../fase-1/index.md) |
+| Switch 8 porte Gigabit gestibile (per esempio TP-Link TL-SG108E) | **30-50 €** nuovo | "gestibile" vuol dire che si configura (VLAN, statistiche per porta) e serve per approfondire; per il corso va bene anche uno non gestibile, che costa meno |
 | Adattatore USB 3.0 → Ethernet Gigabit (chip Realtek RTL8153) | **10-15 €** | la seconda scheda di rete: riconosciuto da Linux senza driver aggiuntivi |
 | Cavi di rete Cat. 6, 1 m | **2-3 €** l'uno | |
 
