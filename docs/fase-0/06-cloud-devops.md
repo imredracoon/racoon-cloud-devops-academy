@@ -31,7 +31,7 @@ flowchart TB
 
 Con la virtualizzazione un server fisico viene sfruttato molto meglio e una nuova "macchina" si crea in pochi
 minuti. Le **vCPU** di cui hai letto nella [lezione 0.1](01-computer.md) sono le CPU virtuali assegnate a una VM. Anche la VM del
-corso, creata con Multipass, funziona così.
+corso, creata con KVM, la virtualizzazione integrata in Linux, funziona così.
 
 ### Il cloud
 

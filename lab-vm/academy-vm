@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+# academy-vm: crea ed elimina le VM di laboratorio della Racoon Cloud & DevOps Academy
+# con KVM/QEMU e libvirt, partendo dalle immagini cloud ufficiali di Ubuntu e AlmaLinux.
+#
+# Uso:
+#   ./academy-vm rete                 crea (una volta sola) la rete privata "academy" 192.168.56.0/24
+#   ./academy-vm crea lab rhel-lab    crea una o più VM e aspetta che siano pronte
+#   ./academy-vm elimina client       spegne ed elimina una VM con i suoi dischi
+#   ./academy-vm elenco               mostra le VM del corso, lo stato e l'indirizzo
+#
+# Le VM si accendono e spengono con virsh (virsh start lab, virsh shutdown lab) e ci si entra
+# con "ssh lab": lo script aggiunge le voci necessarie in ~/.ssh/config.
+# Istruzioni complete: docs/ambiente/vm-linux.md
+set -euo pipefail
+
+export LIBVIRT_DEFAULT_URI=qemu:///system
+DIR=$(cd "$(dirname "$0")" && pwd)
+IMG_DIR=/var/lib/libvirt/images/academy
+CONSOLE_PASSWORD=academy          # solo per la console seriale (virsh console); SSH accetta solo chiavi
+SSH_CONFIG="$HOME/.ssh/config"
+KNOWN_HOSTS="$HOME/.ssh/known_hosts_academy"
+
+#            sistema  ip  vCPU  RAM(MiB)  disco(GB)  profilo cloud-init
+declare -A VM=(
+  [lab]="ubuntu       21   2    2048      20         lab"
+  [client]="ubuntu    22   1    1024      10         client"
+  [web]="ubuntu       23   1    1024      10         client"
+  [rhel-lab]="alma    10   2    2048      20         rhel-lab"
+  [rhel-client]="alma 11   1    1536      10         rhel-client"
+  [rhel-web]="alma    12   1    1536      10         rhel-client"
+)
+
+errore() { echo "errore: $*" >&2; exit 1; }
+
+controlla_prerequisiti() {
+  local cmd
+  for cmd in virsh virt-install qemu-img curl ssh ssh-keygen; do
+    command -v "$cmd" >/dev/null || errore "manca il comando $cmd: segui l'installazione in docs/ambiente/vm-linux.md"
+  done
+  virsh uri >/dev/null 2>&1 || errore "non riesco a collegarmi a libvirt: sei nel gruppo libvirt? (esci e rientra dopo usermod)"
+}
+
+# Immagine di base e utente predefinito per ogni sistema, secondo il processore del computer.
+immagine() {
+  local os=$1 arch
+  arch=$(uname -m)
+  case "$os/$arch" in
+    ubuntu/x86_64)  echo "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img" ;;
+    ubuntu/aarch64) echo "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-arm64.img" ;;
+    alma/x86_64)
+      # AlmaLinux 10 richiede un processore x86-64-v3 (AVX2); per i processori più vecchi esiste la variante v2.
+      if grep -qw avx2 /proc/cpuinfo; then
+        echo "https://repo.almalinux.org/almalinux/10/cloud/x86_64/images/AlmaLinux-10-GenericCloud-latest.x86_64.qcow2"
+      else
+        echo "https://repo.almalinux.org/almalinux/10/cloud/x86_64_v2/images/AlmaLinux-10-GenericCloud-latest.x86_64_v2.qcow2"
+      fi ;;
+    alma/aarch64)   echo "https://repo.almalinux.org/almalinux/10/cloud/aarch64/images/AlmaLinux-10-GenericCloud-latest.aarch64.qcow2" ;;
+    *) errore "processore $arch non supportato" ;;
+  esac
+}
+
+utente() { [ "$1" = ubuntu ] && echo ubuntu || echo almalinux; }
+
+rete() {
+  if virsh net-info academy >/dev/null 2>&1; then
+    echo "La rete academy esiste già."
+  else
+    virsh net-define "$DIR/academy-net.xml"
+    virsh net-autostart academy
+  fi
+  virsh net-start academy 2>/dev/null || true
+}
+
+chiave_ssh() {
+  if [ ! -f "$HOME/.ssh/id_ed25519.pub" ]; then
+    echo "Creo la tua chiave SSH (~/.ssh/id_ed25519): premi Invio per accettare i valori proposti." >&2
+    ssh-keygen -t ed25519 -f "$HOME/.ssh/id_ed25519" >&2
+  fi
+  cat "$HOME/.ssh/id_ed25519.pub"
+}
+
+# Aggiunge "Host NOME" a ~/.ssh/config, così basta scrivere: ssh NOME
+configura_ssh() {
+  local nome=$1 ip=$2 user=$3
+  mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
+  touch "$SSH_CONFIG" && chmod 600 "$SSH_CONFIG"
+  ssh-keygen -R "$ip" -f "$KNOWN_HOSTS" >/dev/null 2>&1 || true
+  grep -q "^Host $nome\$" "$SSH_CONFIG" && return 0
+  cat >> "$SSH_CONFIG" <<EOF
+
+# VM di laboratorio della Racoon Cloud & DevOps Academy (aggiunta da academy-vm)
+Host $nome
+    HostName $ip
+    User $user
+    UserKnownHostsFile $KNOWN_HOSTS
+    StrictHostKeyChecking accept-new
+EOF
+}
+
+crea() {
+  local nome=$1 os ip cpu mem disk profilo url base user tmp
+  [ -n "${VM[$nome]:-}" ] || errore "VM sconosciuta: $nome (possibili: ${!VM[*]})"
+  read -r os ip cpu mem disk profilo <<<"${VM[$nome]}"
+  virsh dominfo "$nome" >/dev/null 2>&1 && errore "la VM $nome esiste già (per ricrearla: ./academy-vm elimina $nome)"
+  virsh net-info academy >/dev/null 2>&1 || rete
+
+  url=$(immagine "$os")
+  base="$IMG_DIR/$(basename "$url")"
+  user=$(utente "$os")
+  sudo mkdir -p "$IMG_DIR"
+  if ! sudo test -f "$base"; then
+    echo "Scarico l'immagine di base (solo la prima volta): $url"
+    sudo curl -fL --progress-bar -o "$base.part" "$url"
+    sudo mv "$base.part" "$base"
+  fi
+  # Il disco della VM registra solo le differenze rispetto all'immagine di base (qcow2 con backing file).
+  sudo qemu-img create -q -f qcow2 -F qcow2 -b "$base" "$IMG_DIR/$nome.qcow2" "${disk}G"
+
+  tmp=$(mktemp -d)
+  printf 'instance-id: %s-%s\nlocal-hostname: %s\n' "$nome" "$(date +%s)" "$nome" > "$tmp/meta-data"
+  {
+    echo "#cloud-config"
+    echo "hostname: $nome"
+    echo "ssh_authorized_keys:"
+    echo "  - $(chiave_ssh)"
+    echo "password: $CONSOLE_PASSWORD"
+    echo "chpasswd: { expire: false }"
+    echo "ssh_pwauth: false"
+    echo
+    cat "$DIR/cloud-init/$profilo.yaml"
+  } > "$tmp/user-data"
+
+  virt-install --name "$nome" --memory "$mem" --vcpus "$cpu" --cpu host-passthrough \
+    --osinfo linux2022 --import \
+    --disk "path=$IMG_DIR/$nome.qcow2,format=qcow2,bus=virtio" \
+    --network "network=academy,mac=52:54:00:56:00:$ip,model=virtio" \
+    --cloud-init "user-data=$tmp/user-data,meta-data=$tmp/meta-data" \
+    --graphics none --noautoconsole
+  rm -rf "$tmp"
+
+  configura_ssh "$nome" "192.168.56.$ip" "$user"
+  echo "Attendo che $nome completi la configurazione (cloud-init, qualche minuto)..."
+  until ssh -o ConnectTimeout=5 -o BatchMode=yes "$nome" true 2>/dev/null; do sleep 5; done
+  ssh "$nome" sudo cloud-init status --wait >/dev/null || true
+  echo "Pronta: ssh $nome   (192.168.56.$ip, utente $user)"
+}
+
+elimina() {
+  local nome=$1
+  [ -n "${VM[$nome]:-}" ] || errore "VM sconosciuta: $nome"
+  virsh destroy "$nome" 2>/dev/null || true
+  virsh undefine "$nome" --remove-all-storage --snapshots-metadata
+}
+
+elenco() {
+  local nome os ip _
+  printf '%-12s %-10s %-15s %s\n' VM SISTEMA INDIRIZZO STATO
+  for nome in lab client web rhel-lab rhel-client rhel-web; do
+    read -r os ip _ <<<"${VM[$nome]}"
+    printf '%-12s %-10s %-15s %s\n' "$nome" "$os" "192.168.56.$ip" "$(virsh domstate "$nome" 2>/dev/null || echo 'non creata')"
+  done
+}
+
+comando=${1:-}
+shift || true
+case "$comando" in
+  rete)    controlla_prerequisiti; rete ;;
+  crea)    controlla_prerequisiti; [ $# -gt 0 ] || errore "indica almeno una VM"; for n in "$@"; do crea "$n"; done ;;
+  elimina) controlla_prerequisiti; [ $# -gt 0 ] || errore "indica almeno una VM"; for n in "$@"; do elimina "$n"; done ;;
+  elenco)  controlla_prerequisiti; elenco ;;
+  *) sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

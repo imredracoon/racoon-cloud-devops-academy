@@ -9,19 +9,19 @@
 |---|---|
 | **Durata** | 10-15 ore |
 | **Consegna** | Repository pubblico GitHub `secure-web-server` |
-| **Ambiente** | Una VM nuova, `web`, creata con Multipass, più la VM `client` |
+| **Ambiente** | Una VM nuova, `web` (o `rhel-web`), più la VM `client` (o `rhel-client`) |
 
 ## Il compito
 
 !!! tip "Su quale distribuzione?"
     Svolgi il progetto sulla famiglia che hai scelto come percorso principale. Per un portfolio davvero completo,
     realizzalo su **entrambe**: lo stesso repository può contenere `setup-ubuntu.sh` e `setup-rhel.sh`. Nel percorso
-    RHEL crea una terza VM `web` aggiungendola al `Vagrantfile` (per esempio con IP `192.168.56.20`) e sostituisci:
+    RHEL crea la VM `rhel-web` (`./academy-vm crea rhel-web`, IP `192.168.56.12`) e sostituisci:
     `nftables` con **firewalld**, il gruppo `sudo` con **`wheel`**, il servizio `ssh` con **`sshd`**,
     `sites-available` con **`/etc/nginx/conf.d/`**, `unattended-upgrades` con **`dnf-automatic`**; installa
     fail2ban da **EPEL**; mantieni SELinux in **enforcing** e attiva il booleano `httpd_can_network_connect`.
 
-Su una VM nuova chiamata `web` (`multipass launch 24.04 --name web --cpus 1 --memory 1G --disk 10G`):
+Su una VM nuova chiamata `web` (`./academy-vm crea web`, IP `192.168.56.23`):
 
 ### Requisiti funzionali
 
@@ -138,7 +138,7 @@ Dopo il test di fail2ban sblocca il client con `sudo fail2ban-client set sshd un
     groupadd -f ssh-users
     id admin  &>/dev/null || useradd -m -s /bin/bash -G sudo,ssh-users admin
     id webapp &>/dev/null || useradd --system --home /srv/webapp --shell /usr/sbin/nologin webapp
-    usermod -aG ssh-users ubuntu    # mantiene l'accesso di Multipass
+    usermod -aG ssh-users ubuntu    # mantiene il tuo accesso con ssh web
 
     # applicazione
     install -d -o webapp -g webapp /srv/webapp/public

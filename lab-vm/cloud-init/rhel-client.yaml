@@ -1,0 +1,15 @@
+# Profilo cloud-init delle VM "rhel-client" e "rhel-web" (AlmaLinux 10): pochi strumenti di rete.
+# Lo script academy-vm aggiunge in testa nome host, chiave SSH e password della console.
+
+package_update: true
+packages:
+  - bash-completion
+  - bind-utils
+  - nmap-ncat
+  - tcpdump
+  - curl
+  - git
+  - firewalld
+
+runcmd:
+  - systemctl enable --now firewalld

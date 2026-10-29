@@ -1,0 +1,21 @@
+<!-- Rete privata dei laboratori della Racoon Cloud & DevOps Academy.
+     NAT verso Internet, DHCP con indirizzi fissi per ogni VM e DNS interno:
+     dentro le VM "ping client" o "ping rhel-lab" funzionano per nome.
+     La crea lo script academy-vm (comando: ./academy-vm rete). -->
+<network>
+  <name>academy</name>
+  <forward mode='nat'/>
+  <bridge name='virbr56' stp='on' delay='0'/>
+  <domain name='lab.internal' localOnly='yes'/>
+  <ip address='192.168.56.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='192.168.56.100' end='192.168.56.199'/>
+      <host mac='52:54:00:56:00:10' name='rhel-lab' ip='192.168.56.10'/>
+      <host mac='52:54:00:56:00:11' name='rhel-client' ip='192.168.56.11'/>
+      <host mac='52:54:00:56:00:12' name='rhel-web' ip='192.168.56.12'/>
+      <host mac='52:54:00:56:00:21' name='lab' ip='192.168.56.21'/>
+      <host mac='52:54:00:56:00:22' name='client' ip='192.168.56.22'/>
+      <host mac='52:54:00:56:00:23' name='web' ip='192.168.56.23'/>
+    </dhcp>
+  </ip>
+</network>

@@ -1,0 +1,46 @@
+# Profilo cloud-init della VM "lab" (Ubuntu 24.04): Fase 1 e preparazione LFCS.
+# Lo script academy-vm aggiunge in testa nome host, chiave SSH e password della console.
+# Uso: ./academy-vm crea lab       (vedi docs/ambiente/vm-linux.md)
+# Documentazione cloud-init: https://cloudinit.readthedocs.io/
+
+package_update: true
+packages:
+  - bash-completion
+  - man-db
+  - manpages
+  - tree
+  - jq
+  - dnsutils
+  - traceroute
+  - tcpdump
+  - nftables
+  - lvm2
+  - acl
+  - git
+  - curl
+  - nano
+  - vim
+
+runcmd:
+  # Tre dischi "finti" da 1 GB (file + loop device) per gli esercizi su partizioni e LVM.
+  - mkdir -p /srv/lab-disks
+  - for n in 1 2 3; do truncate -s 1G /srv/lab-disks/disk$n.img; done
+  - |
+    cat > /etc/systemd/system/lab-disks.service <<'UNIT'
+    [Unit]
+    Description=Collega i dischi di laboratorio come loop device
+    DefaultDependencies=no
+    Before=local-fs-pre.target
+
+    [Service]
+    Type=oneshot
+    RemainAfterExit=yes
+    ExecStart=/bin/sh -c 'for n in 1 2 3; do losetup -fP /srv/lab-disks/disk$n.img; done'
+
+    [Install]
+    WantedBy=local-fs-pre.target
+    UNIT
+  - systemctl daemon-reload
+  - systemctl enable --now lab-disks.service
+
+final_message: "VM di laboratorio pronta dopo $UPTIME secondi."

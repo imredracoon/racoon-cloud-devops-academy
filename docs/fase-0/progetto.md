@@ -33,7 +33,7 @@ GitHub trasforma automaticamente in diagramma i blocchi di codice `mermaid`. Par
 ````markdown
 ```mermaid
 flowchart LR
-  PC[Il mio PC<br>Fedora Workstation, 16 GB RAM] --> MP[Multipass]
+  PC[Il mio PC<br>Fedora Workstation, 16 GB RAM] --> MP[KVM/libvirt]
   MP --> VM[VM lab<br>Ubuntu 24.04, 2 vCPU, 2 GB]
   PC --> DC[Dev Container<br>Ubuntu 24.04 + strumenti]
   PC --> GH[GitHub<br>academy-lab]
@@ -78,17 +78,16 @@ Valuta il tuo lavoro con questa lista prima di considerarlo concluso:
     | Componente | Dettagli |
     |---|---|
     | Computer | Fedora Workstation, 16 GB RAM, 8 core |
-    | VM `lab` | Ubuntu 24.04 LTS, kernel 6.8, 2 vCPU, 2 GB RAM, 20 GB disco, creata con Multipass |
+    | VM `lab` | Ubuntu 24.04 LTS, kernel 6.8, 2 vCPU, 2 GB RAM, 20 GB disco, creata con KVM/libvirt e lo script `academy-vm` |
     | Dev Container | Ubuntu 24.04 con Git, Python, Docker, Terraform, kubectl, AWS CLI, gcloud |
 
     (diagramma Mermaid)
 
     ## Ricreare la VM
 
-    1. Installare Multipass da https://canonical.com/multipass/install
-    2. Eseguire, nella cartella `lab-vm`:
-       `multipass launch 24.04 --name lab --cpus 2 --memory 2G --disk 20G --cloud-init cloud-init.yaml`
-    3. Verificare con `multipass shell lab` e `losetup -a` (devono comparire tre dischi di laboratorio)
+    1. Installare KVM e libvirt come indicato nella pagina "Macchine virtuali Linux" del corso
+    2. Eseguire, nella cartella `lab-vm`: `./academy-vm rete` e `./academy-vm crea lab`
+    3. Verificare con `ssh lab` e `losetup -a` (devono comparire tre dischi di laboratorio)
 
     ## Diario
 

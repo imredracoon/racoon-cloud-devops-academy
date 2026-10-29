@@ -240,7 +240,7 @@ a vicenda. Su un server scegli un solo strumento.
     kernel e nessuno ascoltava. Se usassi `reject` invece di `drop`, il client riceverebbe subito un rifiuto.
     `drop` rivela meno informazioni all'esterno; `reject` rende più rapida la diagnosi nelle reti interne.
 
-    (Se `multipass shell` smette di funzionare, controlla la regola per la porta 22: Multipass usa SSH.)
+    (Se `ssh lab` smette di funzionare, entra con `virsh console lab` e controlla la regola per la porta 22.)
 
 ??? success "Soluzione: percorso RHEL"
     ```bash

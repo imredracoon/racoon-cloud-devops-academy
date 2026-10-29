@@ -59,7 +59,7 @@ Cloud.
 
 Una VM nel cloud non si configura a mano via SSH: è lento, non ripetibile e non scala. Si passa uno **script** che
 viene eseguito all'avvio. Sulla maggior parte delle immagini Linux lo esegue **cloud-init**, lo stesso strumento che
-usi con Multipass ([Fase 0](../fase-0/index.md)).
+usi per le VM di laboratorio ([macchine virtuali](../ambiente/vm-linux.md)).
 
 ```bash title="avvio.sh"
 #!/bin/bash
