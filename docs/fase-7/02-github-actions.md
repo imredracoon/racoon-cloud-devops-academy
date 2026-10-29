@@ -102,7 +102,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, ubuntu-24.04-arm]
         python: ["3.12", "3.13"]
     steps:
       - uses: actions/checkout@v7
@@ -174,7 +174,7 @@ qualcosa è fallito), `always()`, `cancelled()`, `contains()`, `startsWith()`.
 
     1. Crea `.github/workflows/saluti.yml` come sopra, fai push e osserva l'esecuzione nella scheda **Actions**.
     2. Aggiungi un segreto `TOKEN_API` e uno step che stampa `echo "$TOKEN"`: cosa compare nel log?
-    3. Aggiungi un job `matrice` con Ubuntu e macOS e due versioni di Python.
+    3. Aggiungi un job `matrice` con Ubuntu su Intel/AMD e su ARM e due versioni di Python.
     4. Aggiungi un job `riepilogo` con `needs: [saluta, matrice]` che scrive nel **riepilogo** dell'esecuzione:
        `echo "### Tutto ok :rocket:" >> "$GITHUB_STEP_SUMMARY"`.
     5. Fai fallire apposta uno step (`exit 1`) e aggiungi uno step con `if: failure()` che stampa un messaggio.
@@ -215,7 +215,7 @@ qualcosa è fallito), `always()`, `cancelled()`, `contains()`, `startsWith()`.
 {"questions":[
  {"q":"Dove si trovano i workflow di GitHub Actions?","options":["Nella cartella .github/workflows del repository","Nelle impostazioni del repository","In un file Jenkinsfile","Nella wiki"],"answer":[0],"explanation":"Sono file YAML versionati con il codice."},
  {"q":"Come fai partire un job solo dopo il successo di un altro?","options":["Con needs","Con if: always()","Mettendolo dopo nel file","Con concurrency"],"answer":[0],"explanation":"Senza needs i job sono paralleli."},
- {"q":"I file creati in un job sono visibili in un altro job dello stesso workflow?","options":["Sì, sempre","No, ogni job parte da una macchina pulita: servono artefatti o output","Solo con lo stesso runner","Solo su macOS"],"answer":[1],"explanation":"actions/upload-artifact e download-artifact."},
+ {"q":"I file creati in un job sono visibili in un altro job dello stesso workflow?","options":["Sì, sempre","No, ogni job parte da una macchina pulita: servono artefatti o output","Solo con lo stesso runner","Solo se i job girano su ARM"],"answer":[1],"explanation":"actions/upload-artifact e download-artifact."},
  {"q":"Quali sono buone pratiche di sicurezza nei workflow?","options":["Dichiarare permissions con il minimo necessario","Fissare le azioni di terze parti a uno SHA di commit","Usare permissions: write-all","Stampare i segreti per verificarli","Usare pull_request_target per tutte le PR"],"answer":[0,1],"explanation":"Il GITHUB_TOKEN deve avere solo i permessi necessari."},
  {"q":"Come passi un valore da uno step a quelli successivi?","options":["Scrivendo nome=valore nel file $GITHUB_OUTPUT e leggendolo con steps.ID.outputs.nome","Con una variabile Bash","Non si può","Con un segreto"],"answer":[0],"explanation":"Lo step deve avere un id."},
  {"q":"Cosa fa una matrice?","options":["Esegue lo stesso job con combinazioni diverse di parametri, in parallelo","Crea una tabella nel riepilogo","Cifra i segreti","Ordina i job"],"answer":[0],"explanation":"Per esempio più sistemi operativi e versioni del linguaggio."}

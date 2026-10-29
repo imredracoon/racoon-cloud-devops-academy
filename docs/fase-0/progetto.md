@@ -33,7 +33,7 @@ GitHub trasforma automaticamente in diagramma i blocchi di codice `mermaid`. Par
 ````markdown
 ```mermaid
 flowchart LR
-  PC[Il mio PC<br>Windows 11, 16 GB RAM] --> MP[Multipass]
+  PC[Il mio PC<br>Fedora Workstation, 16 GB RAM] --> MP[Multipass]
   MP --> VM[VM lab<br>Ubuntu 24.04, 2 vCPU, 2 GB]
   PC --> DC[Dev Container<br>Ubuntu 24.04 + strumenti]
   PC --> GH[GitHub<br>academy-lab]
@@ -77,7 +77,7 @@ Valuta il tuo lavoro con questa lista prima di considerarlo concluso:
 
     | Componente | Dettagli |
     |---|---|
-    | Computer | Windows 11 Home, 16 GB RAM, 8 core |
+    | Computer | Fedora Workstation, 16 GB RAM, 8 core |
     | VM `lab` | Ubuntu 24.04 LTS, kernel 6.8, 2 vCPU, 2 GB RAM, 20 GB disco, creata con Multipass |
     | Dev Container | Ubuntu 24.04 con Git, Python, Docker, Terraform, kubectl, AWS CLI, gcloud |
 

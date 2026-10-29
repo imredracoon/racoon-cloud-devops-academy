@@ -25,7 +25,7 @@ flowchart TB
     H[Hypervisor]
     H --> V1[VM 1<br>Linux]
     H --> V2[VM 2<br>Linux]
-    H --> V3[VM 3<br>Windows]
+    H --> V3[VM 3<br>RHEL]
   end
 ```
 

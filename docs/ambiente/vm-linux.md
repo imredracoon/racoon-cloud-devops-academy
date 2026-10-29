@@ -32,40 +32,45 @@ due famiglie è presentato in schede affiancate, e i laboratori si possono svolg
 ## Percorso Debian/Ubuntu: Multipass
 
 Usiamo **Multipass**, uno strumento gratuito e open source di Canonical (l'azienda che sviluppa Ubuntu) che crea
-VM Ubuntu con un solo comando su Windows, macOS e Linux.
+VM Ubuntu con un solo comando. Su Linux usa **KVM**, la virtualizzazione integrata nel kernel.
 
 ### 1. Installa Multipass
 
-=== "Windows"
+Multipass si distribuisce come pacchetto **snap**, il formato di pacchetti universale di Canonical.
 
-    Requisiti: Windows 10 o 11 (Home, Pro o Enterprise), versione 1809 o successiva, con la funzionalità
-    **Piattaforma macchina virtuale** attiva (Pannello di controllo → Programmi → Attiva o disattiva funzionalità
-    di Windows).
+=== "Ubuntu"
 
-    Scarica il file `.msi` dalla [pagina ufficiale](https://canonical.com/multipass/install) ed eseguilo come
-    amministratore.
-
-=== "macOS"
-
-    Requisiti: macOS 14 Sonoma o successivo, Mac con processore Apple (M) o Intel, account amministratore.
-
-    Scarica il file `.pkg` dalla [pagina ufficiale](https://canonical.com/multipass/install) ed eseguilo.
-
-=== "Linux"
-
-    Multipass si installa come pacchetto *snap*:
+    `snap` è già presente:
 
     ```bash
     sudo snap install multipass
     ```
 
-    Se la tua distribuzione non ha `snapd`, installalo seguendo la [guida di Snapcraft](https://snapcraft.io/docs/installing-snapd).
+=== "Fedora"
 
-Apri un terminale (su Windows: **PowerShell**; su macOS: **Terminale**) e verifica:
+    Prima installa `snapd` e crea il collegamento `/snap` che alcuni pacchetti si aspettano:
+
+    ```bash
+    sudo dnf install -y snapd
+    sudo ln -s /var/lib/snapd/snap /snap
+    ```
+
+    Esci e rientra nella sessione (o riavvia), poi:
+
+    ```bash
+    sudo snap install multipass
+    ```
+
+Apri un terminale e verifica:
 
 ```bash
 multipass version
 ```
+
+!!! tip "La virtualizzazione è attiva?"
+    Il comando `grep -cE 'vmx|svm' /proc/cpuinfo` deve stampare un numero maggiore di zero. Se stampa `0`, attiva
+    la virtualizzazione (*Intel VT-x* o *AMD-V*, a volte chiamata *SVM*) nel BIOS/UEFI del computer: il manuale o il
+    sito del produttore indicano dove si trova l'opzione.
 
 ### 2. Crea la VM di laboratorio
 
@@ -75,8 +80,8 @@ descrive come preparare la VM (pacchetti da installare e tre dischi virtuali da 
 **cloud-init** è lo standard con cui si configurano automaticamente i server al primo avvio, anche nel cloud.
 
 1. Scarica il file: apri il link qui sopra, premi l'icona **Download raw file** e salvalo in una cartella
-   che ricordi, per esempio `Documenti/academy`.
-2. Nel terminale, spostati in quella cartella (`cd Documenti/academy`) e lancia:
+   che ricordi, per esempio `~/academy`.
+2. Nel terminale, spostati in quella cartella (`cd ~/academy`) e lancia:
 
 ```bash
 multipass launch 24.04 --name lab --cpus 2 --memory 2G --disk 20G --cloud-init cloud-init.yaml
@@ -138,39 +143,51 @@ del corso crea due VM su una rete privata con indirizzi fissi:
 | `rhel-lab` | 192.168.56.10 | il server, con tre dischi di laboratorio come la VM Ubuntu |
 | `rhel-client` | 192.168.56.11 | il client per gli esercizi di rete |
 
-### 1. Installa Vagrant e un hypervisor
+### 1. Installa Vagrant e libvirt
 
-=== "Windows e Linux"
+Su Linux Vagrant crea le VM con **libvirt**, il gestore di macchine virtuali standard che usa KVM, lo stesso motore
+di Multipass. Le box ufficiali AlmaLinux sono disponibili per libvirt.
 
-    1. Installa [VirtualBox](https://www.virtualbox.org/wiki/Downloads) (gratuito).
-    2. Installa [Vagrant](https://developer.hashicorp.com/vagrant/install).
-
-    Su Windows VirtualBox convive con Hyper-V (usato da Docker Desktop e Multipass), ma può essere più lento.
-    Su Linux puoi usare in alternativa **libvirt/KVM** con il plugin `vagrant-libvirt`.
-
-=== "macOS (Intel)"
-
-    Installa [VirtualBox](https://www.virtualbox.org/wiki/Downloads) e [Vagrant](https://developer.hashicorp.com/vagrant/install).
-
-=== "macOS (Apple M1-M4)"
-
-    Le box AlmaLinux per processori ARM sono disponibili per **VMware** e **Parallels**. Installa
-    [VMware Fusion](https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion) (gratuito per uso
-    personale), [Vagrant](https://developer.hashicorp.com/vagrant/install), la
-    [Vagrant VMware Utility](https://developer.hashicorp.com/vagrant/install/vmware) e il plugin:
+=== "Ubuntu"
 
     ```bash
-    vagrant plugin install vagrant-vmware-desktop
+    sudo apt install -y qemu-kvm libvirt-daemon-system vagrant vagrant-libvirt
     ```
 
-    Poi aggiungi `--provider=vmware_desktop` al comando `vagrant up`.
+=== "Fedora"
+
+    ```bash
+    sudo dnf install -y @virtualization vagrant vagrant-libvirt
+    ```
+
+Poi aggiungi il tuo utente al gruppo `libvirt`, così puoi gestire le VM senza `sudo`, ed esci e rientra nella
+sessione:
+
+```bash
+sudo usermod -aG libvirt $USER
+```
+
+Verifica che Vagrant veda il plugin:
+
+```console
+$ vagrant plugin list
+vagrant-libvirt (0.12.2, system)
+```
+
+Il numero di versione può essere diverso: conta che `vagrant-libvirt` ci sia.
+
+!!! note "Vagrant dai repository della distribuzione"
+    Ubuntu e Fedora distribuiscono una versione di Vagrant un po' più vecchia di quella di HashiCorp, ma già
+    integrata con il plugin libvirt: per il laboratorio va benissimo. Se ti serve l'ultima versione, la
+    [pagina ufficiale](https://developer.hashicorp.com/vagrant/install) spiega come aggiungere il repository di
+    HashiCorp.
 
 ### 2. Crea le VM
 
 Scarica la cartella `lab-vm/rhel` del corso (oppure clona il repository), aprila nel terminale e lancia:
 
 ```bash
-vagrant up
+vagrant up --provider=libvirt
 ```
 
 La prima volta scarica la box (circa 1 GB) e prepara le macchine. Poi:
@@ -216,5 +233,6 @@ for n in 1 2 3; do sudo truncate -s 1G /srv/lab-disks/disk$n.img; sudo losetup -
 - [cloud-init: documentazione ufficiale](https://cloudinit.readthedocs.io/)
 - [Killercoda: playground](https://killercoda.com/playgrounds)
 - [Vagrant: documentazione](https://developer.hashicorp.com/vagrant/docs)
+- [vagrant-libvirt: documentazione](https://vagrant-libvirt.github.io/vagrant-libvirt/)
 - [AlmaLinux: box Vagrant ufficiali](https://wiki.almalinux.org/installation/vagrant-boxes.html)
 - [Red Hat Developer Subscription for Individuals](https://developers.redhat.com/articles/faqs-no-cost-red-hat-enterprise-linux)

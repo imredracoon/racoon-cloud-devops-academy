@@ -119,7 +119,7 @@ rete) puoi recuperare l'accesso. È un obiettivo esplicito della RHCSA.
 
 !!! note "Nelle VM del corso e nel cloud"
     Con Multipass e Vagrant non vedi il menu di GRUB; l'esercizio va fatto su una VM con console grafica (per
-    esempio creata a mano in VirtualBox) o su RHEL con la Developer Subscription. Nel cloud la console è spesso
+    esempio creata a mano con *virt-manager*, l'interfaccia grafica di libvirt) o su RHEL con la Developer Subscription. Nel cloud la console è spesso
     assente: per questo si usano accessi alternativi (Session Manager, console seriale) e soprattutto la
     **prevenzione** (chiavi SSH di emergenza, snapshot).
 

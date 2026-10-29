@@ -96,6 +96,7 @@ nav:
       - Il percorso e le certificazioni: percorso.md
       - Ambiente di laboratorio:
           - ambiente/index.md
+          - "Non hai ancora Linux?": ambiente/linux-sul-pc.md
           - Dev Container: ambiente/devcontainer.md
           - Macchine virtuali Linux: ambiente/vm-linux.md
           - Account cloud in sicurezza: ambiente/account-cloud.md

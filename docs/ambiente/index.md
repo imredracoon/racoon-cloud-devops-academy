@@ -1,7 +1,26 @@
 # L'ambiente di laboratorio
 
 Per imparare questo mestiere bisogna **fare**: scrivere comandi, rompere configurazioni, ripararle. Per farlo
-senza rischi e nello stesso modo su qualsiasi computer, il corso usa tre ambienti di laboratorio.
+senza rischi e nello stesso modo per tutti, il corso usa tre ambienti di laboratorio.
+
+## Il tuo computer: Ubuntu o Fedora
+
+Il corso dà per scontato che sul tuo computer ci sia **Linux**, in una di queste due distribuzioni desktop:
+
+| Distribuzione | Versione | Famiglia | Perché sceglierla |
+|---|---|---|---|
+| **Ubuntu Desktop** | 24.04 LTS o 26.04 LTS | Debian | la più diffusa, tantissima documentazione; stessa famiglia della VM Ubuntu |
+| **Fedora Workstation** | l'ultima versione stabile | Red Hat | è la distribuzione "a monte" di RHEL: ciò che arriva in RHEL nasce in Fedora |
+
+Le istruzioni di installazione sono in **schede affiancate** con il nome della distribuzione, come le schede
+Debian/Ubuntu e RHEL della [Fase 1](../fase-1/index.md). Lavorare ogni giorno su Linux è già allenamento: i comandi che usi sul
+tuo computer sono gli stessi che userai sui server.
+
+!!! tip "Non hai ancora Linux?"
+    Nessun problema: la pagina [Non hai ancora Linux?](linux-sul-pc.md) spiega come installare Ubuntu o Fedora,
+    oppure come seguire il corso dal browser con GitHub Codespaces e Killercoda.
+
+## I tre ambienti di laboratorio
 
 | Ambiente | Cos'è | Dove si usa | Costo |
 |---|---|---|---|
@@ -18,8 +37,9 @@ senza rischi e nello stesso modo su qualsiasi computer, il corso usa tre ambient
 
 Non serve preparare tutto adesso. Il corso ti dice quando è il momento:
 
-1. **[Fase 0](../fase-0/index.md), [lezione 0.7](../fase-0/07-laboratorio.md)**: installi la macchina virtuale Linux e il Dev Container.
-2. **[Fase 4](../fase-4/index.md), [lezione 4.3](../fase-4/03-account.md)**: crei gli account cloud, con budget e allarmi di spesa.
+1. **Prima di iniziare**: hai Ubuntu o Fedora sul tuo computer ([Non hai ancora Linux?](linux-sul-pc.md)).
+2. **[Fase 0](../fase-0/index.md), [lezione 0.7](../fase-0/07-laboratorio.md)**: installi la macchina virtuale Linux e il Dev Container.
+3. **[Fase 4](../fase-4/index.md), [lezione 4.3](../fase-4/03-account.md)**: crei gli account cloud, con budget e allarmi di spesa.
 
 ## Requisiti del computer
 
@@ -28,7 +48,7 @@ Non serve preparare tutto adesso. Il corso ti dice quando è il momento:
 | Memoria (RAM) | 8 GB | 16 GB o più |
 | Spazio libero su disco | 40 GB | 80 GB |
 | Processore | 4 core, con virtualizzazione attiva | 8 core |
-| Sistema operativo | Windows 10/11, macOS 14 o successivo, una distribuzione Linux recente | — |
+| Sistema operativo | Ubuntu Desktop 24.04 LTS o Fedora Workstation | Ubuntu 26.04 LTS o l'ultima Fedora |
 
 !!! tip "Il computer non basta?"
     Puoi svolgere le fasi 2-8 interamente dal browser con **GitHub Codespaces**, usando la quota gratuita mensile

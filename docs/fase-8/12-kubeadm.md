@@ -16,7 +16,7 @@ manifest dei componenti del control plane come *static pod*, configura il kubele
 
 !!! info "Cosa ti serve"
     Due o tre macchine virtuali Linux con almeno 2 CPU e 2 GB di RAM ciascuna (4 GB per il control plane è più
-    comodo), in rete tra loro: per esempio VM locali con VirtualBox o Multipass, oppure istanze EC2 o Compute Engine
+    comodo), in rete tra loro: per esempio VM locali con Multipass o Vagrant, oppure istanze EC2 o Compute Engine
     (ricorda di spegnerle a fine lavoro). kind non basta per questa lezione, ma la parte su etcd e certificati la
     puoi provare anche lì.
 
