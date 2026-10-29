@@ -41,8 +41,29 @@ CLEAN_JS = """
     while (n && n.tagName !== "H2") { const next = n.nextElementSibling; n.remove(); n = next; }
     h.remove();
   });
+  // Le note numerate nei blocchi di codice: nel PDF il numero resta nel codice, il testo va in un elenco sotto.
+  root.querySelectorAll(".md-annotation").forEach((ann) => {
+    const n = ann.querySelector("[data-md-annotation-id]")?.getAttribute("data-md-annotation-id") || "";
+    const text = ann.querySelector(".md-tooltip__inner")?.innerHTML || "";
+    const block = ann.closest(".highlight") || ann.parentElement;
+    let list = block.nextElementSibling;
+    if (!list || !list.classList.contains("pdf-annotations")) {
+      if (list && list.tagName === "OL" && list.hidden) list.remove();
+      list = document.createElement("ol");
+      list.className = "pdf-annotations";
+      block.after(list);
+    }
+    const li = document.createElement("li");
+    li.value = Number(n) || list.children.length + 1;
+    li.innerHTML = text;
+    list.appendChild(li);
+    const mark = document.createElement("span");
+    mark.className = "pdf-annotation-mark";
+    mark.textContent = `(${n})`;
+    ann.replaceWith(mark);
+  });
   root.querySelectorAll([
-    ".md-content__button", ".headerlink", ".md-clipboard", ".md-source-file", ".academy-done",
+    ".md-content__button", ".md-code__nav", ".headerlink", ".md-clipboard", ".md-source-file", ".academy-done",
     ".esercizio", ".laboratorio", "details.success",
     ".academy-quiz", "script", ".exam-sim",
     ".mermaid", "img", "svg.twemoji", "video", "audio", "iframe", "figure",
@@ -89,6 +110,11 @@ body { background: #fff; }
 .pdf-toc ul { list-style: none; padding-left: 0; }
 .pdf-toc li li { padding-left: 1.2em; }
 .pdf-toc a { text-decoration: none; color: inherit; }
+/* Le icone del tema sono maschere CSS: alcuni lettori PDF le mostrano come quadrati colorati. Nel PDF si tolgono. */
+.md-typeset .admonition-title::before, .md-typeset summary::before, .md-typeset summary::after { display: none; }
+[dir=ltr] .md-typeset .admonition-title, [dir=ltr] .md-typeset summary { padding-left: 0.6rem; padding-right: 0.6rem; }
+.pdf-annotation-mark { font-weight: 700; color: #3949ab; }
+.md-typeset ol.pdf-annotations { margin-top: -0.4em; font-size: 0.9em; }
 """
 
 
@@ -159,7 +185,7 @@ def main():
             for s, items in toc
         )
         today = datetime.date.today().strftime("%d/%m/%Y")
-        doc = f"""<!doctype html><html lang="it"><head><meta charset="utf-8">
+        doc = f"""<!doctype html><html lang="it" dir="ltr"><head><meta charset="utf-8">
 <title>{html.escape(config['site_name'])}</title>
 {''.join(f'<link rel="stylesheet" href="{h}">' for h in styles)}
 <style>{PRINT_CSS}</style></head>
