@@ -68,6 +68,12 @@ CLEAN_JS = """
     ".academy-quiz", "script", ".exam-sim",
     ".mermaid", "img", "svg.twemoji", "video", "audio", "iframe", "figure",
   ].join(",")).forEach((e) => e.remove());
+  // I diagrammi Mermaid non vengono disegnati (la libreria arriva da una CDN, bloccata) e Material toglie la classe
+  // "mermaid" al blocco: si riconoscono dalla prima parola del sorgente.
+  root.querySelectorAll("pre").forEach((pre) => {
+    if (/^\\s*(flowchart|graph|sequenceDiagram|classDiagram|stateDiagram|erDiagram|gantt|pie|mindmap|timeline)\\b/
+        .test(pre.textContent)) pre.remove();
+  });
   root.querySelectorAll("details").forEach((d) => d.setAttribute("open", ""));
   // Le schede (Debian/Ubuntu, RHEL, AWS, Google Cloud) diventano blocchi in sequenza.
   root.querySelectorAll(".tabbed-set").forEach((set) => {
