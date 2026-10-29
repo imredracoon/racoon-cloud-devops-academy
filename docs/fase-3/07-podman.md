@@ -353,6 +353,40 @@ Nel lavoro li incontrerai entrambi, e passare dall'uno all'altro richiede pochi 
     **Spiegazione.** Con il lingering i servizi dell'utente partono al boot. `podman kill` fa uscire il container
     con un errore, e `Restart=on-failure` fa ripartire il servizio: è systemd a riavviarlo, non Podman.
 
+## Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    Gli esercizi sulla workstation (o in `rhel-lab`) sono tutto ciò che serve.
+
+=== "Livello 2 · Workstation + server"
+
+    Metti in servizio su `srv1` il Quadlet del [sito statico](#un-sito-statico-come-servizio), rootless, con il tuo
+    utente e `loginctl enable-linger`. Su `srv1` con Ubuntu i file `.pod` non sono disponibili (Podman 4.9), i
+    `.container` sì.
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | `ssh srv1 systemctl --user status sito` | `active (running)` |
+    | riavvio di `srv1`, **senza** entrare con SSH, poi `curl -sI http://IP-SRV1:PORTA/` dalla workstation (apri la porta nel firewall) | `200`: il servizio è partito senza che tu fossi collegato |
+    | `ssh srv1 podman auto-update --dry-run` | il container compare tra quelli controllati |
+
+=== "Livello 3 · Mini data center"
+
+    Metti in servizio il Quadlet del sito statico su **`nodo3`**, che nel progetto userà i Quadlet per tutto lo
+    stack. AlmaLinux 10 ha Podman 5: puoi provare anche i file `.pod`. Poi lancia la stessa immagine su `nodo2` con
+    Docker (`docker run -d -p 127.0.0.1:8081:80 ...`).
+
+    **Collaudo**
+
+    | Prova | Risultato atteso |
+    |---|---|
+    | riavvio di `nodo3` senza entrare, poi `ssh nodo2 curl -sI http://nodo3.lab:PORTA/` | `200` (porta aperta in firewalld) |
+    | `ssh nodo3 podman images --digests` e `ssh nodo2 docker images --digests` | lo stesso digest per la stessa immagine |
+    | `ssh nodo3 sudo ausearch -m AVC -ts boot` | nessun blocco di SELinux |
+
 ## Verifica rapida
 
 <script type="application/json" class="quiz-data">

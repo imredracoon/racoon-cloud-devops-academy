@@ -40,6 +40,37 @@ lo dà per acquisito.
     pensato per girare senza privilegi di root. Nella [lezione 3.2](02-immagini-container.md) lo installi su `rhel-lab`. Quasi tutti i comandi
     di questa fase funzionano sostituendo `docker` con `podman`; le differenze sono segnalate.
 
+## Nei tre livelli
+
+Le lezioni 3.1-3.6 si fanno nel Dev Container in tutti i livelli: le immagini si costruiscono lì e si pubblicano
+sul registry. Cambia dove fai girare lo stack.
+
+=== "Livello 1 · Un PC"
+
+    Dev Container per le lezioni, VM `web` (Docker) o `rhel-lab` (Podman) per il progetto.
+
+=== "Livello 2 · Workstation + server"
+
+    Installa Docker su `srv1` con Ubuntu (come nella VM, [lezione 3.2](02-immagini-container.md)) oppure usa Podman su `srv1` con
+    AlmaLinux. Lo stack del progetto gira su `srv1`, dietro il Nginx dell'host che hai configurato nei progetti 1 e 2.
+    La [lezione 3.7](07-podman.md#nei-tre-livelli) la provi anche sul server, con un Quadlet che parte all'avvio.
+
+=== "Livello 3 · Mini data center"
+
+    I due percorsi diventano due motori sullo stesso data center: **`nodo2` con Docker e Compose**, **`nodo3` con
+    Podman e i Quadlet**. Entrambi scaricano la **stessa immagine** dal registry: è la prova più concreta che un
+    container è portabile.
+
+!!! warning "Docker, firewall e VM sulla stessa macchina"
+    Su `srv1`, `nodo2` e `nodo3` tieni presenti due cose:
+
+    - **le porte pubblicate da Docker scavalcano il firewall dell'host**: il traffico verso un container passa per
+      la catena `forward`, non per `input`, quindi la tua politica `drop` non lo vede. Pubblica le porte solo su
+      `127.0.0.1` (`"127.0.0.1:8080:80"`) e metti davanti il Nginx dell'host, che è l'unico a esporsi;
+    - Docker crea regole proprie, come libvirt: un `/etc/nftables.conf` con `flush ruleset` le cancellerebbe al
+      primo `systemctl restart nftables`. Usa la tabella dedicata `homelab` vista nella
+      [lezione 1.11](../fase-1/11-firewall.md#nei-tre-livelli) anche su `nodo2`.
+
 ## Le lezioni
 
 1. [Cosa sono i container](01-concetti.md)
