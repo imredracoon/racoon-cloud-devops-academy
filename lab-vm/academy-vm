@@ -7,6 +7,8 @@
 #   ./academy-vm crea lab rhel-lab    crea una o più VM e aspetta che siano pronte
 #   ./academy-vm elimina client       spegne ed elimina una VM con i suoi dischi
 #   ./academy-vm elenco               mostra le VM del corso, lo stato e l'indirizzo
+#   ./academy-vm ssh-config srv1      stampa le voci ~/.ssh/config per raggiungere le VM passando dal
+#                                     server srv1 (livelli 2 e 3: da incollare sulla workstation)
 #
 # Le VM si accendono e spengono con virsh (virsh start lab, virsh shutdown lab) e ci si entra
 # con "ssh lab": lo script aggiunge le voci necessarie in ~/.ssh/config.
@@ -28,7 +30,11 @@ declare -A VM=(
   [rhel-lab]="alma    10   2    2048      20         rhel-lab"
   [rhel-client]="alma 11   1    1536      10         rhel-client"
   [rhel-web]="alma    12   1    1536      10         rhel-client"
+  [k8s-cp]="ubuntu    31   2    2048      20         client"
+  [k8s-w1]="ubuntu    32   2    2048      20         client"
+  [k8s-w2]="ubuntu    33   2    2048      20         client"
 )
+ORDINE="lab client web rhel-lab rhel-client rhel-web k8s-cp k8s-w1 k8s-w2"
 
 errore() { echo "errore: $*" >&2; exit 1; }
 
@@ -77,6 +83,9 @@ chiave_ssh() {
     ssh-keygen -t ed25519 -f "$HOME/.ssh/id_ed25519" >&2
   fi
   cat "$HOME/.ssh/id_ed25519.pub"
+  # Livelli 2 e 3: anche le chiavi già autorizzate su questo server (quella della workstation) entrano nelle VM.
+  [ -f "$HOME/.ssh/authorized_keys" ] && grep -E '^(ssh-|ecdsa-)' "$HOME/.ssh/authorized_keys"
+  return 0
 }
 
 # Aggiunge "Host NOME" a ~/.ssh/config, così basta scrivere: ssh NOME
@@ -122,7 +131,7 @@ crea() {
     echo "#cloud-config"
     echo "hostname: $nome"
     echo "ssh_authorized_keys:"
-    echo "  - $(chiave_ssh)"
+    chiave_ssh | sort -u | sed 's/^/  - /'
     echo "password: $CONSOLE_PASSWORD"
     echo "chpasswd: { expire: false }"
     echo "ssh_pwauth: false"
@@ -155,9 +164,21 @@ elimina() {
 elenco() {
   local nome os ip _
   printf '%-12s %-10s %-15s %s\n' VM SISTEMA INDIRIZZO STATO
-  for nome in lab client web rhel-lab rhel-client rhel-web; do
+  for nome in $ORDINE; do
     read -r os ip _ <<<"${VM[$nome]}"
     printf '%-12s %-10s %-15s %s\n' "$nome" "$os" "192.168.56.$ip" "$(virsh domstate "$nome" 2>/dev/null || echo 'non creata')"
+  done
+}
+
+# Livelli 2 e 3: le VM stanno su una rete privata del server. La workstation le raggiunge con ProxyJump,
+# cioè passando via SSH dal server. Stampa le voci da aggiungere a ~/.ssh/config della workstation.
+ssh_config() {
+  local salto=$1 nome os ip _
+  for nome in $ORDINE; do
+    read -r os ip _ <<<"${VM[$nome]}"
+    printf '\n# VM %s, raggiunta passando da %s (generata da academy-vm ssh-config)\n' "$nome" "$salto"
+    printf 'Host %s\n    HostName 192.168.56.%s\n    User %s\n    ProxyJump %s\n' "$nome" "$ip" "$(utente "$os")" "$salto"
+    printf '    UserKnownHostsFile ~/.ssh/known_hosts_academy\n    StrictHostKeyChecking accept-new\n'
   done
 }
 
@@ -168,5 +189,6 @@ case "$comando" in
   crea)    controlla_prerequisiti; [ $# -gt 0 ] || errore "indica almeno una VM"; for n in "$@"; do crea "$n"; done ;;
   elimina) controlla_prerequisiti; [ $# -gt 0 ] || errore "indica almeno una VM"; for n in "$@"; do elimina "$n"; done ;;
   elenco)  controlla_prerequisiti; elenco ;;
-  *) sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+  ssh-config) [ $# -eq 1 ] || errore "indica il server, per esempio: ./academy-vm ssh-config srv1"; ssh_config "$1" ;;
+  *) sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac

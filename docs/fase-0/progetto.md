@@ -26,6 +26,34 @@ Crea un repository pubblico che documenti il tuo ambiente di laboratorio e diven
 2. Una cartella `lab-vm/` con una copia del file `cloud-init.yaml` che hai usato.
 3. Una cartella `appunti/` con un file Markdown per ogni lezione della Fase 0, scritto con parole tue.
 
+### Nei tre livelli
+
+=== "Livello 1 · Un PC"
+
+    I requisiti qui sopra bastano.
+
+=== "Livello 2 · Workstation + server"
+
+    In più:
+
+    - nel README, una sezione **Il server `srv1`** con modello, processore, RAM, disco, sistema operativo,
+      indirizzo IP riservato e come ci si collega;
+    - le **istruzioni per ricostruire `srv1`** da zero: installazione, prenotazione DHCP, chiave SSH, KVM e VM;
+    - un file `COLLAUDO.md` con la tabella del [collaudo del livello 2](08-homelab.md#collaudo-del-livello-2): ogni
+      prova, il comando, il risultato atteso, il risultato ottenuto e la data;
+    - il diagramma con workstation, router, `srv1` e le sue VM.
+
+=== "Livello 3 · Mini data center"
+
+    In più:
+
+    - un file `INVENTARIO.md` con l'[inventario](08-homelab.md#collaudo-del-livello-3) di tutto l'hardware: modello, numero di
+      serie, processore, RAM, disco, indirizzo MAC, indirizzo IP, ruolo, prezzo pagato;
+    - le istruzioni per ricostruire ogni nodo da zero;
+    - un file `COLLAUDO.md` con la tabella del [collaudo del livello 3](08-homelab.md#collaudo-del-livello-3), compilata;
+    - il diagramma con router, switch, i tre nodi (con il ruolo di ciascuno) e le VM di `nodo1`;
+    - una foto del laboratorio, se ti va: nei colloqui fa sempre effetto.
+
 ### Il diagramma in Mermaid
 
 GitHub trasforma automaticamente in diagramma i blocchi di codice `mermaid`. Parti da questo esempio e adattalo:
@@ -62,9 +90,11 @@ Valuta il tuo lavoro con questa lista prima di considerarlo concluso:
 - [ ] Il README si legge senza conoscere il corso: chi lo apre capisce cosa contiene il repository.
 - [ ] Il diagramma viene mostrato correttamente su GitHub.
 - [ ] Seguendo solo le istruzioni del README, una persona riesce a ricreare la VM.
-- [ ] Ci sono gli appunti di tutte e sette le lezioni.
+- [ ] Ci sono gli appunti di tutte le lezioni che hai seguito.
 - [ ] Il diario contiene almeno una riga per ogni settimana di studio.
 - [ ] Non ci sono informazioni personali sensibili (indirizzo di casa, numero di telefono, password).
+- [ ] (Livelli 2 e 3) Il collaudo è compilato con la data e tutte le prove superate.
+- [ ] (Livelli 2 e 3) Seguendo il README si ricostruisce un server da zero, fino a `ssh srv1` (o `ssh nodo1`) senza password.
 
 ??? success "Esempio di README (da non copiare: scrivi il tuo)"
     ```markdown

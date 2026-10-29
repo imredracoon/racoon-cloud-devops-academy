@@ -162,9 +162,30 @@ Non serve crearle tutte subito: il corso ti dice quando ne serve una nuova.
 | `rhel-lab` | AlmaLinux 10 | 192.168.56.10 | `almalinux` | 2 vCPU, 2 GB, 20 GB | Fase 1, RHCSA, RHCE |
 | `rhel-client` | AlmaLinux 10 | 192.168.56.11 | `almalinux` | 1 vCPU, 1,5 GB, 10 GB | esercizi di rete, RHCE |
 | `rhel-web` | AlmaLinux 10 | 192.168.56.12 | `almalinux` | 1 vCPU, 1,5 GB, 10 GB | [Progetto 1](../fase-1/progetto.md), percorso RHEL |
+| `k8s-cp` | Ubuntu 24.04 | 192.168.56.31 | `ubuntu` | 2 vCPU, 2 GB, 20 GB | [lezione 8.12](../fase-8/12-kubeadm.md): control plane |
+| `k8s-w1`, `k8s-w2` | Ubuntu 24.04 | 192.168.56.32-33 | `ubuntu` | 2 vCPU, 2 GB, 20 GB | [lezione 8.12](../fase-8/12-kubeadm.md): worker |
+
+!!! note "Hai creato la rete prima dell'arrivo delle VM `k8s-*`?"
+    Se `./academy-vm rete` l'hai eseguito prima che lo script conoscesse le VM `k8s-cp`, `k8s-w1` e `k8s-w2`,
+    ricrea la rete una volta, con le VM spente: `virsh net-destroy academy && virsh net-undefine academy &&
+    ./academy-vm rete`. Dopo `git pull` lo script e la rete sono aggiornati.
 
 Le VM si vedono tra loro **per nome**: da `lab` puoi scrivere `ping client`, da `rhel-client` `ssh rhel-lab`. Il
 gateway della rete, cioè il tuo computer, è `192.168.56.1`.
+
+### Livelli 2 e 3: le VM sul server
+
+Nei [livelli 2 e 3](livelli.md) le VM non girano sulla workstation ma su `srv1` (livello 2) o su `nodo1` (livello 3).
+Tutti i comandi di questa pagina si eseguono **sul server**, dopo esserci entrati con `ssh srv1` o `ssh nodo1`; lì
+servono solo i pacchetti senza grafica (`virt-manager` non serve). La [lezione 0.8](../fase-0/08-homelab.md) ti guida passo
+passo. Due comodità per lavorare dalla workstation:
+
+- **SSH diretto alle VM**: sul server esegui `./academy-vm ssh-config srv1` (o `nodo1`) e copia l'output in fondo al file
+  `~/.ssh/config` della **workstation**. Da quel momento `ssh lab` funziona anche dalla workstation: la connessione
+  passa dal server (*ProxyJump*). Lo script autorizza nelle VM anche le chiavi che hai già autorizzato sul server.
+- **virt-manager remoto**: sulla workstation apri virt-manager, *File → Aggiungi connessione*, scegli *QEMU/KVM*,
+  spunta *Connetti a un host remoto via SSH* e scrivi il tuo utente e `srv1`. Vedi e gestisci le VM del server come
+  se fossero sulla workstation.
 
 ### Comandi utili
 

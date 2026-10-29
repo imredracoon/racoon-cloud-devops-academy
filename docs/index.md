@@ -31,9 +31,11 @@ simulazioni d'esame e contenuti multimediali restano sul sito, dove sono interat
     ---
 
     Un ambiente di laboratorio identico per tutti, sul tuo computer con Ubuntu o Fedora, oppure direttamente
-    dal browser con GitHub Codespaces.
+    dal browser con GitHub Codespaces. Tre livelli: un PC, workstation + server, oppure un mini data center
+    con mini PC usati.
 
-    [:octicons-arrow-right-24: Prepara l'ambiente](ambiente/index.md)
+    [:octicons-arrow-right-24: Prepara l'ambiente](ambiente/index.md) ·
+    [I tre livelli](ambiente/livelli.md)
 
 -   :material-certificate:{ .lg .middle } **Dieci certificazioni**
 
