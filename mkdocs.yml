@@ -285,3 +285,12 @@ nav:
       - "8. Manutenzione": appendici/hardware/08-manutenzione.md
       - "9. Architettura di un data center": appendici/hardware/09-data-center.md
       - "Verifica finale": appendici/hardware/verifica.md
+  - "Appendice · FreeBSD":
+      - appendici/freebsd/index.md
+      - "1. FreeBSD e Linux": appendici/freebsd/01-freebsd-e-linux.md
+      - "2. Installare e amministrare": appendici/freebsd/02-installazione.md
+      - "3. ZFS": appendici/freebsd/03-zfs.md
+      - "4. Le jail": appendici/freebsd/04-jail.md
+      - "5. pf e bhyve": appendici/freebsd/05-pf-bhyve.md
+      - "6. Laboratorio: OPNsense nell'homelab": appendici/freebsd/06-opnsense.md
+      - "Verifica finale": appendici/freebsd/verifica.md

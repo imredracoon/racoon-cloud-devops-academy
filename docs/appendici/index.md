@@ -28,9 +28,11 @@ Le appendici preparano agli esami di certificazione collegati al percorso. Ognun
 | Red Hat Certified System Administrator (RHCSA, EX200) | pratico, RHEL 10 | 1 | [Appendice](rhcsa/index.md) |
 | Canonical Academy · Linux SysAdmin (Ubuntu) | ibrido, quattro esami | 1 | [Appendice](canonical/index.md) |
 
-!!! tip "Un'appendice in più, senza esame"
+!!! tip "Due appendici in più, senza esame"
     L'appendice [Hardware e data center](hardware/index.md) racconta cosa c'è sotto il cloud: dispositivi di
     rete, rack, server reali, tipologie di server con Ubuntu e RHEL, manutenzione e architettura di un data center.
+    L'appendice [FreeBSD](freebsd/index.md), breve e facoltativa, presenta un Unix diverso da Linux: pkg, ZFS,
+    jail, il firewall pf e un laboratorio con OPNsense come firewall dell'homelab.
 
 Per le certificazioni Linux scegli in base al sistema che userai: **RHCSA** per il mondo Red Hat (RHEL, Rocky,
 AlmaLinux), **LFCS** se lavori su Ubuntu e vuoi un titolo neutrale e riconosciuto, **Canonical Academy** come

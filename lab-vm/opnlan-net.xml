@@ -1,0 +1,9 @@
+<!-- Rete "opnlan" dell'appendice FreeBSD (laboratorio OPNsense).
+     Rete isolata: nessun NAT e nessun DHCP da libvirt. Il DHCP e l'uscita verso Internet li fornisce OPNsense
+     (10.30.30.1). L'host ha l'indirizzo 10.30.30.254, così raggiunge l'interfaccia web e le VM della rete.
+     Si crea con: virsh net-define opnlan-net.xml && virsh net-start opnlan && virsh net-autostart opnlan -->
+<network>
+  <name>opnlan</name>
+  <bridge name='virbr30' stp='on' delay='0'/>
+  <ip address='10.30.30.254' netmask='255.255.255.0'/>
+</network>
