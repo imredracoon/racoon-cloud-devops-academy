@@ -7,6 +7,7 @@ a partire dalle immagini cloud ufficiali di Ubuntu 24.04 e AlmaLinux 10.
 |---|---|
 | `academy-vm` | lo script che crea la rete e le VM (`./academy-vm` senza argomenti mostra l'aiuto) |
 | `academy-net.xml` | la rete privata `academy` 192.168.56.0/24, con indirizzi fissi e DNS interno |
+| `opnlan-net.xml` | la rete isolata `opnlan` 10.30.30.0/24 del laboratorio OPNsense ([appendice FreeBSD](https://imredracoon.github.io/racoon-cloud-devops-academy/appendici/freebsd/06-opnsense/)) |
 | `cloud-init/` | i profili cloud-init di ogni VM: pacchetti e dischi di laboratorio |
 
 Le istruzioni complete, passo per passo, sono nel corso: **Ambiente di laboratorio → Macchine virtuali Linux**.
