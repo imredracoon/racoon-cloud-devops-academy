@@ -1,0 +1,64 @@
+# podcheck dentro il cluster (lezione G.10): un CronJob che ogni 10 minuti
+# elenca i Pod con problemi in tutti i namespace.
+# kubectl apply -f deploy.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: podcheck
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: podcheck
+  namespace: podcheck
+---
+# Solo lettura dei Pod, in tutti i namespace: niente di più (minimo privilegio).
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: podcheck-lettura-pod
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: podcheck-lettura-pod
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: podcheck-lettura-pod
+subjects:
+  - kind: ServiceAccount
+    name: podcheck
+    namespace: podcheck
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: podcheck
+  namespace: podcheck
+spec:
+  schedule: "*/10 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          serviceAccountName: podcheck
+          restartPolicy: Never
+          containers:
+            - name: podcheck
+              image: podcheck:dev          # caricata in kind con "kind load docker-image podcheck:dev"
+              imagePullPolicy: IfNotPresent
+              args: ["-A"]
+              resources:
+                requests: { cpu: 10m, memory: 32Mi }
+                limits: { memory: 64Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: { drop: ["ALL"] }

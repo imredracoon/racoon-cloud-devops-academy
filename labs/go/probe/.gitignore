@@ -1,0 +1,5 @@
+# binari prodotti da go build
+/probe
+/dist/
+*.test
+coverage.out

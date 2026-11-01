@@ -58,6 +58,13 @@ Il codice si scrive sempre nel Dev Container della workstation e si salva su Git
     `healthcheck.py` li controlla entrambi. È l'automazione "fatta a mano" che nella [Fase 6](../fase-6/index.md)
     sostituirai con Ansible.
 
+## Il percorso Go
+
+Python resta il linguaggio di questa fase; in parallelo il [percorso Go](../go/index.md) prosegue con
+[G.4 Una CLI vera, con i test](../go/04-cli-test.md) dopo la [lezione 2.7](07-python-automazione.md) e
+[G.5 Concorrenza e servizi HTTP](../go/05-concorrenza-http.md) dopo la [lezione 2.8](08-flask.md). È qui che nasce
+**racoon-probe**, il tool Go che porterai avanti fino alla Fase 8.
+
 ## Le lezioni
 
 1. [Git: i fondamenti](01-git-base.md)

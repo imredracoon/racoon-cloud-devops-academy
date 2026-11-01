@@ -71,6 +71,11 @@ sul registry. Cambia dove fai girare lo stack.
       primo `systemctl restart nftables`. Usa la tabella dedicata `homelab` vista nella
       [lezione 1.11](../fase-1/11-firewall.md#nei-tre-livelli) anche su `nodo2`.
 
+## Il percorso Go
+
+Dopo la [lezione 3.3](03-dockerfile.md) studia [G.6 Go nei container](../go/06-container.md) del
+[percorso Go](../go/index.md): costruirai per racoon-probe un'immagine di pochi megabyte, per amd64 e arm64.
+
 ## Le lezioni
 
 1. [Cosa sono i container](01-concetti.md)

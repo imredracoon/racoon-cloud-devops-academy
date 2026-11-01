@@ -22,6 +22,12 @@ moderno è fatto di computer collegati in rete. Questa fase costruisce il vocabo
 poggia tutto il resto del corso. Anche se alcuni argomenti ti sembrano già noti, seguili: spesso è proprio sulle
 basi che si inciampa nei colloqui tecnici.
 
+## Il percorso Go
+
+Quando hai finito la [lezione 0.7](07-laboratorio.md) e il Dev Container funziona, puoi iniziare la seconda strada
+del corso: il [percorso Go](../go/index.md). La prima lezione, [G.1 Primi passi con Go](../go/01-primi-passi.md),
+parte da zero e non richiede di saper programmare.
+
 ## Le lezioni
 
 1. [Come funziona un computer](01-computer.md)

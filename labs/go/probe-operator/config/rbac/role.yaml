@@ -1,0 +1,22 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: probe-operator
+rules:
+- apiGroups:
+  - monitoring.academy.racoon.dev
+  resources:
+  - probes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - monitoring.academy.racoon.dev
+  resources:
+  - probes/status
+  verbs:
+  - get
+  - patch
+  - update

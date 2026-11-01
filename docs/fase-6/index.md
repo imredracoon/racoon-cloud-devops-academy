@@ -74,6 +74,12 @@ Terraform lavora sul cloud ed è uguale per tutti. Ansible invece cambia molto: 
     DHCP e DNS della Fase 1) diventa un ruolo: la rete del laboratorio è descritta in un repository e si ricostruisce
     con un comando. Anche l'istanza VPN della [lezione 5.1](../fase-5/01-vpc.md#nei-tre-livelli) entra in Terraform.
 
+## Il percorso Go
+
+Dopo la [lezione 6.7](07-moduli.md) studia [G.8 Testare Terraform con Terratest](../go/08-terratest.md) del
+[percorso Go](../go/index.md): test di integrazione in Go che applicano davvero un modulo, lo verificano e lo
+distruggono.
+
 ## Le lezioni
 
 1. [Infrastructure as Code](01-iac.md)

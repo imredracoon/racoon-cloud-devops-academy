@@ -44,6 +44,33 @@ Flask** che gestisce un elenco di attività. Ogni fase la porta un passo più av
 È esattamente il percorso che una vera applicazione compie in un'azienda, ed è una storia facile da raccontare
 in un colloquio.
 
+## Due linguaggi: Python e Go
+
+Il corso ha **due strade di programmazione** che si percorrono insieme:
+
+- **Python** è il linguaggio delle fasi: script di automazione, la Tasks API, gli esempi con gli SDK. È il più
+  diffuso negli script di sistema e in Ansible.
+- **Go** è il [percorso parallelo](go/index.md): undici lezioni distribuite lungo tutte le fasi, dalla
+  [lezione G.1](go/01-primi-passi.md) dopo la Fase 0 fino a un operator Kubernetes nella Fase 8. Go è il linguaggio
+  in cui sono scritti Docker, Kubernetes, Terraform e Prometheus, e compare spesso negli annunci per ruoli DevOps,
+  Platform Engineer e SRE.
+
+Ogni pagina introduttiva di fase indica quale lezione Go studiare e quando. Il percorso Go aggiunge circa
+**70 ore** in tutto e un progetto in più per il portfolio, [racoon-probe](go/progetto.md): un exporter Prometheus
+che diventa un operator. Se preferisci concentrarti su Python, puoi rimandare le lezioni G.7-G.11 a dopo la
+Fase 8 senza perdere nulla.
+
+| Fase | Lezioni Go | Cosa costruisci in Go |
+|---|---|---|
+| [0](fase-0/index.md) | [G.1](go/01-primi-passi.md) | i primi programmi |
+| [1](fase-1/index.md) | [G.2](go/02-collezioni-errori.md), [G.3](go/03-pacchetti-rete.md) | `sysinfo` e `portcheck` |
+| [2](fase-2/index.md) | [G.4](go/04-cli-test.md), [G.5](go/05-concorrenza-http.md) | `racoon-probe`: CLI con test, poi servizio HTTP concorrente |
+| [3](fase-3/index.md) | [G.6](go/06-container.md) | immagine distroless multi-architettura |
+| [4](fase-4/index.md)-[5](fase-5/index.md) | [G.7](go/07-sdk-cloud.md) | `inventario` di AWS e Google Cloud |
+| [6](fase-6/index.md) | [G.8](go/08-terratest.md) | test Terratest dei moduli |
+| [7](fase-7/index.md) | [G.9](go/09-ci-metriche.md) | pipeline ed exporter Prometheus |
+| [8](fase-8/index.md) | [G.10](go/10-client-go.md), [G.11](go/11-operator.md) | `podcheck` e l'operator `Probe` |
+
 ## AWS e Google Cloud
 
 Il corso usa **AWS come cloud principale** e **Google Cloud come percorso parallelo**. Nelle lezioni delle fasi

@@ -1,0 +1,58 @@
+# L'operator dentro il cluster (lezione G.11).
+#   docker build -t probe-operator:dev . && kind load docker-image probe-operator:dev --name academy
+#   kubectl apply -f config/crd/ -f config/rbac/ -f config/manager.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: probe-operator
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: probe-operator
+  namespace: probe-operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: probe-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: probe-operator           # generato da controller-gen in config/rbac/role.yaml
+subjects:
+  - kind: ServiceAccount
+    name: probe-operator
+    namespace: probe-operator
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: probe-operator
+  namespace: probe-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app.kubernetes.io/name: probe-operator }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: probe-operator }
+    spec:
+      serviceAccountName: probe-operator
+      containers:
+        - name: manager
+          image: probe-operator:dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - { name: health, containerPort: 8081 }
+          livenessProbe:
+            httpGet: { path: /healthz, port: health }
+          readinessProbe:
+            httpGet: { path: /readyz, port: health }
+          resources:
+            requests: { cpu: 10m, memory: 64Mi }
+            limits: { memory: 128Mi }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }

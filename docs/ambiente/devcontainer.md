@@ -22,6 +22,7 @@ Contiene, tra gli altri:
 |---|---|---|
 | Git e GitHub CLI | Versionare il codice | 2 |
 | Python 3.12, Flask, pytest | Automazione e applicazione d'esempio | 2 |
+| Go 1.27 | Il [percorso Go](../go/index.md), parallelo a Python | 0-8 |
 | Docker (*docker-in-docker*) | Container | 3 |
 | AWS CLI e Google Cloud CLI | Gestire il cloud da riga di comando | 4-5 |
 | Terraform 1.12 e Ansible | Infrastructure as Code | 6 |

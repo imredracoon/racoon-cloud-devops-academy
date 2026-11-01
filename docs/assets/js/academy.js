@@ -198,7 +198,7 @@
       total += list.length; done += d;
       var pct = list.length ? Math.round(d / list.length * 100) : 0;
       html += '<details class="academy-progress__phase"><summary><strong>' +
-        esc(ph.replace("fase-", "Fase ")) + "</strong> · " + d + "/" + list.length +
+        esc(ph === "go" ? "Percorso Go" : ph.replace("fase-", "Fase ")) + "</strong> · " + d + "/" + list.length +
         ' <span class="academy-bar"><span style="width:' + pct + '%"></span></span></summary><ul>';
       list.forEach(function (p) {
         html += "<li>" + (state[p.key] ? "✅ " : "⬜ ") + '<a href="' + esc(p.href) + '">' +

@@ -1,0 +1,18 @@
+# Due Probe d'esempio (lezione G.11): kubectl apply -f config/samples/probes.yaml
+apiVersion: monitoring.academy.racoon.dev/v1alpha1
+kind: Probe
+metadata:
+  name: tasks-api
+  namespace: tasks
+spec:
+  url: http://tasks-api.tasks.svc.cluster.local/health
+  interval: 15s
+---
+apiVersion: monitoring.academy.racoon.dev/v1alpha1
+kind: Probe
+metadata:
+  name: sito-corso
+  namespace: default
+spec:
+  url: https://imredracoon.github.io/racoon-cloud-devops-academy/
+  expectStatus: 200

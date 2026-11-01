@@ -1,0 +1,85 @@
+# Pipeline di integrazione continua di probe (lezione G.8 del percorso Go).
+# Funziona quando la cartella probe è la radice di un repository GitHub.
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMMAGINE: ghcr.io/${{ github.repository }}
+
+jobs:
+  qualita:
+    name: Vet, lint e test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod   # la versione di Go la decide go.mod, non la pipeline
+
+      - name: Formattazione
+        run: test -z "$(gofmt -l .)" || { gofmt -l .; exit 1; }
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.15
+
+      - name: Test con race detector e copertura
+        run: go test -race -coverprofile=coverage.out ./...
+
+      - name: Riepilogo copertura
+        run: go tool cover -func=coverage.out | tail -1
+
+  immagine:
+    name: Build e pubblicazione dell'immagine
+    needs: qualita
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: docker/login-action@v4
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMMAGINE }}
+          tags: |
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=sha
+
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64   # Go compila per entrambe senza emulare
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: VERSION=${{ github.ref_name }}

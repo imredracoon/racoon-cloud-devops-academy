@@ -71,6 +71,12 @@ La Tasks API, dalla versione di questa fase, espone le **metriche** su `/metrics
     scatta quando ne spegni uno. Il rilascio pull aggiorna la Tasks API su `nodo3` con i Quadlet della
     [Fase 3](../fase-3/progetto.md#nei-tre-livelli).
 
+## Il percorso Go
+
+Dopo la [lezione 7.6](06-prometheus.md) studia [G.9 Pipeline ed exporter Prometheus](../go/09-ci-metriche.md)
+del [percorso Go](../go/index.md): racoon-probe ottiene la sua pipeline e diventa un exporter letto dal Prometheus di
+questa fase.
+
 ## Le lezioni
 
 1. [Integrazione e rilascio continui](01-concetti.md)

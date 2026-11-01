@@ -230,6 +230,21 @@ nav:
       - "8.15 GitOps e Kubernetes nel cloud": fase-8/15-gitops-cloud.md
       - "Progetto 8 · Cluster con GitOps": fase-8/progetto.md
       - "Verifica di fine fase": fase-8/verifica.md
+  - "Percorso Go":
+      - go/index.md
+      - "G.1 Primi passi con Go": go/01-primi-passi.md
+      - "G.2 Collezioni, struct ed errori": go/02-collezioni-errori.md
+      - "G.3 Pacchetti, interfacce e rete": go/03-pacchetti-rete.md
+      - "G.4 Una CLI vera, con i test": go/04-cli-test.md
+      - "G.5 Concorrenza e servizi HTTP": go/05-concorrenza-http.md
+      - "G.6 Go nei container": go/06-container.md
+      - "G.7 Gli SDK di AWS e Google Cloud": go/07-sdk-cloud.md
+      - "G.8 Testare Terraform con Terratest": go/08-terratest.md
+      - "G.9 Pipeline ed exporter Prometheus": go/09-ci-metriche.md
+      - "G.10 Parlare con Kubernetes: client-go": go/10-client-go.md
+      - "G.11 Un operator con Kubebuilder": go/11-operator.md
+      - "Progetto Go · racoon-probe": go/progetto.md
+      - "Verifica finale": go/verifica.md
   - Certificazioni:
       - appendici/index.md
       - "AWS Cloud Practitioner":

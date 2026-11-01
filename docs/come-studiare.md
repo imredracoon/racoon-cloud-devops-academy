@@ -9,7 +9,7 @@ Il corso è pensato per chi **parte da zero**: non serve sapere programmare, non
 avere lavorato nell'informatica. Serve invece:
 
 - un computer con almeno **8 GB di RAM** (16 GB è meglio) e una connessione a Internet;
-- costanza: **8-10 ore a settimana** per circa 16 mesi;
+- costanza: **8-10 ore a settimana** per circa 16 mesi (circa 18 con il [percorso Go](go/index.md));
 - la disponibilità a sbagliare. Nei laboratori romperai cose: è previsto ed è il modo più rapido per imparare.
 
 Se hai già esperienza, segui comunque tutte le lezioni nell'ordine. I contenuti si appoggiano l'uno sull'altro
@@ -25,6 +25,9 @@ Il corso è diviso in **nove fasi** (dalla 0 alla 8). Ogni fase contiene:
 | **Lezioni** | Teoria spiegata passo per passo, esempi commentati, esercizi e una verifica rapida. |
 | **Progetto** | Un lavoro completo da pubblicare su GitHub: diventa parte del tuo portfolio. |
 | **Verifica di fine fase** | Un quiz che copre tutta la fase. Passa alla fase successiva quando superi l'80%. |
+
+Accanto alle fasi corre il [percorso Go](go/index.md): undici lezioni da studiare in parallelo, ciascuna nel momento
+indicato dalla pagina introduttiva della fase, con un suo progetto e una verifica finale.
 
 ## Come è fatta una lezione
 
