@@ -111,6 +111,13 @@ Gli argomenti sono gli stessi per tutti; cambia **dove** li provi. Scegli la sch
     non hai verificato che la modifica funziona. Se perdi l'accesso, schermo e tastiera collegati al server sono la
     tua console di emergenza.
 
+## Il percorso Go
+
+Accanto a questa fase studi due lezioni del [percorso Go](../go/index.md):
+[G.2 Collezioni, struct ed errori](../go/02-collezioni-errori.md) dopo la [lezione 1.4](04-processi-systemd.md), e
+[G.3 Pacchetti, interfacce e rete](../go/03-pacchetti-rete.md) dopo la [lezione 1.9](09-diagnostica.md). Scriverai
+in Go dei piccoli strumenti che leggono `/proc` e controllano le porte di rete delle tue VM.
+
 ## Le lezioni
 
 1. [Il filesystem](01-filesystem.md)

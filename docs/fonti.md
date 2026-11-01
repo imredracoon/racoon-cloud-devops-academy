@@ -39,6 +39,17 @@ la documentazione: i prodotti cambiano, e conviene abituarsi presto a leggerla.
 | [Documentazione di Ansible](https://docs.ansible.com/) e [ansible-navigator](https://ansible.readthedocs.io/projects/navigator/) | automazione dei server |
 | [Documentazione di Terraform](https://developer.hashicorp.com/terraform/docs) | infrastruttura come codice |
 
+## Go
+
+| Fonte | Per cosa |
+|---|---|
+| [Documentazione di Go](https://go.dev/doc/), [A Tour of Go](https://go.dev/tour/) ed [Effective Go](https://go.dev/doc/effective_go) | linguaggio, strumenti e stile |
+| [Libreria standard e pacchetti](https://pkg.go.dev/) | riferimento di ogni pacchetto |
+| [Blog ufficiale di Go](https://go.dev/blog/) | approfondimenti del team Go |
+| [AWS SDK for Go v2](https://docs.aws.amazon.com/sdk-for-go/v2/developer-guide/welcome.html) e [Google Cloud Go](https://cloud.google.com/go/docs/reference) | SDK dei cloud |
+| [Terratest](https://terratest.gruntwork.io/docs/) | test di integrazione di Terraform |
+| [client-go](https://github.com/kubernetes/client-go) e [The Kubebuilder Book](https://book.kubebuilder.io/) | programmi e operator per Kubernetes |
+
 ## Container e Kubernetes
 
 | Fonte | Per cosa |

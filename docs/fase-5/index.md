@@ -63,6 +63,12 @@ flowchart LR
     Come nel livello 2, ma il capo della VPN è il gateway `nodo1`: **tutta la rete del laboratorio**
     `10.10.10.0/24` raggiunge la VPC e viceversa, come una sede aziendale collegata al cloud.
 
+## Il percorso Go
+
+Se non l'hai fatta nella [Fase 4](../fase-4/index.md), questo è il momento della lezione
+[G.7 Gli SDK di AWS e Google Cloud](../go/07-sdk-cloud.md) del [percorso Go](../go/index.md): un tool che elenca le
+risorse dei due cloud, testabile senza account.
+
 ## Le lezioni
 
 1. [Reti private e pubbliche](01-vpc.md)

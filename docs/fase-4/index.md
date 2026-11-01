@@ -58,6 +58,12 @@ tuo laboratorio diventa la **sede** di una piccola azienda, che usa il cloud per
     Come nel livello 2, ma è `nodo1` a mandare nel cloud i backup di tutto il data center raccolti sul suo
     storage NFS: le credenziali del cloud stanno su una sola macchina.
 
+## Il percorso Go
+
+Dopo la [lezione 4.10](10-cli.md), quando le CLI `aws` e `gcloud` sono configurate, puoi studiare
+[G.7 Gli SDK di AWS e Google Cloud](../go/07-sdk-cloud.md) del [percorso Go](../go/index.md), oppure rimandarla alla
+[Fase 5](../fase-5/index.md).
+
 ## Le lezioni
 
 1. [Cos'è il cloud computing](01-cloud-computing.md)

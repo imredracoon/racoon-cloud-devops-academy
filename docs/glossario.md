@@ -31,10 +31,16 @@ Backend (Terraform)
 Bilanciatore di carico
 :   Componente che distribuisce le richieste tra più server e smette di inviarle a quelli non sani. [Lezione](fase-5/02-ha-scaling.md)
 
+Binario statico
+:   Programma compilato che contiene tutto ciò che gli serve e non dipende dalle librerie del sistema; in Go si ottiene con CGO_ENABLED=0. [Lezione](go/06-container.md)
+
 Bucket
 :   Contenitore di oggetti nello storage a oggetti (Amazon S3, Cloud Storage). [Lezione](fase-4/06-storage.md)
 
 ## C
+
+Channel
+:   In Go, canale tipizzato attraverso cui le goroutine si scambiano valori. [Lezione](go/05-concorrenza-http.md)
 
 CI/CD
 :   Integrazione continua (ogni modifica viene compilata e testata in automatico) e rilascio continuo (le modifiche approvate arrivano in produzione in automatico). [Lezione](fase-7/01-concetti.md)
@@ -54,6 +60,9 @@ CNI, CSI, CRI
 Commit
 :   Fotografia delle modifiche registrata nella storia di un repository Git. [Lezione](fase-2/01-git-base.md)
 
+Compilatore
+:   Programma che traduce il codice sorgente in codice macchina prima dell'esecuzione, come quello di Go. [Lezione](go/01-primi-passi.md)
+
 ConfigMap e Secret
 :   Oggetti Kubernetes che forniscono configurazione e dati sensibili ai Pod. [Lezione](fase-8/06-config.md)
 
@@ -62,6 +71,9 @@ Container
 
 Control plane
 :   Componenti che gestiscono un cluster Kubernetes: API server, etcd, scheduler, controller manager. [Lezione](fase-8/01-architettura.md)
+
+CRD (CustomResourceDefinition)
+:   Estensione dell'API di Kubernetes che aggiunge un nuovo tipo di risorsa, con il suo schema. [Lezione](go/11-operator.md)
 
 Cron
 :   Servizio che esegue comandi a orari pianificati. [Lezione](fase-2/05-pianificazione.md)
@@ -106,6 +118,9 @@ Endpoint
 etcd
 :   Database chiave-valore distribuito in cui Kubernetes salva lo stato del cluster. [Lezione](fase-8/12-kubeadm.md)
 
+Exporter
+:   Programma che espone in formato Prometheus le metriche di un sistema che non le espone da solo. [Lezione](go/09-ci-metriche.md)
+
 ## F
 
 Filesystem
@@ -121,6 +136,12 @@ Gateway API
 
 GitOps
 :   Pratica in cui lo stato desiderato di un sistema sta in Git e un agente lo applica e lo mantiene. [Lezione](fase-8/15-gitops-cloud.md)
+
+Go
+:   Linguaggio compilato, creato in Google, in cui sono scritti Docker, Kubernetes, Terraform e Prometheus. Nel corso è il secondo linguaggio, accanto a Python. [Lezione](go/index.md)
+
+Goroutine
+:   Funzione Go eseguita in modo concorrente, gestita dal runtime e molto più leggera di un thread. [Lezione](go/05-concorrenza-http.md)
 
 ## H
 
@@ -213,6 +234,9 @@ Object storage
 OIDC
 :   Protocollo di identità che permette, per esempio, a una pipeline di ottenere credenziali cloud temporanee senza chiavi salvate. [Lezione](fase-7/04-deploy-oidc.md)
 
+Operator
+:   Estensione di Kubernetes composta da una CRD e da un controller che ne riconcilia gli oggetti. [Lezione](go/11-operator.md)
+
 Osservabilità
 :   Capacità di capire lo stato interno di un sistema da metriche, log e tracce. [Lezione](fase-7/05-osservabilita.md)
 
@@ -247,6 +271,9 @@ Pull request
 
 ## R
 
+Race condition
+:   Errore in cui il risultato dipende dall'ordine in cui più flussi concorrenti accedono agli stessi dati; in Go si trova con go test -race. [Lezione](go/05-concorrenza-http.md)
+
 RBAC
 :   Controllo degli accessi basato sui ruoli, per esempio in Kubernetes. [Lezione](fase-8/11-rbac.md)
 
@@ -272,6 +299,9 @@ RPO e RTO
 :   Quanti dati si possono perdere (RPO) e quanto tempo può durare il fermo (RTO) in caso di disastro. [Lezione](fase-5/10-well-architected.md)
 
 ## S
+
+SDK (Software Development Kit)
+:   Libreria che permette a un programma di usare le API di un servizio, come quelle di AWS o Google Cloud. [Lezione](go/07-sdk-cloud.md)
 
 SELinux e AppArmor
 :   Sistemi di controllo d'accesso obbligatorio che limitano cosa possono fare i processi, anche se eseguiti da root. [Lezione](fase-1/14-selinux-apparmor.md)

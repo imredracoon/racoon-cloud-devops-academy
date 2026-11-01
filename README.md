@@ -1,10 +1,12 @@
 # Racoon Cloud & DevOps Academy
 
 Un corso **gratuito e interattivo**, in italiano, per diventare Cloud/DevOps engineer **partendo da zero**: Linux e
-reti, Git, Bash e Python, container, AWS e Google Cloud, Terraform, CI/CD e osservabilità, Kubernetes.
+reti, Git, Bash, Python e Go, container, AWS e Google Cloud, Terraform, CI/CD e osservabilità, Kubernetes.
 
 - **9 fasi** con lezioni, esercizi con soluzione, laboratori e un progetto per il portfolio in ogni fase.
 - **Percorsi doppi** Debian/Ubuntu e RHEL (Rocky/AlmaLinux) per Linux, e AWS e Google Cloud per il cloud.
+- **Due linguaggi**: Python nelle fasi e un **percorso Go parallelo** (11 lezioni) che porta da zero a un exporter
+  Prometheus e a un operator Kubernetes.
 - **10 appendici di certificazione** (AWS, Google Cloud, Terraform, CKA, LFCS, RHCSA, RHCE in Ansible, Canonical)
   con simulazioni casuali: oltre 730 domande e 155 task pratici originali.
 - Solo **fonti ufficiali**, sempre citate.
@@ -36,7 +38,7 @@ mkdocs build --strict && python scripts/build_pdf.py   # site/assets/pdf/racoon-
 | Percorso | Contenuto |
 |---|---|
 | `docs/` | le lezioni (Markdown), le appendici e le banche delle simulazioni (`docs/assets/banks/`) |
-| `labs/` | i laboratori: Tasks API, Terraform, Ansible, Kubernetes |
+| `labs/` | i laboratori: Tasks API, Terraform, Ansible, Kubernetes e i programmi del percorso Go (`labs/go`) |
 | `lab-vm/` | le macchine virtuali per i laboratori Linux e kubeadm |
 | `.devcontainer/` | l'ambiente di studio riproducibile |
 | `scripts/check_banks.py` | i controlli automatici delle banche domande |

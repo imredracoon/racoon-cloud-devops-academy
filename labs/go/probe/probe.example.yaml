@@ -1,0 +1,17 @@
+# Configurazione di esempio di probe: copiala in probe.yaml e adattala.
+interval: 30s   # ogni quanto ripetere i controlli (modalità serve)
+timeout: 5s     # tempo massimo per un controllo
+
+targets:
+  - name: tasks-api
+    type: http
+    url: http://localhost:8000/health
+    expect_status: 200
+
+  - name: postgres
+    type: tcp
+    address: localhost:5432
+
+  - name: sito-corso
+    type: http
+    url: https://imredracoon.github.io/racoon-cloud-devops-academy/

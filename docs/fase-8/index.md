@@ -75,6 +75,13 @@ imparare. Nei livelli 2 e 3, dalla [lezione 8.12](12-kubeadm.md#nei-tre-livelli)
     Lo storage è l'NFS di `nodo1`, gli indirizzi dei servizi li assegna MetalLB sulla rete del laboratorio e `nodo1`
     li pubblica verso casa. Se `nodo1` ha 16 GB, puoi aggiungere le VM `k8s-w1` e `k8s-w2` come worker.
 
+## Il percorso Go
+
+Il [percorso Go](../go/index.md) si chiude qui con due lezioni:
+[G.10 Parlare con Kubernetes: client-go](../go/10-client-go.md) dopo la [lezione 8.11](11-rbac.md), e
+[G.11 Un operator con Kubebuilder](../go/11-operator.md) dopo la [lezione 8.13](13-helm-kustomize.md). Poi il
+[progetto Go](../go/progetto.md) e la [verifica finale](../go/verifica.md).
+
 ## Le lezioni
 
 1. [Architettura di Kubernetes](01-architettura.md)

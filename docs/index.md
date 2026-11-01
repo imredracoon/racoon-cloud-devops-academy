@@ -22,9 +22,18 @@ simulazioni d'esame e contenuti multimediali restano sul sito, dove sono interat
     ---
 
     Si parte da cos'è un computer e si arriva a gestire cluster Kubernetes con pipeline automatiche.
-    Circa 600 ore di studio, pensate per chi studia 8-10 ore a settimana.
+    Circa 600 ore di studio, più circa 70 del percorso Go, pensate per chi studia 8-10 ore a settimana.
 
     [:octicons-arrow-right-24: Il percorso](percorso.md)
+
+-   :material-language-go:{ .lg .middle } **Due linguaggi: Python e Go**
+
+    ---
+
+    Python per l'automazione, e in parallelo un percorso Go che accompagna tutte le fasi: CLI, servizi HTTP,
+    exporter Prometheus, Terratest e un operator Kubernetes.
+
+    [:octicons-arrow-right-24: Il percorso Go](go/index.md)
 
 -   :material-flask:{ .lg .middle } **Laboratori riproducibili**
 

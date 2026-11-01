@@ -1,0 +1,43 @@
+# Controlla che il codice di riferimento del percorso Go (labs/go) compili e superi i test.
+name: Laboratori Go
+
+on:
+  push:
+    branches: [main]
+    paths: ["labs/go/**", ".github/workflows/labs-go.yml"]
+  pull_request:
+    paths: ["labs/go/**", ".github/workflows/labs-go.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.modulo }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        modulo: [probe, inventario, terratest, podcheck, probe-operator]
+    defaults:
+      run:
+        working-directory: labs/go/${{ matrix.modulo }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: labs/go/${{ matrix.modulo }}/go.mod
+          cache-dependency-path: labs/go/${{ matrix.modulo }}/go.sum
+      - name: Formattazione
+        run: test -z "$(gofmt -l .)" || { gofmt -l .; exit 1; }
+      - name: go vet
+        run: go vet ./...
+      # TestPrimoProgetto di terratest richiede terraform e TestReteWebAWS un account AWS:
+      # per quel modulo si controlla solo che compili.
+      - name: Test
+        if: matrix.modulo != 'terratest'
+        run: go test -race ./...
+      - name: Compila i test
+        if: matrix.modulo == 'terratest'
+        run: go test -run '^$' ./...
